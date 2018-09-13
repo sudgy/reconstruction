@@ -1,0 +1,5 @@
+target
+
+# I use this to install the resulting jars directly into my ImageJ
+# installation, you don't need it
+install.sh
