@@ -157,7 +157,7 @@ public class ReconCommand extends ContextCommand implements Initializable {
             recon.set_input_images(M_pixel_width, M_pixel_height, holo, null);
             recon.calculateFFT();
             recon.filter(roi);
-            recon.set_reference_holo(reference.result(hologram, holo, roi));
+            recon.set_reference_holo(reference.result(hologram, t, roi));
             boolean already_propagated = false;
             for (double z : M_zs) {
                 if (IJ.escapePressed()) {
