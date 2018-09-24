@@ -26,6 +26,7 @@ import java.nio.file.Paths;
 import unal.od.jdiffraction.cpu.utils.ArrayUtils;
 
 import org.scijava.Initializable;
+import org.scijava.app.StatusService;
 import org.scijava.command.Command;
 import org.scijava.command.ContextCommand;
 import org.scijava.plugin.Parameter;
@@ -53,6 +54,7 @@ import edu.pdx.imagej.reconstruction.parameter.SaveParameter;
 @Plugin(type = Command.class, menuPath = "PDX>Reconstruct")
 public class ReconCommand extends ContextCommand implements Initializable {
     @Parameter private UIService P_ui;
+    @Parameter private StatusService P_status;
     @Parameter private UnitService P_units;
 
     @Parameter private ImageParameter P_hologram;
@@ -137,10 +139,10 @@ public class ReconCommand extends ContextCommand implements Initializable {
         if (M_save_to_file) {
             for (double z : M_zs) {
                 try {
-                    if (amplitude_enabled) new File(Paths.get(M_directory, "Amplitude", String.valueOf(z)).toString()).mkdirs();
-                    if (phase_enabled) new File(Paths.get(M_directory, "Phase", String.valueOf(z)).toString()).mkdirs();
-                    if (real_enabled) new File(Paths.get(M_directory, "Real", String.valueOf(z)).toString()).mkdirs();
-                    if (imaginary_enabled) new File(Paths.get(M_directory, "Imaginary", String.valueOf(z)).toString()).mkdirs();
+                    if (amplitude_enabled) new File(Paths.get(M_directory, "Amplitude", format_z(z)).toString()).mkdirs();
+                    if (phase_enabled) new File(Paths.get(M_directory, "Phase", format_z(z)).toString()).mkdirs();
+                    if (real_enabled) new File(Paths.get(M_directory, "Real", format_z(z)).toString()).mkdirs();
+                    if (imaginary_enabled) new File(Paths.get(M_directory, "Imaginary", format_z(z)).toString()).mkdirs();
                 }
                 catch (SecurityException e) {
                     P_ui.showDialog("Unable to create directories: " + e.getMessage(), "Error");
@@ -148,6 +150,8 @@ public class ReconCommand extends ContextCommand implements Initializable {
                 }
             }
         }
+        int total_size = M_ts.size() * M_zs.size();
+        int current = 0;
         for (int t : M_ts) {
             float[][] holo = hologram.getStack().getProcessor(t).getFloatArray();
             recon.set_input_images(M_pixel_width, M_pixel_height, holo, null);
@@ -156,6 +160,12 @@ public class ReconCommand extends ContextCommand implements Initializable {
             recon.set_reference_holo(reference.result(hologram, holo, roi));
             boolean already_propagated = false;
             for (double z : M_zs) {
+                if (IJ.escapePressed()) {
+                    P_status.showStatus(1, 1, "Command canceled");
+                    return;
+                }
+                P_status.showStatus(current, total_size, "Processing " + hologram.getImageStack().getSliceLabel(t) + " at z = " + format_z(z));
+                ++current;
                 recon.set_distance((float)z);
                 if (already_propagated) recon.propagate(false);
                 else {
@@ -163,12 +173,13 @@ public class ReconCommand extends ContextCommand implements Initializable {
                     already_propagated = true;
                 }
                 float[][] field = recon.get_result();
-                if (amplitude_enabled) finish_result(ArrayUtils.modulus(field), z, t, amplitude, "Amplitude");
-                if (phase_enabled) finish_result(ArrayUtils.phase(field), z, t, phase, "Phase");
-                if (real_enabled) finish_result(ArrayUtils.real(field), z, t, real, "Real");
-                if (imaginary_enabled) finish_result(ArrayUtils.imaginary(field), z, t, imaginary, "Imaginary");
+                if (amplitude_enabled) finish_result(ArrayUtils.modulus(field), z, t, amplitude, "Amplitude", hologram.getImageStack().getSliceLabel(t));
+                if (phase_enabled) finish_result(ArrayUtils.phase(field), z, t, phase, "Phase", hologram.getImageStack().getSliceLabel(t));
+                if (real_enabled) finish_result(ArrayUtils.real(field), z, t, real, "Real", hologram.getImageStack().getSliceLabel(t));
+                if (imaginary_enabled) finish_result(ArrayUtils.imaginary(field), z, t, imaginary, "Imaginary", hologram.getImageStack().getSliceLabel(t));
             }
         }
+        P_status.showStatus(1, 1, "Done!");
         if (!M_save_to_file) {
             if (amplitude_enabled) show(amplitude, "Amplitude");
             if (phase_enabled) show(phase, "Phase");
@@ -176,25 +187,25 @@ public class ReconCommand extends ContextCommand implements Initializable {
             if (imaginary_enabled) show(imaginary, "Imaginary");
         }
     }
-    void finish_result(float[][] result_as_array, double z, int t, ImageStack stack, String type)
+    private void finish_result(float[][] result_as_array, double z, int t, ImageStack stack, String type, String label)
     {
         ImageProcessor result = new FloatProcessor(result_as_array).convertToByteProcessor();
         if (M_save_to_file) {
-            String label = stack.getSliceLabel(t);
             ImagePlus temp_img = new ImagePlus("", result);
             temp_img.setCalibration(M_cal);
-            IJ.saveAsTiff(temp_img, Paths.get(M_directory, type, String.valueOf(z), label).toString() + ".tiff");
+            IJ.saveAsTiff(temp_img, Paths.get(M_directory, type, format_z(z), label).toString() + ".tiff");
             temp_img.close();
         }
         else {
-            stack.addSlice(result);
+            stack.addSlice(label + ", z = " + format_z(z), result);
         }
     }
-    void show(ImageStack stack, String label)
+    private void show(ImageStack stack, String label)
     {
         ImagePlus imp = IJ.createHyperStack(label, M_pixel_width, M_pixel_height, 1, M_zs.size(), M_ts.size(), 8);
         imp.setStack(stack);
         imp.setCalibration(M_cal);
         imp.show();
     }
+    private String format_z(double z) {return String.format("%.3f", z);}
 }
