@@ -16,7 +16,7 @@
  * Foundation.  For any other questions regarding this program, please contact
  * David Cohoe at dcohoe@pdx.edu.
  */
-
+/*
 package edu.pdx.imagej.reconstruction;
 
 import ij.ImagePlus;
@@ -34,7 +34,7 @@ import unal.od.jdiffraction.cpu.utils.ArrayUtils;
  *
  * @see ReferenceHolo
  * @author David Cohoe
- */
+ *
 @Plugin(type = Command.class, menuPath = "PDX>Get Reference Hologram")
 public class GetReferenceHolo implements Command {
     @Parameter(label = "Hologram", autoFill = false)
@@ -52,3 +52,4 @@ public class GetReferenceHolo implements Command {
         new ImagePlus("Reference Imaginary", new FloatProcessor(imaginary)).show();
     }
 }
+*/
