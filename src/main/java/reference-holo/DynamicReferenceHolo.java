@@ -142,7 +142,7 @@ public interface DynamicReferenceHolo {
                 int middle = size / 2;
                 boolean even = size % 2 == 0;
                 for (int i = 0; i < size; ++i) {
-                    slices[i] = M_imp.getImageStack().getProcessor(M_times.get(i)).getFloatArray();
+                    slices[i] = M_imp.getImageStack().getProcessor(M_times.get(i) + offset).getFloatArray();
                 }
                 result = new float[width][height];
                 for (int y = 0; y < height; ++y) {

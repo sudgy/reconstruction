@@ -29,6 +29,7 @@ import edu.pdx.imagej.dynamic_parameters.HoldingParameter;
 import edu.pdx.imagej.dynamic_parameters.AbstractDParameter;
 import edu.pdx.imagej.dynamic_parameters.BoolParameter;
 import edu.pdx.imagej.dynamic_parameters.ImageParameter;
+import edu.pdx.imagej.dynamic_parameters.IntParameter;
 
 import edu.pdx.imagej.reconstruction.DynamicReferenceHolo;
 
@@ -67,13 +68,16 @@ public class RefParameter extends HoldingParameter<DynamicReferenceHolo> {
         switch (M_type) {
             case None: M_param = add_parameter(NoneRef.class); break;
             case Single: M_param = add_parameter(SingleRef.class); break;
+            case Offset: M_param = add_parameter(OffsetRef.class); break;
             case Median: M_param = add_parameter(MedianRef.class); break;
+            case MedianOffset: M_param = add_parameter(MedianOffsetRef.class); break;
             case Self: M_param = add_parameter(SelfRef.class); break;
         }
         super.read_from_prefs(c, name);
         set_error(M_param.get_error());
     }
-    @Override public boolean reconstruction_needed() {return M_reconstruction_needed;}
+    @Override public boolean reconstruction_needed()
+        {return M_reconstruction_needed || super.reconstruction_needed();}
     @Override
     public void recreate()
     {
@@ -83,29 +87,38 @@ public class RefParameter extends HoldingParameter<DynamicReferenceHolo> {
             switch (M_type) {
                 case None: M_param = add_parameter(NoneRef.class); break;
                 case Single: M_param = add_parameter(SingleRef.class); break;
+                case Offset: M_param = add_parameter(OffsetRef.class); break;
                 case Median: M_param = add_parameter(MedianRef.class); break;
+                case MedianOffset: M_param = add_parameter(MedianOffsetRef.class); break;
                 case Self: M_param = add_parameter(SelfRef.class); break;
             }
             set_error(M_param.get_error());
+        }
+        else if (super.reconstruction_needed()) {
+            super.recreate();
         }
         else throw new UnsupportedOperationException();
     }
     public DynamicReferenceHolo get_value() {return M_param.get_value();}
 
     private enum Choices {
-        None, Single, Median, Self;
+        None, Single, Offset, Median, MedianOffset, Self;
         @Override public String toString()
         {
             if (this == Single) return "Single Image";
+            else if (this == Offset) return "Single Image with Offset";
+            else if (this == MedianOffset) return "Median with Offset";
             else return name();
         }
         public static Choices value_of(String s)
         {
-            if (s.equals("Single Image")) return Single;
+            if (s.equals(Single.toString())) return Single;
+            else if (s.equals(Offset.toString())) return Offset;
+            else if (s.equals(MedianOffset.toString())) return MedianOffset;
             else return Choices.valueOf(s);
         }
     }
-    private static String[] S_choices = {Choices.None.toString(), Choices.Single.toString(), Choices.Median.toString(), Choices.Self.toString()};
+    private static String[] S_choices = {Choices.None.toString(), Choices.Single.toString(), Choices.Offset.toString(), Choices.Median.toString(), Choices.MedianOffset.toString(), Choices.Self.toString()};
     private Choices M_type = Choices.None;
     private boolean M_reconstruction_needed = false;
     private DParameter<DynamicReferenceHolo> M_param;
@@ -152,6 +165,42 @@ public class RefParameter extends HoldingParameter<DynamicReferenceHolo> {
 
 
 
+    public static class OffsetRef extends HoldingParameter<DynamicReferenceHolo> {
+        @Override
+        public void initialize()
+        {
+            M_img = add_parameter(ImageParameter.class, "Reference Hologram Image");
+            M_offset = add_parameter(IntParameter.class, 0, "Time offset", "frames");
+            M_use_same_roi = add_parameter(BoolParameter.class, "Use same ROI for reference hologram?", true);
+        }
+        @Override
+        public void read_from_dialog(GenericDialog gd)
+        {
+            super.read_from_dialog(gd);
+            check_for_errors();
+        }
+        @Override
+        public void read_from_prefs(Class<?> c, String name)
+        {
+            super.read_from_prefs(c, name);
+            check_for_errors();
+        }
+        @Override
+        public DynamicReferenceHolo get_value() {return new DynamicReferenceHolo.Offset(M_img.get_value(), M_use_same_roi.get_value(), M_offset.get_value());}
+
+        private void check_for_errors()
+        {
+            set_error(M_img.get_error());
+            if (get_error() == null) set_error(M_offset.get_error());
+            if (get_error() == null) set_error(M_use_same_roi.get_error());
+        }
+        private ImageParameter M_img;
+        private IntParameter M_offset;
+        private BoolParameter M_use_same_roi;
+    }
+
+
+
     public static class MedianRef extends HoldingParameter<DynamicReferenceHolo> {
         @Override
         public void initialize()
@@ -179,6 +228,30 @@ public class RefParameter extends HoldingParameter<DynamicReferenceHolo> {
         private ImageParameter M_img;
         private BoolParameter M_use_same_roi;
         private float[][] M_result;
+    }
+
+
+
+    public static class MedianOffsetRef extends HoldingParameter<DynamicReferenceHolo> {
+        @Override
+        public void initialize()
+        {
+            M_img = add_parameter(ImageParameter.class, "Reference Hologram Stack");
+            M_ts = add_parameter(TParameter.class, M_img, true);
+            M_offset = add_parameter(IntParameter.class, 0, "Time offset", "frames");
+            M_use_same_roi = add_parameter(BoolParameter.class, "Use same ROI for reference hologram?", true);
+        }
+        @Override
+        public DynamicReferenceHolo get_value() {return new DynamicReferenceHolo.MedianOffset(
+                                                                M_img.get_value(),
+                                                                M_use_same_roi.get_value(),
+                                                                M_ts.get_value(),
+                                                                M_offset.get_value());}
+
+        private ImageParameter M_img;
+        private TParameter M_ts;
+        private IntParameter M_offset;
+        private BoolParameter M_use_same_roi;
     }
 
 
