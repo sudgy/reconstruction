@@ -27,6 +27,8 @@ import ij.ImagePlus;
 import ij.gui.Roi;
 import ij.plugin.ZProjector;
 
+import edu.pdx.imagej.reconstruction.util.OffsetUtil;
+
 public interface DynamicReferenceHolo {
     float[][] result(ImagePlus imp, int t, Roi roi);
     static class None implements DynamicReferenceHolo {
@@ -65,13 +67,11 @@ public interface DynamicReferenceHolo {
         @Override
         public float[][] result(ImagePlus imp, int t, Roi roi)
         {
-            int final_t = t + M_offset;
-            final int min_t = 1;
-            final int max_t = M_imp.getImageStackSize();
-            final_t = final_t < min_t ? min_t : final_t > max_t ? max_t : final_t;
+            int offset = OffsetUtil.get_offset(M_offset, t, 1, M_imp.getImageStackSize());
+            int final_t = t + offset;
             float[][] result = M_cache.get(final_t);
             if (result == null) {
-                float[][] img = M_imp.getStack().getProcessor(t).getFloatArray();
+                float[][] img = M_imp.getStack().getProcessor(final_t).getFloatArray();
                 if (!M_use_same_roi) {
                     if (M_roi == null) {
                         M_roi = FilterImageComplex.get_roi(img, null, "Please select the ROI for the reference hologram.");
@@ -90,17 +90,17 @@ public interface DynamicReferenceHolo {
         private HashMap<Integer, float[][]> M_cache = new HashMap<>();
     }
     static class Median implements DynamicReferenceHolo {
-        public Median(ImagePlus img, boolean use_same_roi)
+        public Median(ImagePlus img, boolean use_same_roi, AbstractList<Integer> times)
         {
             M_img = img;
             M_use_same_roi = use_same_roi;
+            M_times = times;
         }
         @Override
         public float[][] result(ImagePlus imp, int t, Roi roi)
         {
             if (M_result == null) {
-                imp = ZProjector.run(M_img, "median");
-                float[][] img = imp.getProcessor().getFloatArray();
+                float[][] img = calculate_median(M_img, M_times);
                 if (!M_use_same_roi) {
                     roi = FilterImageComplex.get_roi(img, null, "Please select the ROI for the reference hologram.");
                 }
@@ -112,6 +112,7 @@ public interface DynamicReferenceHolo {
         private ImagePlus M_img;
         private boolean M_use_same_roi;
         private float[][] M_result;
+        private AbstractList<Integer> M_times;
     }
     static class MedianOffset implements DynamicReferenceHolo {
         public MedianOffset(ImagePlus imp, boolean use_same_roi, AbstractList<Integer> times, int offset)
@@ -128,33 +129,13 @@ public interface DynamicReferenceHolo {
         @Override
         public float[][] result(ImagePlus imp, int t, Roi roi)
         {
-            int offset = M_offset + t;
-            final int m = M_imp.getImageStackSize();
-            if (offset + M_min_t < 1) offset = 1 - M_min_t;
-            else if (offset + M_max_t > m) offset = m - M_max_t;
-            float[][] result = M_cache.get(offset + M_min_t);
+            int offset = OffsetUtil.get_multi_offset(M_offset, t, 1, M_imp.getImageStackSize(), M_min_t, M_max_t);
+            float[][] result = M_cache.get(offset + M_min_t + t);
             if (result == null) {
-                final int width = M_imp.getWidth();
-                final int height = M_imp.getHeight();
-                final int size = M_times.size();
-                float[][][] slices = new float[width][height][size];
-                float[] values = new float[size];
-                int middle = size / 2;
-                boolean even = size % 2 == 0;
-                for (int i = 0; i < size; ++i) {
-                    slices[i] = M_imp.getImageStack().getProcessor(M_times.get(i) + offset).getFloatArray();
-                }
-                result = new float[width][height];
-                for (int y = 0; y < height; ++y) {
-                    for (int x = 0; x < height; ++x) {
-                        for (int i = 0; i < size; ++i) {
-                            values[i] = slices[i][x][y];
-                        }
-                        Arrays.sort(values);
-                        if (even) result[x][y] = (values[middle - 1] + values[middle])/2f;
-                        else result[x][y] = values[middle];
-                    }
-                }
+                result = calculate_median(M_imp, new AbstractList<Integer>() {
+                    @Override public Integer get(int index) {return M_times.get(index) + offset + t - 1;}
+                    @Override public int size() {return M_times.size();}
+                });
                 if (!M_use_same_roi) {
                     if (M_roi == null) {
                         M_roi = FilterImageComplex.get_roi(result, null, "Please select the ROI for the reference hologram.");
@@ -162,7 +143,7 @@ public interface DynamicReferenceHolo {
                     roi = M_roi;
                 }
                 result = ReferenceHolo.get(result, roi);
-                M_cache.put(offset + M_min_t, result);
+                M_cache.put(offset + M_min_t + t, result);
             }
             return result;
         }
@@ -187,5 +168,30 @@ public interface DynamicReferenceHolo {
         }
 
         private Roi M_roi;
+    }
+    static float[][] calculate_median(ImagePlus imp, AbstractList<Integer> times)
+    {
+        final int width = imp.getWidth();
+        final int height = imp.getHeight();
+        final int size = times.size();
+        float[][][] slices = new float[width][height][size];
+        float[] values = new float[size];
+        int middle = size / 2;
+        boolean even = size % 2 == 0;
+        for (int i = 0; i < size; ++i) {
+            slices[i] = imp.getImageStack().getProcessor(times.get(i)).getFloatArray();
+        }
+        float[][] result = new float[width][height];
+        for (int y = 0; y < height; ++y) {
+            for (int x = 0; x < height; ++x) {
+                for (int i = 0; i < size; ++i) {
+                    values[i] = slices[i][x][y];
+                }
+                Arrays.sort(values);
+                if (even) result[x][y] = (values[middle - 1] + values[middle])/2f;
+                else result[x][y] = values[middle];
+            }
+        }
+        return result;
     }
 }

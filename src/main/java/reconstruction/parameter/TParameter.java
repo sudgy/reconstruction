@@ -38,17 +38,37 @@ import edu.pdx.imagej.dynamic_parameters.ImageParameter;
 
 @Plugin(type = DParameter.class)
 public class TParameter extends HoldingParameter<AbstractList<Integer>> {
-    public TParameter(ImageParameter holo_p, Boolean multi)
+    public enum PossibleTypes {
+        All, AllMulti, SomeMulti;
+        Choices get_default_choice()
+        {
+            switch (this) {
+                case All: return Choices.Current;
+                case AllMulti: return Choices.All;
+                case SomeMulti: return Choices.Range;
+            }
+            return null;
+        }
+        String[] get_choices()
+        {
+            switch (this) {
+                case All: return S_choices;
+                case AllMulti: return S_all_multi_choices;
+                case SomeMulti: return S_some_multi_choices;
+            }
+            return null;
+        }
+    }
+    public TParameter(ImageParameter holo_p, PossibleTypes possible)
     {
         M_holo_p = holo_p;
-        M_multi = multi;
-        M_type = M_multi ? Choices.Range : Choices.Current;
+        M_possible = possible;
+        M_type = M_possible.get_default_choice();
     }
     @Override
     public void initialize()
     {
-        if (M_multi) M_param = add_parameter(RangeT.class, this);
-        else M_param = add_parameter(CurrentT.class, this);
+        M_param = make_default_class();
         ImagePlus i = M_holo_p.get_value();
         if (i == null) return;
         M_max_t = i.getImageStackSize();
@@ -59,7 +79,7 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
     {
         M_show = M_max_t > 1;
         if (M_show) {
-            gd.addChoice("t_slice selection", get_choices(M_multi), M_type.toString());
+            gd.addChoice("t_slice selection", M_possible.get_choices(), M_type.toString());
             super.add_to_dialog(gd);
         }
     }
@@ -73,7 +93,7 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
             if (old_type != M_type) M_reconstruction_needed = true;
             // The user just selected an image with one layer when it was multi-layer
             if (M_max_t == 1) {
-                M_type = M_multi ? Choices.Range : Choices.Current;
+                M_type = M_possible.get_default_choice();
                 M_reconstruction_needed = true;
             }
             super.read_from_dialog(gd);
@@ -94,11 +114,10 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
     public void read_from_prefs(Class<?> c, String name)
     {
         if (M_max_t == 1) {
-            if (M_multi) M_param = add_parameter(RangeT.class, this);
-            else M_param = add_parameter(CurrentT.class, this);
+            M_param = make_default_class();
             return;
         }
-        M_type = Choices.value_of(prefs().get(c, name + ".type", (M_multi ? Choices.Range : Choices.Current).toString()));
+        M_type = Choices.value_of(prefs().get(c, name + ".type", M_possible.get_default_choice().toString()));
         clear_parameters();
         switch (M_type) {
             case Single: M_param = add_parameter(SingleT.class, this); break;
@@ -136,6 +155,15 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
     @Override
     public AbstractList<Integer> get_value() {return M_param.get_value();}
 
+    private DParameter<AbstractList<Integer>> make_default_class()
+    {
+        switch (M_possible) {
+            case All: return add_parameter(CurrentT.class, this);
+            case AllMulti: return add_parameter(AllT.class, this);
+            case SomeMulti: return add_parameter(RangeT.class, this);
+        }
+        return null;
+    }
     private enum Choices {
         Single, Current, All, List, Range, Continuous;
         @Override public String toString()
@@ -152,18 +180,15 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
         }
     }
     private static String[] S_choices = {Choices.Single.toString(), Choices.Current.toString(), Choices.All.toString(), Choices.List.toString(), Choices.Range.toString(), Choices.Continuous.toString()};
-    private static String[] S_multi_choices = {Choices.List.toString(), Choices.Range.toString(), Choices.Continuous.toString()};
-    private static String[] get_choices(boolean multi)
-    {
-        return multi ? S_multi_choices : S_choices;
-    }
+    private static String[] S_all_multi_choices = {Choices.All.toString(), Choices.List.toString(), Choices.Range.toString(), Choices.Continuous.toString()};
+    private static String[] S_some_multi_choices = {Choices.List.toString(), Choices.Range.toString(), Choices.Continuous.toString()};
     private Choices M_type = Choices.Current;
     private boolean M_reconstruction_needed = false;
     private ImageParameter M_holo_p;
     private int M_max_t;
     private boolean M_show;
     private DParameter<AbstractList<Integer>> M_param;
-    private boolean M_multi;
+    private PossibleTypes M_possible;
 
 
 

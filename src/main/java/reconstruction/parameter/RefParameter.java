@@ -34,6 +34,10 @@ import edu.pdx.imagej.dynamic_parameters.IntParameter;
 import edu.pdx.imagej.reconstruction.DynamicReferenceHolo;
 
 public class RefParameter extends HoldingParameter<DynamicReferenceHolo> {
+    public RefParameter(ImageParameter holo)
+    {
+        M_holo = holo;
+    }
     @Override
     public void initialize()
     {
@@ -67,7 +71,7 @@ public class RefParameter extends HoldingParameter<DynamicReferenceHolo> {
         clear_parameters();
         switch (M_type) {
             case None: M_param = add_parameter(NoneRef.class); break;
-            case Single: M_param = add_parameter(SingleRef.class); break;
+            case Single: M_param = add_parameter(SingleRef.class, this); break;
             case Offset: M_param = add_parameter(OffsetRef.class); break;
             case Median: M_param = add_parameter(MedianRef.class); break;
             case MedianOffset: M_param = add_parameter(MedianOffsetRef.class); break;
@@ -86,7 +90,7 @@ public class RefParameter extends HoldingParameter<DynamicReferenceHolo> {
             clear_parameters();
             switch (M_type) {
                 case None: M_param = add_parameter(NoneRef.class); break;
-                case Single: M_param = add_parameter(SingleRef.class); break;
+                case Single: M_param = add_parameter(SingleRef.class, this); break;
                 case Offset: M_param = add_parameter(OffsetRef.class); break;
                 case Median: M_param = add_parameter(MedianRef.class); break;
                 case MedianOffset: M_param = add_parameter(MedianOffsetRef.class); break;
@@ -122,6 +126,7 @@ public class RefParameter extends HoldingParameter<DynamicReferenceHolo> {
     private Choices M_type = Choices.None;
     private boolean M_reconstruction_needed = false;
     private DParameter<DynamicReferenceHolo> M_param;
+    private ImageParameter M_holo;
 
 
 
@@ -135,12 +140,14 @@ public class RefParameter extends HoldingParameter<DynamicReferenceHolo> {
 
 
 
-    public static class SingleRef extends HoldingParameter<DynamicReferenceHolo> {
+    public class SingleRef extends HoldingParameter<DynamicReferenceHolo> {
         @Override
         public void initialize()
         {
             M_img = add_parameter(ImageParameter.class, "Reference Hologram Image");
             M_use_same_roi = add_parameter(BoolParameter.class, "Use same ROI for reference hologram?", true);
+            if (M_img.get_value() == M_holo.get_value()) set_warning("Warning: Reference Hologram is the same as the Hologram being reconstructed.");
+            else set_warning(null);
         }
         @Override
         public void read_from_dialog(GenericDialog gd)
@@ -148,6 +155,8 @@ public class RefParameter extends HoldingParameter<DynamicReferenceHolo> {
             super.read_from_dialog(gd);
             set_error(M_img.get_error());
             if (get_error() == null) set_error(M_use_same_roi.get_error());
+            if (M_img.get_value() == M_holo.get_value()) set_warning("Warning: Reference Hologram is the same as the Hologram being reconstructed.");
+            else set_warning(null);
         }
         @Override
         public void read_from_prefs(Class<?> c, String name)
@@ -155,6 +164,8 @@ public class RefParameter extends HoldingParameter<DynamicReferenceHolo> {
             super.read_from_prefs(c, name);
             set_error(M_img.get_error());
             if (get_error() == null) set_error(M_use_same_roi.get_error());
+            if (M_img.get_value() == M_holo.get_value()) set_warning("Warning: Reference Hologram is the same as the Hologram being reconstructed.");
+            else set_warning(null);
         }
         @Override
         public DynamicReferenceHolo get_value() {return new DynamicReferenceHolo.Single(M_img.get_value().getProcessor().getFloatArray(), M_use_same_roi.get_value());}
@@ -206,6 +217,7 @@ public class RefParameter extends HoldingParameter<DynamicReferenceHolo> {
         public void initialize()
         {
             M_img = add_parameter(ImageParameter.class, "Reference Hologram Stack");
+            M_ts = add_parameter(TParameter.class, M_img, TParameter.PossibleTypes.AllMulti);
             M_use_same_roi = add_parameter(BoolParameter.class, "Use same ROI for reference hologram?", true);
         }
         @Override
@@ -223,8 +235,9 @@ public class RefParameter extends HoldingParameter<DynamicReferenceHolo> {
             if (get_error() == null) set_error(M_use_same_roi.get_error());
         }
         @Override
-        public DynamicReferenceHolo get_value() {return new DynamicReferenceHolo.Median(M_img.get_value(), M_use_same_roi.get_value());}
+        public DynamicReferenceHolo get_value() {return new DynamicReferenceHolo.Median(M_img.get_value(), M_use_same_roi.get_value(), M_ts.get_value());}
 
+        private TParameter M_ts;
         private ImageParameter M_img;
         private BoolParameter M_use_same_roi;
         private float[][] M_result;
@@ -237,7 +250,7 @@ public class RefParameter extends HoldingParameter<DynamicReferenceHolo> {
         public void initialize()
         {
             M_img = add_parameter(ImageParameter.class, "Reference Hologram Stack");
-            M_ts = add_parameter(TParameter.class, M_img, true);
+            M_ts = add_parameter(TParameter.class, M_img, TParameter.PossibleTypes.SomeMulti);
             M_offset = add_parameter(IntParameter.class, 0, "Time offset", "frames");
             M_use_same_roi = add_parameter(BoolParameter.class, "Use same ROI for reference hologram?", true);
         }

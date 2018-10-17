@@ -86,8 +86,8 @@ public class ReconCommand extends ContextCommand implements Initializable {
         P_width = new DoubleParameter(0.0, "Image_Width", P_units.image().toString());
         P_height = new DoubleParameter(0.0, "Image_Height", P_units.image().toString());
         P_z = new ZParameter();
-        P_t = new TParameter(P_hologram, false);
-        P_ref = new RefParameter();
+        P_t = new TParameter(P_hologram, TParameter.PossibleTypes.All);
+        P_ref = new RefParameter(P_hologram);
         P_amplitude = new BoolParameter("Amplitude", false);
         P_phase = new BoolParameter("Phase", false);
         P_real = new BoolParameter("Real", false);
