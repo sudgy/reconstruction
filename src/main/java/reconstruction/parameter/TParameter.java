@@ -25,7 +25,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import ij.ImagePlus;
-import ij.WindowManager;
 import ij.gui.GenericDialog;
 
 import org.scijava.plugin.Plugin;
@@ -245,7 +244,7 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
             return new AbstractList<Integer>() {
                 @Override
                 public Integer get(int index)
-                {return WindowManager.getCurrentImage().getCurrentSlice();}
+                {return M_holo_p.get_value().getCurrentSlice();}
                 @Override
                 public int size()
                 {return 1;}
