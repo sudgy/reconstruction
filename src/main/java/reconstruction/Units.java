@@ -24,6 +24,7 @@ public enum Units {
 
     public static Units value_of(String s)
     {
+        if (s == null) return null;
         switch (s) {
             case "Nanometers": return Nano;
             case "Micrometers": return Micro;
