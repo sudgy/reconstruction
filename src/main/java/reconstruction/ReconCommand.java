@@ -64,6 +64,7 @@ public class ReconCommand extends ContextCommand implements Initializable {
     @Parameter private ZParameter P_z;
     @Parameter private TParameter P_t;
     @Parameter private RefParameter P_ref;
+    @Parameter private BoolParameter P_center;
     @Parameter private BoolParameter P_amplitude;
     @Parameter private BoolParameter P_phase;
     @Parameter private BoolParameter P_real;
@@ -88,6 +89,7 @@ public class ReconCommand extends ContextCommand implements Initializable {
         P_z = new ZParameter();
         P_t = new TParameter(P_hologram, TParameter.PossibleTypes.All);
         P_ref = new RefParameter(P_hologram);
+        P_center = new BoolParameter("Automatic Centering of ROI", false);
         P_amplitude = new BoolParameter("Amplitude", false);
         P_phase = new BoolParameter("Phase", false);
         P_real = new BoolParameter("Real", false);
@@ -107,6 +109,8 @@ public class ReconCommand extends ContextCommand implements Initializable {
         M_zs = P_z.get_value();
         M_ts = P_t.get_value();
         DynamicReferenceHolo reference = P_ref.get_value();
+        boolean center = P_center.get_value();
+        boolean centered = false;
         boolean amplitude_enabled = P_amplitude.get_value();
         boolean phase_enabled = P_phase.get_value();
         boolean real_enabled = P_real.get_value();
@@ -159,6 +163,10 @@ public class ReconCommand extends ContextCommand implements Initializable {
             recon.filter(roi);
             recon.set_reference_holo(reference.result(hologram, t, roi));
             boolean already_propagated = false;
+            if (center && !centered) {
+                centered = already_propagated = true;
+                recon.center();
+            }
             for (double z : M_zs) {
                 if (IJ.escapePressed()) {
                     P_status.showStatus(1, 1, "Command canceled");

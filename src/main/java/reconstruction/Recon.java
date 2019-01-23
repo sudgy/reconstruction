@@ -25,6 +25,7 @@ import java.awt.Rectangle;
 import ij.ImagePlus;
 import ij.process.FloatProcessor;
 import ij.gui.Roi;
+import ij.gui.Line;
 
 import org.jtransforms.fft.FloatFFT_2D;
 
@@ -77,6 +78,20 @@ public class Recon {
     public void filter()
     {
         M_filtered_field = M_field;
+    }
+    public void center()
+    {
+        set_distance(0);
+        propagate(true);
+        float[][] phase = ArrayUtils.phase(M_output_field);
+        Line h_line = new Line(0, 1024, 2048, 1024);
+        Line v_line = new Line(1024, 0, 1024, 2048);
+        float[][] center = CenterField.get_field(phase, h_line, v_line);
+        ArrayUtils.complexShift(M_filtered_field);
+        M_fft.complexInverse(M_filtered_field, true);
+        ArrayUtils.complexMultiplication2(M_filtered_field, center);
+        M_fft.complexForward(M_filtered_field);
+        ArrayUtils.complexShift(M_filtered_field);
     }
     public void propagate() {propagate(true);}
     public void propagate(boolean process)
