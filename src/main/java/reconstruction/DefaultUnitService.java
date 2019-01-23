@@ -28,11 +28,11 @@ import org.scijava.service.AbstractService;
 @Plugin(type = Service.class)
 public class DefaultUnitService extends AbstractService implements UnitService {
     @Override
-    public Units wavelength() {return Units.value_of(P_prefs.get(UnitService.class, "wavelength"));}
+    public Units wavelength() {return Units.value_of(P_prefs.get(UnitService.class, "wavelength", "Nanometers"));}
     @Override
-    public Units image() {return Units.value_of(P_prefs.get(UnitService.class, "image"));}
+    public Units image() {return Units.value_of(P_prefs.get(UnitService.class, "image", "Micrometers"));}
     @Override
-    public Units z() {return Units.value_of(P_prefs.get(UnitService.class, "z"));}
+    public Units z() {return Units.value_of(P_prefs.get(UnitService.class, "z", "Micrometers"));}
 
     @Override
     public void set_wavelength(String val) {P_prefs.put(UnitService.class, "wavelength", val);}
