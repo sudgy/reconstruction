@@ -21,15 +21,11 @@ package edu.pdx.imagej.reconstruction;
 
 import java.awt.Point;
 
-import ij.IJ;
-import java.util.Arrays;
-
 public class CenterField {
-    public static float[][] get_field(float[][] image, Iterable<Point> h_line, Iterable<Point> v_line)
+    public static float[][] get_field(float[][] image, CenterOptions options)
     {
-        double[] h_fit = PolyFit.fit(image, h_line);
-        double[] v_fit = PolyFit.fit(image, v_line);
-        IJ.showMessage(Arrays.toString(h_fit) + "\n" + Arrays.toString(v_fit));
+        double[] h_fit = PolyFit.fit(image, options.h_line());
+        double[] v_fit = PolyFit.fit(image, options.v_line());
         final int M = image.length;
         final int N = image[0].length;
         float[][] result = new float[M][N * 2];
