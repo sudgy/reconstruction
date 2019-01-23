@@ -7,7 +7,7 @@
 
     <groupId>edu.pdx</groupId>
     <artifactId>reconstruction</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
     <dependencies>
       <dependency>
         <groupId>net.imagej</groupId>
@@ -25,6 +25,12 @@
         <artifactId>scijava-common</artifactId>
         <version>2.74.3</version>
       </dependency>
+      <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math3 -->
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-math3</artifactId>
+        <version>3.6.1</version>
+      </dependency>
       <!-- https://mvnrepository.com/artifact/com.github.wendykierp/JTransforms -->
       <dependency>
         <groupId>com.github.wendykierp</groupId>
@@ -40,7 +46,13 @@
       <dependency>
         <groupId>edu.pdx</groupId>
         <artifactId>dynamic_parameters</artifactId>
-        <version>1.0</version>
+        <version>1.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-api</artifactId>
+        <scope>test</scope>
+        <version>5.3.1</version>
       </dependency>
     </dependencies>
     <repositories>
@@ -66,4 +78,26 @@
             </plugin>
         </plugins>
     </reporting>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.1</version>
+                <configuration>
+                    <threadCount>3</threadCount>
+                    <forkCount>0</forkCount>
+                    <reuseForks>false</reuseForks>
+                </configuration>
+                <executions>
+                  <execution>
+                    <id>default-test</id>
+                    <phase>test</phase>
+                    <goals>
+                      <goal>test</goal>
+                    </goals>
+                  </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
