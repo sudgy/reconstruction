@@ -24,8 +24,13 @@ import java.awt.Point;
 public class CenterField {
     public static float[][] get_field(float[][] image, CenterOptions options)
     {
-        double[] h_fit = PolyFit.fit(image, options.h_line());
-        double[] v_fit = PolyFit.fit(image, options.v_line());
+        PolyFit pf = new PolyFit(image);
+        double[] h_fit;
+        if (options.h_line() == null) h_fit = pf.auto_h(10);
+        else h_fit = pf.fit(options.h_line());
+        double[] v_fit;
+        if (options.v_line() == null) v_fit = pf.auto_v(10);
+        else v_fit = pf.fit(options.v_line());
         final int M = image.length;
         final int N = image[0].length;
         float[][] result = new float[M][N * 2];
