@@ -36,7 +36,6 @@ import org.scijava.ui.UIService;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
-import ij.gui.Line;
 import ij.gui.Roi;
 import ij.measure.Calibration;
 import ij.process.ImageProcessor;
@@ -167,9 +166,7 @@ public class ReconCommand extends ContextCommand implements Initializable {
             boolean already_propagated = false;
             if (center && !centered) {
                 centered = already_propagated = true;
-                Line h_line = new Line(0, 1024, 2048, 1024);
-                Line v_line = new Line(1024, 0, 1024, 2048);
-                recon.center(new CenterOptions(true, 2, h_line, v_line));
+                recon.center(P_center.get_value());
             }
             for (double z : M_zs) {
                 if (IJ.escapePressed()) {
