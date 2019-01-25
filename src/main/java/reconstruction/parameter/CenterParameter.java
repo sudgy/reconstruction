@@ -74,6 +74,7 @@ public class CenterParameter extends HoldingParameter<CenterOptions> {
                 case Manual: M_param = add_parameter(ManualCenter.class, this); break;
                 case Auto: M_param = add_parameter(AutoCenter.class); break;
             }
+            super.read_from_prefs(c, name);
         }
         else {
             clear_parameters();
