@@ -179,16 +179,28 @@ public class CenterParameter extends HoldingParameter<CenterOptions> {
         {
             set_dimensions1();
             M_h_val = add_parameter(IntParameter.class, M_height / 2, "Pixel value for horizontal line");
+            M_h_start = add_parameter(IntParameter.class, 0, "Horizontal line start");
+            M_h_end = add_parameter(IntParameter.class, M_width, "Horizontal line start");
             M_v_val = add_parameter(IntParameter.class, M_width / 2,  "Pixel value for vertical line");
+            M_v_start = add_parameter(IntParameter.class, 0, "Vertical line start");
+            M_v_end = add_parameter(IntParameter.class, M_height, "Vertical line start");
             set_dimensions2();
         }
         @Override
         public CenterOptions get_value()
         {
             int h_val = M_h_val.get_value();
+            int h1 = M_h_start.get_value();
+            int h2 = M_h_end.get_value();
+            int h_start = Math.min(h1, h2);
+            int h_end = Math.max(h1, h2);
             int v_val = M_v_val.get_value();
-            Line h_line = new Line(0, h_val, M_width, h_val);
-            Line v_line = new Line(v_val, 0, v_val, M_height);
+            int v1 = M_v_start.get_value();
+            int v2 = M_v_end.get_value();
+            int v_start = Math.min(v1, v2);
+            int v_end = Math.max(v1, v2);
+            Line h_line = new Line(h_start, h_val, h_end, h_val);
+            Line v_line = new Line(v_val, v_start, v_val, v_end);
             return new CenterOptions(true, 2, h_line, v_line);
         }
         @Override
@@ -218,10 +230,18 @@ public class CenterParameter extends HoldingParameter<CenterOptions> {
         private void set_dimensions2()
         {
             M_h_val.set_bounds(0, M_height);
+            M_h_start.set_bounds(0, M_width);
+            M_h_end.set_bounds(0, M_width);
             M_v_val.set_bounds(0, M_width);
+            M_v_start.set_bounds(0, M_height);
+            M_v_end.set_bounds(0, M_height);
         }
         private IntParameter M_h_val;
+        private IntParameter M_h_start;
+        private IntParameter M_h_end;
         private IntParameter M_v_val;
+        private IntParameter M_v_start;
+        private IntParameter M_v_end;
         private int          M_width;
         private int          M_height;
     }
