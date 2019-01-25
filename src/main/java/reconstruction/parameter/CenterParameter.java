@@ -176,23 +176,10 @@ public class CenterParameter extends HoldingParameter<CenterOptions> {
         @Override
         public void initialize()
         {
-            int[] dimensions = M_holo.get_value().getDimensions();
-            M_width = dimensions[0];
-            M_height = dimensions[1];
+            set_dimensions1();
             M_h_val = add_parameter(IntParameter.class, M_height / 2, "Pixel value for horizontal line");
             M_v_val = add_parameter(IntParameter.class, M_width / 2,  "Pixel value for vertical line");
-        }
-        @Override
-        public void read_from_dialog(GenericDialog gd)
-        {
-            super.read_from_dialog(gd);
-            check_error();
-        }
-        @Override
-        public void read_from_prefs(Class<?> c, String name)
-        {
-            super.read_from_prefs(c, name);
-            check_error();
+            set_dimensions2();
         }
         @Override
         public CenterOptions get_value()
@@ -203,13 +190,34 @@ public class CenterParameter extends HoldingParameter<CenterOptions> {
             Line v_line = new Line(v_val, 0, v_val, M_height);
             return new CenterOptions(true, 2, h_line, v_line);
         }
-
-        private void check_error()
+        @Override
+        public void read_from_dialog(GenericDialog gd)
         {
-            int h_val = M_h_val.get_value();
-            int v_val = M_v_val.get_value();
-            if (h_val < 0 || h_val >= M_height) set_error("Horizontal line pixel value out of range.");
-            if (v_val < 0 || v_val >= M_width) set_error("Vertical line pixel value out of range.");
+            set_dimensions();
+            super.read_from_dialog(gd);
+        }
+        @Override
+        public void read_from_prefs(Class<?> c, String name)
+        {
+            set_dimensions();
+            super.read_from_prefs(c, name);
+        }
+
+        private void set_dimensions()
+        {
+            set_dimensions1();
+            set_dimensions2();
+        }
+        private void set_dimensions1()
+        {
+            int[] dimensions = M_holo.get_value().getDimensions();
+            M_width = dimensions[0];
+            M_height = dimensions[1];
+        }
+        private void set_dimensions2()
+        {
+            M_h_val.set_bounds(0, M_height);
+            M_v_val.set_bounds(0, M_width);
         }
         private IntParameter M_h_val;
         private IntParameter M_v_val;
