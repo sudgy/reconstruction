@@ -66,7 +66,7 @@ public class CenterParameter extends HoldingParameter<CenterOptions> {
     {
         clear_parameters();
         add_do(false);
-        add_choice("Auto");
+        add_choice(1, "Auto");
         super.read_from_prefs(c, name);
         if (M_do.get_value()) {
             switch (Choices.valueOf(M_choice.get_value())) {
@@ -95,15 +95,18 @@ public class CenterParameter extends HoldingParameter<CenterOptions> {
             boolean doo = M_do.get_value();
             if (doo) {
                 String choice;
+                int degree;
                 if (M_choice == null) {
+                    degree = 1;
                     choice = "Auto";
                 }
                 else {
+                    degree = M_degree.get_value();
                     choice = M_choice.get_value();
                 }
                 clear_parameters();
                 add_do(true);
-                add_choice(choice);
+                add_choice(degree, choice);
                 switch (Choices.valueOf(choice)) {
                     case Middle: M_param = add_parameter(MiddleCenter.class, this); break;
                     case Manual: M_param = add_parameter(ManualCenter.class, this); break;
@@ -127,7 +130,8 @@ public class CenterParameter extends HoldingParameter<CenterOptions> {
     public CenterOptions get_value()
     {
         if (M_do.get_value()) {
-            return M_param.get_value();
+            CenterOptions semi = M_param.get_value();
+            return new CenterOptions(true, M_degree.get_value(), semi.h_line(), semi.v_line());
         }
         else {
             return new CenterOptions(false, 0, null, null);
@@ -136,10 +140,11 @@ public class CenterParameter extends HoldingParameter<CenterOptions> {
 
     private void add_do(boolean doo)
     {
-        M_do = add_parameter(BoolParameter.class, "Automatic centering of ROI", doo);
+        M_do = add_parameter(BoolParameter.class, "Automatic correction of tilt", doo);
     }
-    private void add_choice(String default_item)
+    private void add_choice(int degree, String default_item)
     {
+        M_degree = add_parameter(IntParameter.class, degree, "Polynomial Degree");
         M_choice = add_parameter(ChoiceParameter.class, "Line Selection Type", S_choices, default_item);
     }
     private enum Choices {
@@ -148,6 +153,7 @@ public class CenterParameter extends HoldingParameter<CenterOptions> {
     private static String[] S_choices = {Choices.Middle.toString(), Choices.Manual.toString(), Choices.Auto.toString()};
     private boolean M_reconstruction_needed = false;
     private BoolParameter M_do;
+    private IntParameter M_degree;
     private ChoiceParameter M_choice;
     private DParameter<CenterOptions> M_param;
     private ImageParameter M_holo;
@@ -249,7 +255,7 @@ public class CenterParameter extends HoldingParameter<CenterOptions> {
 
 
     public static class AutoCenter extends AbstractDParameter<CenterOptions> {
-        @Override public CenterOptions get_value() {return new CenterOptions(true, 2, null, null);}
+        @Override public CenterOptions get_value() {return new CenterOptions(true, 1, null, null);}
         @Override public void add_to_dialog(GenericDialog gd) {}
         @Override public void read_from_dialog(GenericDialog gd) {}
         @Override public void save_to_prefs(Class<?> c, String name) {}

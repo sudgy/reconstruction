@@ -21,6 +21,7 @@ package edu.pdx.imagej.reconstruction;
 
 import java.awt.Point;
 import java.util.List;
+import java.util.Arrays;
 
 import org.apache.commons.math3.fitting.PolynomialCurveFitter;
 import org.apache.commons.math3.fitting.WeightedObservedPoints;
@@ -35,7 +36,7 @@ public class PolyFit {
         M_width = phase.length;
         M_height = phase[0].length;
     }
-    public double[] fit_whole_poly(Iterable<Point> line)
+    public double[] fit_whole_poly(Iterable<Point> line, int degree)
     {
         WeightedObservedPoints points = new WeightedObservedPoints();
         int x = 0;
@@ -58,16 +59,14 @@ public class PolyFit {
             ++x;
         }
         M_last_points = points.toList();
-        PolynomialCurveFitter fit = PolynomialCurveFitter.create(2);
+        PolynomialCurveFitter fit = PolynomialCurveFitter.create(degree);
         return fit.fit(M_last_points);
     }
-    public double[] fit(Iterable<Point> line)
+    public double[] fit(Iterable<Point> line, int degree)
     {
-        double[] almost_result = fit_whole_poly(line);
-        double[] result = {almost_result[1], almost_result[2]};
-        return result;
+        return remove_first(fit_whole_poly(line, degree));
     }
-    public double[] auto_h(int num_lines)
+    public double[] auto_h(int num_lines, int degree)
     {
         final int start = M_width / 8;
         final int end = start * 7;
@@ -77,9 +76,9 @@ public class PolyFit {
             final int this_y = (y + 1) * vert_space;
             lines[y] = new Line(start, this_y, end, this_y);
         }
-        return best_fit(lines);
+        return best_fit(lines, degree);
     }
-    public double[] auto_v(int num_lines)
+    public double[] auto_v(int num_lines, int degree)
     {
         final int start = M_height / 8;
         final int end = start * 7;
@@ -89,15 +88,15 @@ public class PolyFit {
             final int this_x = (x + 1) * hor_space;
             lines[x] = new Line(this_x, start, this_x, end);
         }
-        return best_fit(lines);
+        return best_fit(lines, degree);
     }
-    public double[] best_fit(Iterable<Point>[] lines)
+    public double[] best_fit(Iterable<Point>[] lines, int degree)
     {
         double[][] fits = new double[lines.length][];
         double[] squares = new double[lines.length];
         for (int i = 0; i < lines.length; ++i) {
             Iterable<Point> line = lines[i];
-            double[] poly = fit_whole_poly(line);
+            double[] poly = fit_whole_poly(line, degree);
             fits[i] = poly;
             int x = 0;
             for (WeightedObservedPoint p : M_last_points) {
@@ -114,8 +113,7 @@ public class PolyFit {
                 least_index = i;
             }
         }
-        double[] result = {fits[least_index][1], fits[least_index][2]};
-        return result;
+        return remove_first(fits[least_index]);
     }
 
     public static double poly_eval(double[] poly, double x)
@@ -125,6 +123,10 @@ public class PolyFit {
             result += poly[i] * Math.pow(x, i);
         }
         return result;
+    }
+    public static double[] remove_first(double[] input)
+    {
+        return Arrays.copyOfRange(input, 1, input.length);
     }
 
     private final float[][] M_phase;
