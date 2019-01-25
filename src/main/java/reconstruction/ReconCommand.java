@@ -50,6 +50,7 @@ import edu.pdx.imagej.dynamic_parameters.ImageParameter;
 import edu.pdx.imagej.reconstruction.parameter.ZParameter;
 import edu.pdx.imagej.reconstruction.parameter.TParameter;
 import edu.pdx.imagej.reconstruction.parameter.RefParameter;
+import edu.pdx.imagej.reconstruction.parameter.CenterParameter;
 import edu.pdx.imagej.reconstruction.parameter.SaveParameter;
 
 @Plugin(type = Command.class, menuPath = "PDX>Reconstruct")
@@ -65,7 +66,7 @@ public class ReconCommand extends ContextCommand implements Initializable {
     @Parameter private ZParameter P_z;
     @Parameter private TParameter P_t;
     @Parameter private RefParameter P_ref;
-    @Parameter private BoolParameter P_center;
+    @Parameter private CenterParameter P_center;
     @Parameter private BoolParameter P_amplitude;
     @Parameter private BoolParameter P_phase;
     @Parameter private BoolParameter P_real;
@@ -90,7 +91,7 @@ public class ReconCommand extends ContextCommand implements Initializable {
         P_z = new ZParameter();
         P_t = new TParameter(P_hologram, TParameter.PossibleTypes.All);
         P_ref = new RefParameter(P_hologram);
-        P_center = new BoolParameter("Automatic Centering of ROI", false);
+        P_center = new CenterParameter(P_hologram);
         P_amplitude = new BoolParameter("Amplitude", false);
         P_phase = new BoolParameter("Phase", false);
         P_real = new BoolParameter("Real", false);
@@ -110,7 +111,7 @@ public class ReconCommand extends ContextCommand implements Initializable {
         M_zs = P_z.get_value();
         M_ts = P_t.get_value();
         DynamicReferenceHolo reference = P_ref.get_value();
-        boolean center = P_center.get_value();
+        boolean center = P_center.get_value().do_center();
         boolean centered = false;
         boolean amplitude_enabled = P_amplitude.get_value();
         boolean phase_enabled = P_phase.get_value();
