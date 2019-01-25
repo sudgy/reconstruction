@@ -35,7 +35,7 @@ public class PolyFit {
         M_width = phase.length;
         M_height = phase[0].length;
     }
-    public double[] fit(Iterable<Point> line)
+    public double[] fit_whole_poly(Iterable<Point> line)
     {
         WeightedObservedPoints points = new WeightedObservedPoints();
         int x = 0;
@@ -57,9 +57,13 @@ public class PolyFit {
             points.add(x, value);
             ++x;
         }
-        PolynomialCurveFitter fit = PolynomialCurveFitter.create(2);
         M_last_points = points.toList();
-        double[] almost_result = fit.fit(M_last_points);
+        PolynomialCurveFitter fit = PolynomialCurveFitter.create(2);
+        return fit.fit(M_last_points);
+    }
+    public double[] fit(Iterable<Point> line)
+    {
+        double[] almost_result = fit_whole_poly(line);
         double[] result = {almost_result[1], almost_result[2]};
         return result;
     }
@@ -71,7 +75,7 @@ public class PolyFit {
         Line[] lines = new Line[num_lines];
         for (int y = 0; y < num_lines; ++y) {
             final int this_y = (y + 1) * vert_space;
-            lines[y] = new Line(start, vert_space, end, vert_space);
+            lines[y] = new Line(start, this_y, end, this_y);
         }
         return best_fit(lines);
     }
@@ -83,33 +87,35 @@ public class PolyFit {
         Line[] lines = new Line[num_lines];
         for (int x = 0; x < num_lines; ++x) {
             final int this_x = (x + 1) * hor_space;
-            lines[x] = new Line(hor_space, start, hor_space, end);
+            lines[x] = new Line(this_x, start, this_x, end);
         }
         return best_fit(lines);
     }
     public double[] best_fit(Iterable<Point>[] lines)
     {
-        double[][] fits = new double[10][];
-        double[] squares = new double[10];
+        double[][] fits = new double[lines.length][];
+        double[] squares = new double[lines.length];
         for (int i = 0; i < lines.length; ++i) {
             Iterable<Point> line = lines[i];
-            double[] poly = fit(line);
+            double[] poly = fit_whole_poly(line);
             fits[i] = poly;
             int x = 0;
             for (WeightedObservedPoint p : M_last_points) {
                 double poly_val = poly_eval(poly, x);
                 squares[i] += Math.pow(poly_val - p.getY(), 2);
+                ++x;
             }
         }
-        int most_index = 0;
-        double most = Double.MAX_VALUE;
+        int least_index = 0;
+        double least = Double.MAX_VALUE;
         for (int i = 0; i < lines.length; ++i) {
-            if (squares[i] < most) {
-                most = squares[i];
-                most_index = i;
+            if (squares[i] < least) {
+                least = squares[i];
+                least_index = i;
             }
         }
-        return fits[most_index];
+        double[] result = {fits[least_index][1], fits[least_index][2]};
+        return result;
     }
 
     public static double poly_eval(double[] poly, double x)
