@@ -161,8 +161,8 @@ public class CenterParameter extends HoldingParameter<CenterOptions> {
             int[] dimensions = M_holo.get_value().getDimensions();
             int width = dimensions[0];
             int height = dimensions[1];
-            Line h_line = new Line(0, height / 2, width, height / 2);
-            Line v_line = new Line(width / 2, 0, width / 2, height);
+            Line h_line = new Line(width / 8, height / 2, width * 7 / 8, height / 2);
+            Line v_line = new Line(width / 2, height / 8, width / 2, height * 7 / 8);
             return new CenterOptions(true, 2, h_line, v_line);
         }
         @Override public void add_to_dialog(GenericDialog gd) {}
