@@ -157,16 +157,37 @@ public class ReconCommand extends ContextCommand implements Initializable {
         }
         int total_size = M_ts.size() * M_zs.size();
         int current = 0;
+        float[][] center_field = null;
         for (int t : M_ts) {
             float[][] holo = hologram.getStack().getProcessor(t).getFloatArray();
             recon.set_input_images(M_pixel_width, M_pixel_height, holo, null);
             recon.calculateFFT();
             recon.filter(roi);
-            recon.set_reference_holo(reference.result(hologram, t, roi));
+            float[][] reference_holo = reference.result(hologram, t, roi);
             boolean already_propagated = false;
+            // If the first reconstruction, get the center if needed
             if (center && !centered) {
+                recon.set_reference_holo(reference_holo);
                 centered = already_propagated = true;
-                recon.center(P_center.get_value());
+                center_field = recon.center(P_center.get_value());
+            }
+            // If the center is not needed to be found this time
+            else {
+                if (center) {
+                    if (reference_holo == null) reference_holo = center_field;
+                    else {
+                        // ArrayUtils.complexMultiplication has a bug so complexMultiplication2 has to be used
+                        float[][] new_reference_holo = new float[reference_holo.length][reference_holo[0].length];
+                        for (int i = 0; i < reference_holo.length; ++i) {
+                            for (int j = 0; j < reference_holo[0].length; ++j) {
+                                new_reference_holo[i][j] = reference_holo[i][j];
+                            }
+                        }
+                        ArrayUtils.complexMultiplication2(new_reference_holo, center_field);
+                        reference_holo = new_reference_holo;
+                    }
+                }
+                recon.set_reference_holo(reference_holo);
             }
             for (double z : M_zs) {
                 if (IJ.escapePressed()) {

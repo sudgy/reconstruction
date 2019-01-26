@@ -78,7 +78,7 @@ public class Recon {
     {
         M_filtered_field = M_field;
     }
-    public void center(CenterOptions options)
+    public float[][] center(CenterOptions options)
     {
         set_distance(0);
         propagate(true);
@@ -89,6 +89,7 @@ public class Recon {
         ArrayUtils.complexMultiplication2(M_filtered_field, center);
         M_fft.complexForward(M_filtered_field);
         ArrayUtils.complexShift(M_filtered_field);
+        return center;
     }
     public void propagate() {propagate(true);}
     public void propagate(boolean process)
