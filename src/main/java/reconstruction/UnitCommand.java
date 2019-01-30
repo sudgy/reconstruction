@@ -24,7 +24,7 @@ import org.scijava.command.Command;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
-@Plugin(type = Command.class, menuPath = "PDX>Reconstruction Options")
+@Plugin(type = Command.class, menuPath = "Plugins>DHM>Reconstruction Options")
 public class UnitCommand implements Command {
     @Override
     public void run()
