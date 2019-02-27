@@ -194,7 +194,7 @@ public class ReconCommand extends ContextCommand implements Initializable {
                     P_status.showStatus(1, 1, "Command canceled");
                     return;
                 }
-                P_status.showStatus(current, total_size, "Processing " + hologram.getImageStack().getSliceLabel(t) + " at z = " + format_z(z));
+                P_status.showStatus(current, total_size, "Processing " + get_slice_label(hologram, t) + " at z = " + format_z(z));
                 ++current;
                 recon.set_distance((float)z);
                 if (already_propagated) recon.propagate(false);
@@ -203,10 +203,10 @@ public class ReconCommand extends ContextCommand implements Initializable {
                     already_propagated = true;
                 }
                 float[][] field = recon.get_result();
-                if (amplitude_enabled) finish_result(ArrayUtils.modulus(field), z, t, amplitude, "Amplitude", hologram.getImageStack().getSliceLabel(t));
-                if (phase_enabled) finish_result(ArrayUtils.phase(field), z, t, phase, "Phase", hologram.getImageStack().getSliceLabel(t));
-                if (real_enabled) finish_result(ArrayUtils.real(field), z, t, real, "Real", hologram.getImageStack().getSliceLabel(t));
-                if (imaginary_enabled) finish_result(ArrayUtils.imaginary(field), z, t, imaginary, "Imaginary", hologram.getImageStack().getSliceLabel(t));
+                if (amplitude_enabled) finish_result(ArrayUtils.modulus(field), z, t, amplitude, "Amplitude", get_slice_label(hologram, t));
+                if (phase_enabled) finish_result(ArrayUtils.phase(field), z, t, phase, "Phase", get_slice_label(hologram, t));
+                if (real_enabled) finish_result(ArrayUtils.real(field), z, t, real, "Real", get_slice_label(hologram, t));
+                if (imaginary_enabled) finish_result(ArrayUtils.imaginary(field), z, t, imaginary, "Imaginary", get_slice_label(hologram, t));
             }
         }
         P_status.showStatus(1, 1, "Done!");
@@ -238,4 +238,10 @@ public class ReconCommand extends ContextCommand implements Initializable {
         imp.show();
     }
     private String format_z(double z) {return String.format("%.3f", z);}
+    private String get_slice_label(ImagePlus image, int t)
+    {
+        String result = image.getImageStack().getSliceLabel(t);
+        if (result == null) result = image.getTitle();
+        return result;
+    }
 }

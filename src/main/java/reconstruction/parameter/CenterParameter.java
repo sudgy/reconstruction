@@ -40,97 +40,46 @@ public class CenterParameter extends HoldingParameter<CenterOptions> {
     @Override
     public void initialize()
     {
-        add_do(false);
+        M_do = add_parameter(BoolParameter.class, "Automatic correction of tilt", false);
+        M_degree = add_parameter(IntParameter.class, 1, "Polynomial Degree");
+        M_choice = add_parameter(ChoiceParameter.class, "Line Selection Type", S_choices, "Auto");
+        M_param_middle = new MiddleCenter();
+        M_param_manual = add_parameter(ManualCenter.class, this);
+        M_param_auto = new AutoCenter();
+        set_visibilities();
     }
     @Override
     public void read_from_dialog(GenericDialog gd)
     {
-        if (M_do.get_value()) {
-            Choices old_type = Choices.valueOf(M_choice.get_value());
-            super.read_from_dialog(gd);
-            if (!M_do.get_value() || old_type != Choices.valueOf(M_choice.get_value())) {
-                M_reconstruction_needed = true;
-            }
-        }
-        else {
-            super.read_from_dialog(gd);
-            if (M_do.get_value()) {
-                M_reconstruction_needed = true;
-            }
-        }
-        if (M_param != null) set_error(M_param.get_error());
-        else set_error(null);
+        super.read_from_dialog(gd);
+        set_visibilities();
     }
     @Override
     public void read_from_prefs(Class<?> c, String name)
     {
-        clear_parameters();
-        add_do(false);
-        add_choice(1, "Auto");
         super.read_from_prefs(c, name);
+        set_visibilities();
+    }
+    private void set_visibilities()
+    {
+        M_param_manual.set_new_visibility(false);
         if (M_do.get_value()) {
-            switch (Choices.valueOf(M_choice.get_value())) {
-                case Middle: M_param = add_parameter(MiddleCenter.class, this); break;
-                case Manual: M_param = add_parameter(ManualCenter.class, this); break;
-                case Auto: M_param = add_parameter(AutoCenter.class); break;
+            M_degree.set_new_visibility(true);
+            M_choice.set_new_visibility(true);
+            if (Choices.valueOf(M_choice.get_value()) == Choices.Manual) {
+                M_param_manual.set_new_visibility(true);
             }
-            super.read_from_prefs(c, name);
         }
         else {
-            clear_parameters();
-            add_do(false);
-            M_choice = null;
-            M_param = null;
+            M_degree.set_new_visibility(false);
+            M_choice.set_new_visibility(false);
         }
-        if (M_param != null) set_error(M_param.get_error());
-        else set_error(null);
-    }
-    @Override public boolean reconstruction_needed()
-        {return M_reconstruction_needed || super.reconstruction_needed();}
-    @Override
-    public void recreate()
-    {
-        if (M_reconstruction_needed) {
-            M_reconstruction_needed = false;
-            boolean doo = M_do.get_value();
-            if (doo) {
-                String choice;
-                int degree;
-                if (M_choice == null) {
-                    degree = 1;
-                    choice = "Auto";
-                }
-                else {
-                    degree = M_degree.get_value();
-                    choice = M_choice.get_value();
-                }
-                clear_parameters();
-                add_do(true);
-                add_choice(degree, choice);
-                switch (Choices.valueOf(choice)) {
-                    case Middle: M_param = add_parameter(MiddleCenter.class, this); break;
-                    case Manual: M_param = add_parameter(ManualCenter.class, this); break;
-                    case Auto: M_param = add_parameter(AutoCenter.class); break;
-                }
-                set_error(M_param.get_error());
-            }
-            else {
-                clear_parameters();
-                add_do(false);
-                M_choice = null;
-                M_param = null;
-                set_error(null);
-            }
-        }
-        else if (super.reconstruction_needed()) {
-            super.recreate();
-        }
-        else throw new UnsupportedOperationException();
     }
     public CenterOptions get_value()
     {
-        if (M_do.get_value()) {
-            CenterOptions semi = M_param.get_value();
+        DParameter<CenterOptions> current = current_param();
+        if (current != null) {
+            CenterOptions semi = current.get_value();
             return new CenterOptions(true, M_degree.get_value(), semi.h_line(), semi.v_line());
         }
         else {
@@ -138,24 +87,31 @@ public class CenterParameter extends HoldingParameter<CenterOptions> {
         }
     }
 
-    private void add_do(boolean doo)
+    private DParameter<CenterOptions> current_param()
     {
-        M_do = add_parameter(BoolParameter.class, "Automatic correction of tilt", doo);
+        if (M_do.get_value()) {
+            switch (Choices.valueOf(M_choice.get_value())) {
+                case Middle: return M_param_middle;
+                case Manual: return M_param_manual;
+                case Auto: return M_param_auto;
+            }
+        }
+        return null;
     }
-    private void add_choice(int degree, String default_item)
-    {
-        M_degree = add_parameter(IntParameter.class, degree, "Polynomial Degree");
-        M_choice = add_parameter(ChoiceParameter.class, "Line Selection Type", S_choices, default_item);
-    }
+
     private enum Choices {
         Middle, Manual, Auto;
     }
     private static String[] S_choices = {Choices.Middle.toString(), Choices.Manual.toString(), Choices.Auto.toString()};
-    private boolean M_reconstruction_needed = false;
+
     private BoolParameter M_do;
     private IntParameter M_degree;
     private ChoiceParameter M_choice;
-    private DParameter<CenterOptions> M_param;
+
+    private MiddleCenter M_param_middle;
+    private ManualCenter M_param_manual;
+    private AutoCenter M_param_auto;
+
     private ImageParameter M_holo;
 
 

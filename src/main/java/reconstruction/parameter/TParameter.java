@@ -32,8 +32,9 @@ import org.scijava.plugin.Plugin;
 import edu.pdx.imagej.dynamic_parameters.HoldingParameter;
 import edu.pdx.imagej.dynamic_parameters.AbstractDParameter;
 import edu.pdx.imagej.dynamic_parameters.DParameter;
-import edu.pdx.imagej.dynamic_parameters.IntParameter;
+import edu.pdx.imagej.dynamic_parameters.ChoiceParameter;
 import edu.pdx.imagej.dynamic_parameters.ImageParameter;
+import edu.pdx.imagej.dynamic_parameters.IntParameter;
 
 @Plugin(type = DParameter.class)
 public class TParameter extends HoldingParameter<AbstractList<Integer>> {
@@ -62,106 +63,90 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
     {
         M_holo_p = holo_p;
         M_possible = possible;
-        M_type = M_possible.get_default_choice();
     }
     @Override
     public void initialize()
     {
-        M_param = make_default_class();
         ImagePlus i = M_holo_p.get_value();
         if (i == null) return;
         M_max_t = i.getImageStackSize();
-        M_show = M_max_t > 1;
-    }
-    @Override
-    public void add_to_dialog(GenericDialog gd)
-    {
-        M_show = M_max_t > 1;
-        if (M_show) {
-            gd.addChoice("t_slice selection", M_possible.get_choices(), M_type.toString());
-            super.add_to_dialog(gd);
+        M_choice_all = add_parameter(ChoiceParameter.class, "t_slice selection", S_choices, Choices.Current.toString());
+        M_choice_all_multi = add_parameter(ChoiceParameter.class, "t_slice selection", S_all_multi_choices, Choices.All.toString());
+        M_choice_some_multi = add_parameter(ChoiceParameter.class, "t_slice selection", S_some_multi_choices, Choices.Range.toString());
+        M_choice_all.set_new_visibility(false);
+        M_choice_all_multi.set_new_visibility(false);
+        M_choice_some_multi.set_new_visibility(false);
+        if (M_max_t > 1) {
+            switch (M_possible) {
+                case All: M_choice_all.set_new_visibility(true); break;
+                case AllMulti: M_choice_all_multi.set_new_visibility(true); break;
+                case SomeMulti: M_choice_some_multi.set_new_visibility(true); break;
+            }
         }
+
+        M_param_single = add_parameter(SingleT.class, this);
+        M_param_current = new CurrentT();
+        M_param_all = new AllT();
+        M_param_list = add_parameter(ListT.class, this);
+        M_param_range = add_parameter(RangeT.class, this);
+        M_param_continuous = add_parameter(ContinuousT.class, this);
     }
     @Override
     public void read_from_dialog(GenericDialog gd)
     {
-        M_max_t = M_holo_p.get_value().getImageStackSize();
-        if (M_show) {
-            Choices old_type = M_type;
-            M_type = Choices.value_of(gd.getNextChoice());
-            if (old_type != M_type) M_reconstruction_needed = true;
-            // The user just selected an image with one layer when it was multi-layer
-            if (M_max_t == 1) {
-                M_type = M_possible.get_default_choice();
-                M_reconstruction_needed = true;
-            }
-            super.read_from_dialog(gd);
-            set_error(M_param.get_error());
-        }
-        // The user just selected an image with multiple layers when it was one layer
-        if (!M_show && M_max_t > 1) {
-            M_reconstruction_needed = true;
-        }
-    }
-    @Override
-    public void save_to_prefs(Class<?> c, String name)
-    {
-        prefs().put(c, name + ".type", M_type.toString());
-        super.save_to_prefs(c, name);
+        super.read_from_dialog(gd);
+        set_visibilities();
     }
     @Override
     public void read_from_prefs(Class<?> c, String name)
     {
-        if (M_max_t == 1) {
-            M_param = make_default_class();
-            return;
-        }
-        M_type = Choices.value_of(prefs().get(c, name + ".type", M_possible.get_default_choice().toString()));
-        clear_parameters();
-        switch (M_type) {
-            case Single: M_param = add_parameter(SingleT.class, this); break;
-            case Current: M_param = add_parameter(CurrentT.class, this); break;
-            case All: M_param = add_parameter(AllT.class, this); break;
-            case List: M_param = add_parameter(ListT.class, this); break;
-            case Range: M_param = add_parameter(RangeT.class, this); break;
-            case Continuous: M_param = add_parameter(ContinuousT.class, this); break;
-        }
         super.read_from_prefs(c, name);
-        set_error(M_param.get_error());
+        set_visibilities();
     }
-    @Override
-    public boolean reconstruction_needed() {return M_reconstruction_needed;}
-    @Override
-    public void recreate()
+    private void set_visibilities()
     {
-        if (M_reconstruction_needed) {
-            M_reconstruction_needed = false;
-            clear_parameters();
-            switch (M_type) {
-                case Single: M_param = add_parameter(SingleT.class, this); break;
-                case Current: M_param = add_parameter(CurrentT.class, this); break;
-                case All: M_param = add_parameter(AllT.class, this); break;
-                case List: M_param = add_parameter(ListT.class, this); break;
-                case Range: M_param = add_parameter(RangeT.class, this); break;
-                case Continuous: M_param = add_parameter(ContinuousT.class, this); break;
+        M_max_t = M_holo_p.get_value().getImageStackSize();
+        M_param_single.set_new_visibility(false);
+        M_param_list.set_new_visibility(false);
+        M_param_range.set_new_visibility(false);
+        M_param_continuous.set_new_visibility(false);
+        current_choices().set_new_visibility(false);
+        if (M_max_t > 1) {
+            current_choices().set_new_visibility(true);
+            switch (Choices.value_of(current_choices().get_value())) {
+                case Single: M_param_single.set_new_visibility(true); break;
+                case List: M_param_list.set_new_visibility(true); break;
+                case Range: M_param_range.set_new_visibility(true); break;
+                case Continuous: M_param_continuous.set_new_visibility(true); break;
             }
-            set_error(M_param.get_error());
-        }
-        else {
-            throw new UnsupportedOperationException();
         }
     }
     @Override
-    public AbstractList<Integer> get_value() {return M_param.get_value();}
+    public AbstractList<Integer> get_value() {return current_param().get_value();}
 
-    private DParameter<AbstractList<Integer>> make_default_class()
+    private ChoiceParameter current_choices()
     {
         switch (M_possible) {
-            case All: return add_parameter(CurrentT.class, this);
-            case AllMulti: return add_parameter(AllT.class, this);
-            case SomeMulti: return add_parameter(RangeT.class, this);
+            case All: return M_choice_all;
+            case AllMulti: return M_choice_all_multi;
+            case SomeMulti: return M_choice_some_multi;
         }
         return null;
+    }
+    private DParameter<AbstractList<Integer>> current_param()
+    {
+        if (M_max_t > 1) {
+            switch (Choices.value_of(current_choices().get_value())) {
+                case Single: return M_param_single;
+                case Current: return M_param_current;
+                case All: return M_param_all;
+                case List: return M_param_list;
+                case Range: return M_param_range;
+                case Continuous: return M_param_continuous;
+            }
+            return null;
+        }
+        else return M_param_single;
     }
     private enum Choices {
         Single, Current, All, List, Range, Continuous;
@@ -181,12 +166,21 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
     private static String[] S_choices = {Choices.Single.toString(), Choices.Current.toString(), Choices.All.toString(), Choices.List.toString(), Choices.Range.toString(), Choices.Continuous.toString()};
     private static String[] S_all_multi_choices = {Choices.All.toString(), Choices.List.toString(), Choices.Range.toString(), Choices.Continuous.toString()};
     private static String[] S_some_multi_choices = {Choices.List.toString(), Choices.Range.toString(), Choices.Continuous.toString()};
-    private Choices M_type = Choices.Current;
-    private boolean M_reconstruction_needed = false;
+
+    private ChoiceParameter M_choice_all;
+    private ChoiceParameter M_choice_all_multi;
+    private ChoiceParameter M_choice_some_multi;
+
+    private SingleT M_param_single;
+    private CurrentT M_param_current;
+    private AllT M_param_all;
+    private ListT M_param_list;
+    private RangeT M_param_range;
+    private ContinuousT M_param_continuous;
+
     private ImageParameter M_holo_p;
+
     private int M_max_t;
-    private boolean M_show;
-    private DParameter<AbstractList<Integer>> M_param;
     private PossibleTypes M_possible;
 
 

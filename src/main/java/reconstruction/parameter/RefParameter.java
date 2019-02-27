@@ -28,6 +28,7 @@ import edu.pdx.imagej.dynamic_parameters.DParameter;
 import edu.pdx.imagej.dynamic_parameters.HoldingParameter;
 import edu.pdx.imagej.dynamic_parameters.AbstractDParameter;
 import edu.pdx.imagej.dynamic_parameters.BoolParameter;
+import edu.pdx.imagej.dynamic_parameters.ChoiceParameter;
 import edu.pdx.imagej.dynamic_parameters.ImageParameter;
 import edu.pdx.imagej.dynamic_parameters.IntParameter;
 
@@ -41,70 +42,53 @@ public class RefParameter extends HoldingParameter<DynamicReferenceHolo> {
     @Override
     public void initialize()
     {
-        M_param = add_parameter(NoneRef.class);
-    }
-    @Override
-    public void add_to_dialog(GenericDialog gd)
-    {
-        gd.addChoice("Reference Hologram", S_choices, M_type.toString());
-        super.add_to_dialog(gd);
+        M_choice = add_parameter(ChoiceParameter.class, "Reference Hologram", S_choices, "None");
+        M_param_none = new NoneRef();
+        M_param_single = add_parameter(SingleRef.class, this);
+        M_param_offset = add_parameter(OffsetRef.class);
+        M_param_median = add_parameter(MedianRef.class);
+        M_param_median_offset = add_parameter(MedianOffsetRef.class);
+        M_param_self = new SelfRef();
     }
     @Override
     public void read_from_dialog(GenericDialog gd)
     {
-        Choices old_type = M_type;
-        M_type = Choices.value_of(gd.getNextChoice());
-        if (old_type != M_type) M_reconstruction_needed = true;
         super.read_from_dialog(gd);
-        set_error(M_param.get_error());
-    }
-    @Override
-    public void save_to_prefs(Class<?> c, String name)
-    {
-        prefs().put(c, name + ".type", M_type.toString());
-        super.save_to_prefs(c, name);
+        set_visibilities();
     }
     @Override
     public void read_from_prefs(Class<?> c, String name)
     {
-        M_type = Choices.value_of(prefs().get(c, name + ".type", Choices.None.toString()));
-        clear_parameters();
-        switch (M_type) {
-            case None: M_param = add_parameter(NoneRef.class); break;
-            case Single: M_param = add_parameter(SingleRef.class, this); break;
-            case Offset: M_param = add_parameter(OffsetRef.class); break;
-            case Median: M_param = add_parameter(MedianRef.class); break;
-            case MedianOffset: M_param = add_parameter(MedianOffsetRef.class); break;
-            case Self: M_param = add_parameter(SelfRef.class); break;
-        }
         super.read_from_prefs(c, name);
-        set_error(M_param.get_error());
+        set_visibilities();
     }
-    @Override public boolean reconstruction_needed()
-        {return M_reconstruction_needed || super.reconstruction_needed();}
-    @Override
-    public void recreate()
+    private void set_visibilities()
     {
-        if (M_reconstruction_needed) {
-            M_reconstruction_needed = false;
-            clear_parameters();
-            switch (M_type) {
-                case None: M_param = add_parameter(NoneRef.class); break;
-                case Single: M_param = add_parameter(SingleRef.class, this); break;
-                case Offset: M_param = add_parameter(OffsetRef.class); break;
-                case Median: M_param = add_parameter(MedianRef.class); break;
-                case MedianOffset: M_param = add_parameter(MedianOffsetRef.class); break;
-                case Self: M_param = add_parameter(SelfRef.class); break;
-            }
-            set_error(M_param.get_error());
+        M_param_single.set_new_visibility(false);
+        M_param_offset.set_new_visibility(false);
+        M_param_median.set_new_visibility(false);
+        M_param_median_offset.set_new_visibility(false);
+        switch (Choices.value_of(M_choice.get_value())) {
+            case Single: M_param_single.set_new_visibility(true); break;
+            case Offset: M_param_offset.set_new_visibility(true); break;
+            case Median: M_param_median.set_new_visibility(true); break;
+            case MedianOffset: M_param_median_offset.set_new_visibility(true); break;
         }
-        else if (super.reconstruction_needed()) {
-            super.recreate();
-        }
-        else throw new UnsupportedOperationException();
     }
-    public DynamicReferenceHolo get_value() {return M_param.get_value();}
+    public DynamicReferenceHolo get_value() {return current_param().get_value();}
 
+    private DParameter<DynamicReferenceHolo> current_param()
+    {
+        switch (Choices.value_of(M_choice.get_value())) {
+            case None: return M_param_none;
+            case Single: return M_param_single;
+            case Offset: return M_param_offset;
+            case Median: return M_param_median;
+            case MedianOffset: return M_param_median_offset;
+            case Self: return M_param_self;
+        }
+        return null;
+    }
     private enum Choices {
         None, Single, Offset, Median, MedianOffset, Self;
         @Override public String toString()
@@ -123,9 +107,16 @@ public class RefParameter extends HoldingParameter<DynamicReferenceHolo> {
         }
     }
     private static String[] S_choices = {Choices.None.toString(), Choices.Single.toString(), Choices.Offset.toString(), Choices.Median.toString(), Choices.MedianOffset.toString(), Choices.Self.toString()};
-    private Choices M_type = Choices.None;
-    private boolean M_reconstruction_needed = false;
-    private DParameter<DynamicReferenceHolo> M_param;
+
+    private ChoiceParameter M_choice;
+
+    private NoneRef M_param_none;
+    private SingleRef M_param_single;
+    private OffsetRef M_param_offset;
+    private MedianRef M_param_median;
+    private MedianOffsetRef M_param_median_offset;
+    private SelfRef M_param_self;
+
     private ImageParameter M_holo;
 
 

@@ -33,6 +33,7 @@ import edu.pdx.imagej.dynamic_parameters.HoldingParameter;
 import edu.pdx.imagej.dynamic_parameters.AbstractDParameter;
 import edu.pdx.imagej.dynamic_parameters.DParameter;
 import edu.pdx.imagej.dynamic_parameters.DoubleParameter;
+import edu.pdx.imagej.dynamic_parameters.ChoiceParameter;
 import edu.pdx.imagej.reconstruction.UnitService;
 
 @Plugin(type = DParameter.class)
@@ -40,71 +41,54 @@ public class ZParameter extends HoldingParameter<AbstractList<Double>> {
     @Override
     public void initialize()
     {
-        M_param = add_parameter(SingleZ.class);
-    }
-    @Override
-    public void add_to_dialog(GenericDialog gd)
-    {
-        gd.addChoice("Z_plane selection", S_choices, M_type.name());
-        super.add_to_dialog(gd);
+        M_choice = add_parameter(ChoiceParameter.class, "Z_plane selection", S_choices, "Single");
+        M_param_single = add_parameter(SingleZ.class);
+        M_param_list = add_parameter(ListZ.class);
+        M_param_range = add_parameter(RangeZ.class);
+        set_visibilities();
     }
     @Override
     public void read_from_dialog(GenericDialog gd)
     {
-        Choices old_type = M_type;
-        M_type = Choices.valueOf(gd.getNextChoice());
-        if (old_type != M_type) M_reconstruction_needed = true;
         super.read_from_dialog(gd);
-        set_error(M_param.get_error());
-    }
-    @Override
-    public void save_to_prefs(Class<?> c, String name)
-    {
-        prefs().put(c, name + ".type", M_type.name());
-        super.save_to_prefs(c, name);
+        set_visibilities();
     }
     @Override
     public void read_from_prefs(Class<?> c, String name)
     {
-        M_type = Choices.valueOf(prefs().get(c, name + ".type", Choices.Single.name()));
-        clear_parameters();
-        switch (M_type) {
-            case Single: M_param = add_parameter(SingleZ.class); break;
-            case List: M_param = add_parameter(ListZ.class); break;
-            case Range: M_param = add_parameter(RangeZ.class); break;
-        }
         super.read_from_prefs(c, name);
-        set_error(M_param.get_error());
+        set_visibilities();
     }
     @Override
-    public boolean reconstruction_needed() {return M_reconstruction_needed;}
-    @Override
-    public void recreate()
+    public AbstractList<Double> get_value() {return current_param().get_value();}
+
+    private void set_visibilities()
     {
-        if (M_reconstruction_needed) {
-            M_reconstruction_needed = false;
-            clear_parameters();
-            switch (M_type) {
-                case Single: M_param = add_parameter(SingleZ.class); break;
-                case List: M_param = add_parameter(ListZ.class); break;
-                case Range: M_param = add_parameter(RangeZ.class); break;
-            }
-            set_error(M_param.get_error());
-        }
-        else {
-            throw new UnsupportedOperationException();
-        }
+        M_param_single.set_new_visibility(false);
+        M_param_list.set_new_visibility(false);
+        M_param_range.set_new_visibility(false);
+        current_param().set_new_visibility(true);
     }
-    @Override
-    public AbstractList<Double> get_value() {return M_param.get_value();}
+    private DParameter<AbstractList<Double>> current_param()
+    {
+        switch (Choices.valueOf(M_choice.get_value())) {
+            case Single: return M_param_single;
+            case List: return M_param_list;
+            case Range: return M_param_range;
+        }
+        return null;
+    }
 
     private enum Choices {
         Single, List, Range
     }
     private static String[] S_choices = {Choices.Single.name(), Choices.List.name(), Choices.Range.name()};
-    private Choices M_type = Choices.Single;
-    private boolean M_reconstruction_needed = false;
-    private DParameter<AbstractList<Double>> M_param;
+
+    private ChoiceParameter M_choice;
+
+    private SingleZ M_param_single;
+    private ListZ M_param_list;
+    private RangeZ M_param_range;
 
 
 
