@@ -46,6 +46,7 @@ import edu.pdx.imagej.dynamic_parameters.IntParameter;
 import edu.pdx.imagej.dynamic_parameters.DoubleParameter;
 import edu.pdx.imagej.dynamic_parameters.BoolParameter;
 import edu.pdx.imagej.dynamic_parameters.ImageParameter;
+import edu.pdx.imagej.dynamic_parameters.ChoiceParameter;
 import edu.pdx.imagej.reconstruction.parameter.ZParameter;
 import edu.pdx.imagej.reconstruction.parameter.TParameter;
 import edu.pdx.imagej.reconstruction.parameter.RefParameter;
@@ -70,6 +71,7 @@ public class ReconCommand extends ContextCommand implements Initializable {
     @Parameter private BoolParameter P_phase;
     @Parameter private BoolParameter P_real;
     @Parameter private BoolParameter P_imaginary;
+    @Parameter private ChoiceParameter P_result_type;
     @Parameter private SaveParameter P_save;
 
     private Calibration M_cal;
@@ -95,6 +97,8 @@ public class ReconCommand extends ContextCommand implements Initializable {
         P_phase = new BoolParameter("Phase", false);
         P_real = new BoolParameter("Real", false);
         P_imaginary = new BoolParameter("Imaginary", false);
+        String[] choices = {"8-bit", "16-bit", "32-bit"};
+        P_result_type = new ChoiceParameter("Output Image Type", choices);
         P_save = new SaveParameter();
         P_wavelength.set_bounds(Double.MIN_VALUE, Double.MAX_VALUE);
         P_width.set_bounds(Double.MIN_VALUE, Double.MAX_VALUE);
@@ -219,7 +223,9 @@ public class ReconCommand extends ContextCommand implements Initializable {
     }
     private void finish_result(float[][] result_as_array, double z, int t, ImageStack stack, String type, String label)
     {
-        ImageProcessor result = new FloatProcessor(result_as_array).convertToByteProcessor();
+        ImageProcessor result = new FloatProcessor(result_as_array);
+        if (P_result_type.get_value().equals("8-bit")) result = result.convertToByteProcessor();
+        else if (P_result_type.get_value().equals("16-bit")) result = result.convertToShortProcessor();
         if (M_save_to_file) {
             ImagePlus temp_img = new ImagePlus("", result);
             temp_img.setCalibration(M_cal);
