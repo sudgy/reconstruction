@@ -35,6 +35,7 @@ import edu.pdx.imagej.reconstruction.CenterOptions;
 public class CenterParameter extends HoldingParameter<CenterOptions> {
     public CenterParameter(ImageParameter holo)
     {
+        super("PolynomialTiltCorrection");
         M_holo = holo;
     }
     @Override
@@ -118,6 +119,7 @@ public class CenterParameter extends HoldingParameter<CenterOptions> {
 
 
     public class MiddleCenter extends AbstractDParameter<CenterOptions> {
+        public MiddleCenter() {super("MiddleCenter");}
         @Override public CenterOptions get_value()
         {
             int[] dimensions = M_holo.get_value().getDimensions();
@@ -136,6 +138,7 @@ public class CenterParameter extends HoldingParameter<CenterOptions> {
 
 
     public class ManualCenter extends HoldingParameter<CenterOptions> {
+        public ManualCenter() {super("ManualCenter");}
         @Override
         public void initialize()
         {
@@ -211,6 +214,7 @@ public class CenterParameter extends HoldingParameter<CenterOptions> {
 
 
     public static class AutoCenter extends AbstractDParameter<CenterOptions> {
+        public AutoCenter() {super("AutoCenter");}
         @Override public CenterOptions get_value() {return new CenterOptions(true, 1, null, null);}
         @Override public void add_to_dialog(GenericDialog gd) {}
         @Override public void read_from_dialog(GenericDialog gd) {}

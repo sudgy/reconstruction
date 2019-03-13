@@ -37,6 +37,7 @@ import edu.pdx.imagej.reconstruction.DynamicReferenceHolo;
 public class RefParameter extends HoldingParameter<DynamicReferenceHolo> {
     public RefParameter(ImageParameter holo)
     {
+        super("ReferenceHologram");
         M_holo = holo;
     }
     @Override
@@ -122,6 +123,7 @@ public class RefParameter extends HoldingParameter<DynamicReferenceHolo> {
 
 
     public static class NoneRef extends AbstractDParameter<DynamicReferenceHolo> {
+        public NoneRef() {super("NoneRef");}
         @Override public DynamicReferenceHolo get_value() {return new DynamicReferenceHolo.None();}
         @Override public void add_to_dialog(GenericDialog gd) {}
         @Override public void read_from_dialog(GenericDialog gd) {}
@@ -132,6 +134,7 @@ public class RefParameter extends HoldingParameter<DynamicReferenceHolo> {
 
 
     public class SingleRef extends HoldingParameter<DynamicReferenceHolo> {
+        public SingleRef() {super("SingleRef");}
         @Override
         public void initialize()
         {
@@ -168,6 +171,7 @@ public class RefParameter extends HoldingParameter<DynamicReferenceHolo> {
 
 
     public static class OffsetRef extends HoldingParameter<DynamicReferenceHolo> {
+        public OffsetRef() {super("OffsetRef");}
         @Override
         public void initialize()
         {
@@ -204,6 +208,7 @@ public class RefParameter extends HoldingParameter<DynamicReferenceHolo> {
 
 
     public static class MedianRef extends HoldingParameter<DynamicReferenceHolo> {
+        public MedianRef() {super("MedianRef");}
         @Override
         public void initialize()
         {
@@ -237,6 +242,7 @@ public class RefParameter extends HoldingParameter<DynamicReferenceHolo> {
 
 
     public static class MedianOffsetRef extends HoldingParameter<DynamicReferenceHolo> {
+        public MedianOffsetRef() {super("MedianOffsetRef");}
         @Override
         public void initialize()
         {
@@ -261,6 +267,7 @@ public class RefParameter extends HoldingParameter<DynamicReferenceHolo> {
 
 
     public static class SelfRef extends AbstractDParameter<DynamicReferenceHolo> {
+        public SelfRef() {super("SelfRef");}
         @Override public DynamicReferenceHolo get_value() {return new DynamicReferenceHolo.Self();}
         @Override public void add_to_dialog(GenericDialog gd) {}
         @Override public void read_from_dialog(GenericDialog gd) {}

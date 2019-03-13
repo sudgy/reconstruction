@@ -61,6 +61,7 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
     }
     public TParameter(ImageParameter holo_p, PossibleTypes possible)
     {
+        super("Ts");
         M_holo_p = holo_p;
         M_possible = possible;
     }
@@ -186,6 +187,7 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
 
 
     public class SingleT extends HoldingParameter<AbstractList<Integer>> {
+        public SingleT() {super("SingleT");}
         @Override
         public void initialize()
         {
@@ -228,6 +230,7 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
 
 
     public class CurrentT extends AbstractDParameter<AbstractList<Integer>> {
+        public CurrentT() {super("CurrentT");}
         @Override public void add_to_dialog(GenericDialog gd) {}
         @Override public void read_from_dialog(GenericDialog gd) {}
         @Override public void save_to_prefs(Class<?> c, String name) {}
@@ -249,6 +252,7 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
 
 
     public class AllT extends AbstractDParameter<AbstractList<Integer>> {
+        public AllT() {super("AllT");}
         @Override public void add_to_dialog(GenericDialog gd) {}
         @Override public void read_from_dialog(GenericDialog gd) {}
         @Override public void save_to_prefs(Class<?> c, String name) {}
@@ -270,6 +274,7 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
 
 
     public class ListT extends AbstractDParameter<AbstractList<Integer>> {
+        public ListT() {super("ListT");}
         @Override
         public void initialize()
         {
@@ -326,6 +331,7 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
 
 
     public class RangeT extends HoldingParameter<AbstractList<Integer>> {
+        public RangeT() {super("RangeT");}
         @Override
         public void initialize()
         {
@@ -388,6 +394,7 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
 
 
     public class ContinuousT extends AbstractDParameter<AbstractList<Integer>> {
+        public ContinuousT() {super("ContinuousT");}
         @Override
         public void initialize()
         {

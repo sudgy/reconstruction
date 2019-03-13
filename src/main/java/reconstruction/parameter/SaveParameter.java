@@ -35,6 +35,7 @@ import edu.pdx.imagej.dynamic_parameters.HoldingParameter;
 import edu.pdx.imagej.dynamic_parameters.BoolParameter;
 
 public class SaveParameter extends HoldingParameter<Boolean> {
+    public SaveParameter() {super("SaveToFile");}
     @Override
     public void initialize()
     {
@@ -70,6 +71,7 @@ public class SaveParameter extends HoldingParameter<Boolean> {
     public class DirectoryParameter extends AbstractDParameter<String> implements ActionListener {
         public DirectoryParameter()
         {
+            super("DirectoryParameter");
             JButton button = new JButton("", new ImageIcon(SaveParameter.class.getResource("/folder.png")));
             button.addActionListener(this);
             M_folder_button = new Panel();

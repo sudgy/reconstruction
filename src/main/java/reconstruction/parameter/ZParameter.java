@@ -38,6 +38,7 @@ import edu.pdx.imagej.reconstruction.UnitService;
 
 @Plugin(type = DParameter.class)
 public class ZParameter extends HoldingParameter<AbstractList<Double>> {
+    public ZParameter() {super("Zs");}
     @Override
     public void initialize()
     {
@@ -93,6 +94,7 @@ public class ZParameter extends HoldingParameter<AbstractList<Double>> {
 
 
     public static class SingleZ extends HoldingParameter<AbstractList<Double>> {
+        public SingleZ() {super("SingleZ");}
         @Override
         public void initialize()
         {
@@ -128,6 +130,7 @@ public class ZParameter extends HoldingParameter<AbstractList<Double>> {
 
 
     public static class ListZ extends AbstractDParameter<AbstractList<Double>> {
+        public ListZ() {super("ListZ");}
         @Override
         public void initialize()
         {
@@ -178,6 +181,7 @@ public class ZParameter extends HoldingParameter<AbstractList<Double>> {
 
 
     public static class RangeZ extends HoldingParameter<AbstractList<Double>> {
+        public RangeZ() {super("RangeZ");}
         @Override
         public void initialize()
         {
