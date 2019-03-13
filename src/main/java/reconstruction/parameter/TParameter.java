@@ -36,6 +36,8 @@ import edu.pdx.imagej.dynamic_parameters.ChoiceParameter;
 import edu.pdx.imagej.dynamic_parameters.ImageParameter;
 import edu.pdx.imagej.dynamic_parameters.IntParameter;
 
+import ij.IJ;
+
 @Plugin(type = DParameter.class)
 public class TParameter extends HoldingParameter<AbstractList<Integer>> {
     public enum PossibleTypes {
@@ -59,9 +61,9 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
             return null;
         }
     }
-    public TParameter(ImageParameter holo_p, PossibleTypes possible)
+    public TParameter(ImageParameter holo_p, PossibleTypes possible, String label)
     {
-        super("Ts");
+        super(label + "Ts");
         M_holo_p = holo_p;
         M_possible = possible;
     }
@@ -71,9 +73,9 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
         ImagePlus i = M_holo_p.get_value();
         if (i == null) return;
         M_max_t = i.getImageStackSize();
-        M_choice_all = add_parameter(ChoiceParameter.class, "t_slice selection", S_choices, Choices.Current.toString());
-        M_choice_all_multi = add_parameter(ChoiceParameter.class, "t_slice selection", S_all_multi_choices, Choices.All.toString());
-        M_choice_some_multi = add_parameter(ChoiceParameter.class, "t_slice selection", S_some_multi_choices, Choices.Range.toString());
+        M_choice_all = add_parameter(ChoiceParameter.class, "t_slice_selection", S_choices, Choices.Current.toString());
+        M_choice_all_multi = add_parameter(ChoiceParameter.class, "t_slice_selection_", S_all_multi_choices, Choices.All.toString());
+        M_choice_some_multi = add_parameter(ChoiceParameter.class, "t_slice_selection__", S_some_multi_choices, Choices.Range.toString());
         M_choice_all.set_new_visibility(false);
         M_choice_all_multi.set_new_visibility(false);
         M_choice_some_multi.set_new_visibility(false);

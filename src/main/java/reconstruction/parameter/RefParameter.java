@@ -213,7 +213,7 @@ public class RefParameter extends HoldingParameter<DynamicReferenceHolo> {
         public void initialize()
         {
             M_img = add_parameter(ImageParameter.class, "Reference Hologram Stack");
-            M_ts = add_parameter(TParameter.class, M_img, TParameter.PossibleTypes.AllMulti);
+            M_ts = add_parameter(TParameter.class, M_img, TParameter.PossibleTypes.AllMulti, "MedianRef");
             M_use_same_roi = add_parameter(BoolParameter.class, "Use same ROI for reference hologram?", true);
         }
         @Override
@@ -247,7 +247,7 @@ public class RefParameter extends HoldingParameter<DynamicReferenceHolo> {
         public void initialize()
         {
             M_img = add_parameter(ImageParameter.class, "Reference Hologram Stack");
-            M_ts = add_parameter(TParameter.class, M_img, TParameter.PossibleTypes.SomeMulti);
+            M_ts = add_parameter(TParameter.class, M_img, TParameter.PossibleTypes.SomeMulti, "MedianOffsetRef");
             M_offset = add_parameter(IntParameter.class, 0, "Time offset", "frames");
             M_use_same_roi = add_parameter(BoolParameter.class, "Use same ROI for reference hologram?", true);
         }
