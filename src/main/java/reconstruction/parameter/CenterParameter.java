@@ -19,10 +19,10 @@
 
 package edu.pdx.imagej.reconstruction.parameter;
 
-import ij.gui.GenericDialog;
 import ij.gui.Line;
 
 import edu.pdx.imagej.dynamic_parameters.DParameter;
+import edu.pdx.imagej.dynamic_parameters.DPDialog;
 import edu.pdx.imagej.dynamic_parameters.AbstractDParameter;
 import edu.pdx.imagej.dynamic_parameters.HoldingParameter;
 import edu.pdx.imagej.dynamic_parameters.BoolParameter;
@@ -43,6 +43,7 @@ public class CenterParameter extends HoldingParameter<CenterOptions> {
     {
         M_do = add_parameter(BoolParameter.class, "Automatic correction of tilt", false);
         M_degree = add_parameter(IntParameter.class, 1, "Polynomial Degree");
+        M_degree.set_bounds(1, Integer.MAX_VALUE);
         M_choice = add_parameter(ChoiceParameter.class, "Line Selection Type", S_choices, "Auto");
         M_param_middle = new MiddleCenter();
         M_param_manual = add_parameter(ManualCenter.class, this);
@@ -50,9 +51,9 @@ public class CenterParameter extends HoldingParameter<CenterOptions> {
         set_visibilities();
     }
     @Override
-    public void read_from_dialog(GenericDialog gd)
+    public void read_from_dialog()
     {
-        super.read_from_dialog(gd);
+        super.read_from_dialog();
         set_visibilities();
     }
     @Override
@@ -129,8 +130,8 @@ public class CenterParameter extends HoldingParameter<CenterOptions> {
             Line v_line = new Line(width / 2, height / 8, width / 2, height * 7 / 8);
             return new CenterOptions(true, 2, h_line, v_line);
         }
-        @Override public void add_to_dialog(GenericDialog gd) {}
-        @Override public void read_from_dialog(GenericDialog gd) {}
+        @Override public void add_to_dialog(DPDialog dialog) {}
+        @Override public void read_from_dialog() {}
         @Override public void save_to_prefs(Class<?> c, String name) {}
         @Override public void read_from_prefs(Class<?> c, String name) {}
     }
@@ -169,10 +170,10 @@ public class CenterParameter extends HoldingParameter<CenterOptions> {
             return new CenterOptions(true, 2, h_line, v_line);
         }
         @Override
-        public void read_from_dialog(GenericDialog gd)
+        public void read_from_dialog()
         {
             set_dimensions();
-            super.read_from_dialog(gd);
+            super.read_from_dialog();
         }
         @Override
         public void read_from_prefs(Class<?> c, String name)
@@ -216,8 +217,8 @@ public class CenterParameter extends HoldingParameter<CenterOptions> {
     public static class AutoCenter extends AbstractDParameter<CenterOptions> {
         public AutoCenter() {super("AutoCenter");}
         @Override public CenterOptions get_value() {return new CenterOptions(true, 1, null, null);}
-        @Override public void add_to_dialog(GenericDialog gd) {}
-        @Override public void read_from_dialog(GenericDialog gd) {}
+        @Override public void add_to_dialog(DPDialog dialog) {}
+        @Override public void read_from_dialog() {}
         @Override public void save_to_prefs(Class<?> c, String name) {}
         @Override public void read_from_prefs(Class<?> c, String name) {}
     }

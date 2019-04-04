@@ -86,7 +86,7 @@ public class ReconCommand extends ContextCommand implements Initializable {
     public void initialize()
     {
         P_hologram = new ImageParameter("Hologram(s)");
-        P_wavelength = new DoubleParameter(0.0, "Wavelength", P_units.wavelength().toString());
+        P_wavelength = new DoubleParameter(500.0, "Wavelength", P_units.wavelength().toString());
         P_width = new DoubleParameter(0.0, "Image_Width", P_units.image().toString());
         P_height = new DoubleParameter(0.0, "Image_Height", P_units.image().toString());
         P_z = new ZParameter();

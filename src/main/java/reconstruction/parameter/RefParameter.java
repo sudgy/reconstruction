@@ -20,11 +20,11 @@
 package edu.pdx.imagej.reconstruction.parameter;
 
 import ij.ImagePlus;
-import ij.gui.GenericDialog;
 import ij.gui.Roi;
 import ij.plugin.ZProjector;
 
 import edu.pdx.imagej.dynamic_parameters.DParameter;
+import edu.pdx.imagej.dynamic_parameters.DPDialog;
 import edu.pdx.imagej.dynamic_parameters.HoldingParameter;
 import edu.pdx.imagej.dynamic_parameters.AbstractDParameter;
 import edu.pdx.imagej.dynamic_parameters.BoolParameter;
@@ -52,9 +52,9 @@ public class RefParameter extends HoldingParameter<DynamicReferenceHolo> {
         M_param_self = new SelfRef();
     }
     @Override
-    public void read_from_dialog(GenericDialog gd)
+    public void read_from_dialog()
     {
-        super.read_from_dialog(gd);
+        super.read_from_dialog();
         set_visibilities();
     }
     @Override
@@ -125,8 +125,8 @@ public class RefParameter extends HoldingParameter<DynamicReferenceHolo> {
     public static class NoneRef extends AbstractDParameter<DynamicReferenceHolo> {
         public NoneRef() {super("NoneRef");}
         @Override public DynamicReferenceHolo get_value() {return new DynamicReferenceHolo.None();}
-        @Override public void add_to_dialog(GenericDialog gd) {}
-        @Override public void read_from_dialog(GenericDialog gd) {}
+        @Override public void add_to_dialog(DPDialog dialog) {}
+        @Override public void read_from_dialog() {}
         @Override public void save_to_prefs(Class<?> c, String name) {}
         @Override public void read_from_prefs(Class<?> c, String name) {}
     }
@@ -144,9 +144,9 @@ public class RefParameter extends HoldingParameter<DynamicReferenceHolo> {
             else set_warning(null);
         }
         @Override
-        public void read_from_dialog(GenericDialog gd)
+        public void read_from_dialog()
         {
-            super.read_from_dialog(gd);
+            super.read_from_dialog();
             set_error(M_img.get_error());
             if (get_error() == null) set_error(M_use_same_roi.get_error());
             if (M_img.get_value() == M_holo.get_value()) set_warning("Warning: Reference Hologram is the same as the Hologram being reconstructed.");
@@ -180,9 +180,9 @@ public class RefParameter extends HoldingParameter<DynamicReferenceHolo> {
             M_use_same_roi = add_parameter(BoolParameter.class, "Use same ROI for reference hologram?", true);
         }
         @Override
-        public void read_from_dialog(GenericDialog gd)
+        public void read_from_dialog()
         {
-            super.read_from_dialog(gd);
+            super.read_from_dialog();
             check_for_errors();
         }
         @Override
@@ -217,9 +217,9 @@ public class RefParameter extends HoldingParameter<DynamicReferenceHolo> {
             M_use_same_roi = add_parameter(BoolParameter.class, "Use same ROI for reference hologram?", true);
         }
         @Override
-        public void read_from_dialog(GenericDialog gd)
+        public void read_from_dialog()
         {
-            super.read_from_dialog(gd);
+            super.read_from_dialog();
             set_error(M_img.get_error());
             if (get_error() == null) set_error(M_use_same_roi.get_error());
         }
@@ -269,8 +269,8 @@ public class RefParameter extends HoldingParameter<DynamicReferenceHolo> {
     public static class SelfRef extends AbstractDParameter<DynamicReferenceHolo> {
         public SelfRef() {super("SelfRef");}
         @Override public DynamicReferenceHolo get_value() {return new DynamicReferenceHolo.Self();}
-        @Override public void add_to_dialog(GenericDialog gd) {}
-        @Override public void read_from_dialog(GenericDialog gd) {}
+        @Override public void add_to_dialog(DPDialog dialog) {}
+        @Override public void read_from_dialog() {}
         @Override public void save_to_prefs(Class<?> c, String name) {}
         @Override public void read_from_prefs(Class<?> c, String name) {}
     }

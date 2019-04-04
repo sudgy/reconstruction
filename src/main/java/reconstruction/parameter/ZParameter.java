@@ -23,12 +23,12 @@ import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import ij.gui.GenericDialog;
+import java.util.function.Supplier;
 
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
+import edu.pdx.imagej.dynamic_parameters.DPDialog;
 import edu.pdx.imagej.dynamic_parameters.HoldingParameter;
 import edu.pdx.imagej.dynamic_parameters.AbstractDParameter;
 import edu.pdx.imagej.dynamic_parameters.DParameter;
@@ -49,9 +49,9 @@ public class ZParameter extends HoldingParameter<AbstractList<Double>> {
         set_visibilities();
     }
     @Override
-    public void read_from_dialog(GenericDialog gd)
+    public void read_from_dialog()
     {
-        super.read_from_dialog(gd);
+        super.read_from_dialog();
         set_visibilities();
     }
     @Override
@@ -101,9 +101,9 @@ public class ZParameter extends HoldingParameter<AbstractList<Double>> {
             M_z = add_parameter(DoubleParameter.class, 0.0, "Z_value", P_units.z().toString());
         }
         @Override
-        public void read_from_dialog(GenericDialog gd)
+        public void read_from_dialog()
         {
-            super.read_from_dialog(gd);
+            super.read_from_dialog();
             process_errors();
         }
         @Override
@@ -137,14 +137,14 @@ public class ZParameter extends HoldingParameter<AbstractList<Double>> {
             set_error("Z list is empty.");
         }
         @Override
-        public void add_to_dialog(GenericDialog gd)
+        public void add_to_dialog(DPDialog dialog)
         {
-            gd.addStringField("Z values (in a comma separated list)", M_current_string);
+            M_supplier = dialog.add_text_box("Z values (in a comma separated list)", M_current_string);
         }
         @Override
-        public void read_from_dialog(GenericDialog gd)
+        public void read_from_dialog()
         {
-            M_current_string = gd.getNextString();
+            M_current_string = M_supplier.get();
             process_errors();
         }
         @Override
@@ -176,6 +176,7 @@ public class ZParameter extends HoldingParameter<AbstractList<Double>> {
         }
         private ArrayList<Double> M_zs;
         private String M_current_string;
+        private Supplier<String> M_supplier;
     }
 
 
@@ -191,9 +192,9 @@ public class ZParameter extends HoldingParameter<AbstractList<Double>> {
             M_step = add_parameter(DoubleParameter.class, 1.0, "Z_value_step", units);
         }
         @Override
-        public void read_from_dialog(GenericDialog gd)
+        public void read_from_dialog()
         {
-            super.read_from_dialog(gd);
+            super.read_from_dialog();
             process_errors();
         }
         @Override

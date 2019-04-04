@@ -27,9 +27,9 @@ import javax.swing.JButton;
 import javax.swing.ImageIcon;
 
 import ij.IJ;
-import ij.gui.GenericDialog;
 
 import edu.pdx.imagej.dynamic_parameters.Harvester;
+import edu.pdx.imagej.dynamic_parameters.DPDialog;
 import edu.pdx.imagej.dynamic_parameters.AbstractDParameter;
 import edu.pdx.imagej.dynamic_parameters.HoldingParameter;
 import edu.pdx.imagej.dynamic_parameters.BoolParameter;
@@ -47,9 +47,9 @@ public class SaveParameter extends HoldingParameter<Boolean> {
     public Boolean get_value() {return M_save_to_file.get_value();}
     public String get_directory() {return M_directory.get_value();}
     @Override
-    public void read_from_dialog(GenericDialog gd)
+    public void read_from_dialog()
     {
-        super.read_from_dialog(gd);
+        super.read_from_dialog();
         M_directory.set_new_visibility(M_save_to_file.get_value());
         check_for_errors();
     }
@@ -78,14 +78,13 @@ public class SaveParameter extends HoldingParameter<Boolean> {
             M_folder_button.add(button);
         }
         @Override
-        public void add_to_dialog(GenericDialog gd)
+        public void add_to_dialog(DPDialog dialog)
         {
-            M_gd = gd;
-            gd.addPanel(M_folder_button);
-            gd.addMessage(M_directory == null ? "Select a directory..." : M_directory);
-            M_directory_label = (Label)gd.getMessage();
+            M_dialog = dialog;
+            dialog.add_panel(M_folder_button);
+            M_directory_label = dialog.add_message(M_directory == null ? "Select a directory..." : M_directory);
         }
-        @Override public void read_from_dialog(GenericDialog gd) {}
+        @Override public void read_from_dialog() {}
         @Override public void save_to_prefs(Class<?> c, String name) {}
         @Override public void read_from_prefs(Class<?> c, String name) {}
         @Override public int width() {return M_directory_width;}
@@ -97,7 +96,7 @@ public class SaveParameter extends HoldingParameter<Boolean> {
             if (temp != null) M_directory = temp;
             M_directory_label.setText(M_directory == null ? "Select a directory..." : M_directory);
             if (M_directory != null) {
-                M_directory_width = M_gd.getGraphics().getFontMetrics().stringWidth(M_directory) + 64;
+                M_directory_width = M_dialog.string_width(M_directory) + 64;
             }
             check_for_errors();
             M_harvester.check_for_errors();
@@ -107,6 +106,6 @@ public class SaveParameter extends HoldingParameter<Boolean> {
         private Panel M_folder_button;
         private String M_directory;
         private int M_directory_width = 0;
-        private GenericDialog M_gd;
+        private DPDialog M_dialog;
     }
 }

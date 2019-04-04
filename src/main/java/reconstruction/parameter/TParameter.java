@@ -23,12 +23,13 @@ import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 
 import ij.ImagePlus;
-import ij.gui.GenericDialog;
 
 import org.scijava.plugin.Plugin;
 
+import edu.pdx.imagej.dynamic_parameters.DPDialog;
 import edu.pdx.imagej.dynamic_parameters.HoldingParameter;
 import edu.pdx.imagej.dynamic_parameters.AbstractDParameter;
 import edu.pdx.imagej.dynamic_parameters.DParameter;
@@ -95,9 +96,9 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
         M_param_continuous = add_parameter(ContinuousT.class, this);
     }
     @Override
-    public void read_from_dialog(GenericDialog gd)
+    public void read_from_dialog()
     {
-        super.read_from_dialog(gd);
+        super.read_from_dialog();
         set_visibilities();
     }
     @Override
@@ -197,9 +198,9 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
             M_t.set_bounds(1, M_max_t);
         }
         @Override
-        public void read_from_dialog(GenericDialog gd)
+        public void read_from_dialog()
         {
-            super.read_from_dialog(gd);
+            super.read_from_dialog();
             process_errors();
         }
         @Override
@@ -233,8 +234,8 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
 
     public class CurrentT extends AbstractDParameter<AbstractList<Integer>> {
         public CurrentT() {super("CurrentT");}
-        @Override public void add_to_dialog(GenericDialog gd) {}
-        @Override public void read_from_dialog(GenericDialog gd) {}
+        @Override public void add_to_dialog(DPDialog dialog) {}
+        @Override public void read_from_dialog() {}
         @Override public void save_to_prefs(Class<?> c, String name) {}
         @Override public void read_from_prefs(Class<?> c, String name) {}
         @Override
@@ -255,8 +256,8 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
 
     public class AllT extends AbstractDParameter<AbstractList<Integer>> {
         public AllT() {super("AllT");}
-        @Override public void add_to_dialog(GenericDialog gd) {}
-        @Override public void read_from_dialog(GenericDialog gd) {}
+        @Override public void add_to_dialog(DPDialog dialog) {}
+        @Override public void read_from_dialog() {}
         @Override public void save_to_prefs(Class<?> c, String name) {}
         @Override public void read_from_prefs(Class<?> c, String name) {}
         @Override
@@ -283,14 +284,14 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
             set_error("t list is empty.");
         }
         @Override
-        public void add_to_dialog(GenericDialog gd)
+        public void add_to_dialog(DPDialog dialog)
         {
-            gd.addStringField("t values (in a comma separated list)", M_current_string);
+            M_supplier = dialog.add_text_box("t values (in a comma separated list)", M_current_string);
         }
         @Override
-        public void read_from_dialog(GenericDialog gd)
+        public void read_from_dialog()
         {
-            M_current_string = gd.getNextString();
+            M_current_string = M_supplier.get();
             process_errors();
         }
         @Override
@@ -328,6 +329,7 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
         }
         private ArrayList<Integer> M_ts;
         private String M_current_string;
+        private Supplier<String> M_supplier;
     }
 
 
@@ -342,9 +344,9 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
             M_step = add_parameter(IntParameter.class, 1, "t_value_step");
         }
         @Override
-        public void read_from_dialog(GenericDialog gd)
+        public void read_from_dialog()
         {
-            super.read_from_dialog(gd);
+            super.read_from_dialog();
             M_begin.set_bounds(1, M_max_t);
             M_end.set_bounds(1, M_max_t);
             process_errors();
@@ -403,14 +405,14 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
             set_error("t range is empty.");
         }
         @Override
-        public void add_to_dialog(GenericDialog gd)
+        public void add_to_dialog(DPDialog dialog)
         {
-            gd.addStringField("t values (in the format \"begin-end\")", M_current_string);
+            M_supplier = dialog.add_text_box("t values (in the format \"begin-end\")", M_current_string);
         }
         @Override
-        public void read_from_dialog(GenericDialog gd)
+        public void read_from_dialog()
         {
-            M_current_string = gd.getNextString();
+            M_current_string = M_supplier.get();
             process_errors();
         }
         @Override
@@ -468,5 +470,6 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
         private int M_t1;
         private int M_t2;
         private String M_current_string;
+        private Supplier<String> M_supplier;
     }
 }
