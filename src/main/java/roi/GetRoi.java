@@ -19,8 +19,11 @@
 
 package edu.pdx.imagej.reconstruction;
 
+import java.awt.Rectangle;
+
 import ij.ImagePlus;
 import ij.gui.Roi;
+import ij.gui.ShapeRoi;
 import ij.gui.WaitForUserDialog;
 
 /**
@@ -51,7 +54,10 @@ public class GetRoi {
         }
         Roi result = imp.getRoi();
         imp.hide();
-        if (result == null) return new Roi(0, 0, imp.getDimensions()[0], imp.getDimensions()[1]);
+        if (result == null) {
+            // They broke this at some point?
+            return new ShapeRoi(new Rectangle(0, 0, imp.getDimensions()[0], imp.getDimensions()[1]));
+        }
         else return result;
     }
 }
