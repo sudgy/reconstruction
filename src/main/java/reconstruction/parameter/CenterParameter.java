@@ -144,12 +144,12 @@ public class CenterParameter extends HoldingParameter<CenterOptions> {
         public void initialize()
         {
             set_dimensions1();
-            M_h_val = add_parameter(IntParameter.class, M_height / 2, "Pixel value for horizontal line");
-            M_h_start = add_parameter(IntParameter.class, 0, "Horizontal line start");
-            M_h_end = add_parameter(IntParameter.class, M_width, "Horizontal line start");
-            M_v_val = add_parameter(IntParameter.class, M_width / 2,  "Pixel value for vertical line");
-            M_v_start = add_parameter(IntParameter.class, 0, "Vertical line start");
-            M_v_end = add_parameter(IntParameter.class, M_height, "Vertical line start");
+            M_h_val = add_parameter(IntParameter.class, M_height / 2, "Pixel_value_for_horizontal_line");
+            M_h_start = add_parameter(IntParameter.class, 0, "Horizontal_line_start");
+            M_h_end = add_parameter(IntParameter.class, M_width, "Horizontal_line_end");
+            M_v_val = add_parameter(IntParameter.class, M_width / 2,  "Pixel_value_for_vertical_line");
+            M_v_start = add_parameter(IntParameter.class, 0, "Vertical_line_start");
+            M_v_end = add_parameter(IntParameter.class, M_height, "Vertical_line_end");
             set_dimensions2();
         }
         @Override
@@ -172,7 +172,10 @@ public class CenterParameter extends HoldingParameter<CenterOptions> {
         @Override
         public void read_from_dialog()
         {
-            set_dimensions();
+            int[] dimensions = M_holo.get_value().getDimensions();
+            if (M_width != dimensions[0] || M_height != dimensions[1]) {
+                set_dimensions();
+            }
             super.read_from_dialog();
         }
         @Override
