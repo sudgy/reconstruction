@@ -98,6 +98,7 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
     @Override
     public void read_from_dialog()
     {
+        M_max_t = M_holo_p.get_value().getImageStackSize();
         super.read_from_dialog();
         set_visibilities();
     }
@@ -195,12 +196,27 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
         public void initialize()
         {
             M_t = add_parameter(IntParameter.class, 1, "t_value");
+            M_current_max_t = M_max_t;
             M_t.set_bounds(1, M_max_t);
+        }
+        @Override
+        public void add_to_dialog(DPDialog dialog)
+        {
+            super.add_to_dialog(dialog);
+            if (M_current_max_t != M_max_t) {
+                M_current_max_t = M_max_t;
+                M_t.set_bounds(1, M_max_t);
+            }
+            process_errors();
         }
         @Override
         public void read_from_dialog()
         {
             super.read_from_dialog();
+            if (M_current_max_t != M_max_t) {
+                M_current_max_t = M_max_t;
+                M_t.set_bounds(1, M_max_t);
+            }
             process_errors();
         }
         @Override
@@ -228,6 +244,7 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
             set_error(M_t.get_error());
         }
         private IntParameter M_t = new IntParameter(1, "t_value");
+        private int M_current_max_t;
     }
 
 
@@ -342,13 +359,29 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
             M_begin = add_parameter(IntParameter.class, 1, "t_value_begin");
             M_end = add_parameter(IntParameter.class, 1, "t_value_end");
             M_step = add_parameter(IntParameter.class, 1, "t_value_step");
+            M_begin.set_bounds(1, M_max_t);
+            M_end.set_bounds(1, M_max_t);
+        }
+        @Override
+        public void add_to_dialog(DPDialog dialog)
+        {
+            super.add_to_dialog(dialog);
+            if (M_current_max_t != M_max_t) {
+                M_current_max_t = M_max_t;
+                M_begin.set_bounds(1, M_max_t);
+                M_end.set_bounds(1, M_max_t);
+            }
+            process_errors();
         }
         @Override
         public void read_from_dialog()
         {
             super.read_from_dialog();
-            M_begin.set_bounds(1, M_max_t);
-            M_end.set_bounds(1, M_max_t);
+            if (M_current_max_t != M_max_t) {
+                M_current_max_t = M_max_t;
+                M_begin.set_bounds(1, M_max_t);
+                M_end.set_bounds(1, M_max_t);
+            }
             process_errors();
         }
         @Override
@@ -393,6 +426,7 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
         private IntParameter M_begin;
         private IntParameter M_end;
         private IntParameter M_step;
+        private int M_current_max_t;
     }
 
 
