@@ -229,7 +229,7 @@ public class ReconCommand extends ContextCommand implements Initializable {
         if (M_save_to_file) {
             ImagePlus temp_img = new ImagePlus("", result);
             temp_img.setCalibration(M_cal);
-            IJ.saveAsTiff(temp_img, Paths.get(M_directory, type, format_z(z), label).toString() + ".tiff");
+            IJ.saveAsTiff(temp_img, Paths.get(M_directory, type, format_z(z), format_t(t)).toString());
             temp_img.close();
         }
         else {
@@ -244,6 +244,7 @@ public class ReconCommand extends ContextCommand implements Initializable {
         imp.show();
     }
     private String format_z(double z) {return String.format("%.3f", z);}
+    private String format_t(int t) {return Integer.toString(t);}
     private String get_slice_label(ImagePlus image, int t)
     {
         String result = image.getImageStack().getSliceLabel(t);
