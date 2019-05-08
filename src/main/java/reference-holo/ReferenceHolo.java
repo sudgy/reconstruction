@@ -35,7 +35,20 @@ public class ReferenceHolo {
             for (int y = 0; y < hologram[0].length; ++y) {
                 float real = result[x][y * 2];
                 float imaginary = result[x][y * 2 + 1];
-                double abs = Math.sqrt(real * real + imaginary * imaginary);
+                double abs;
+                // Enable this in the future
+                if (false) {
+                    if (x == 0 || x == hologram.length - 1 || y == 0 || y == hologram[0].length - 1) {
+                        // The edges get way too bright for some reason
+                        // The 256 is to let the phase still be good
+                        // I don't know if it actually does anything, though.
+                        abs = Double.MAX_VALUE / 256.0;
+                    }
+                    else {
+                        abs = (real * real + imaginary * imaginary);
+                    }
+                }
+                abs = Math.sqrt(real * real + imaginary * imaginary);
                 result[x][y * 2] = (float)(real / abs);
                 result[x][y * 2 + 1] = (float)(imaginary / abs * -1);
             }
