@@ -111,7 +111,7 @@ class ReconstructionComplexField implements ComplexField {
             for (int y = 0; y < h; ++y) {
                 double r = M_field[x][2 * y];
                 double i = M_field[x][2 * y + 1];
-                result[x][y] = (double)Math.sqrt(r*r + i*i);
+                result[x][y] = Math.sqrt(r*r + i*i);
             }
         }
         return result;
@@ -139,7 +139,7 @@ class ReconstructionComplexField implements ComplexField {
             for (int y = 0; y < h; ++y) {
                 double r = M_field[x][2 * y];
                 double i = M_field[x][2 * y + 1];
-                result[x][y] = (double)Math.atan2(i, r);
+                result[x][y] = Math.atan2(i, r);
             }
         }
         return result;
@@ -268,8 +268,8 @@ class ReconstructionComplexField implements ComplexField {
             for (int y = 0; y < h; ++y) {
                 double a = M_field[x][y*2];
                 double b = M_field[x][y*2+1];
-                double c = other[x][y];
-                double d = other[x][y];
+                double c = other[x][2*y];
+                double d = other[x][2*y+1];
                 M_field[x][y*2] = a * c - b * d;
                 M_field[x][y*2+1] = a * d + b * c;
             }
@@ -284,8 +284,8 @@ class ReconstructionComplexField implements ComplexField {
             for (int y = 0; y < h; ++y) {
                 double a = M_field[x][y*2];
                 double b = M_field[x][y*2+1];
-                double c = other[x][y];
-                double d = other[x][y];
+                double c = other[x][2*y];
+                double d = other[x][2*y+1];
                 double denom = c*c + d*d;
                 M_field[x][y*2] = (a * c + b * d) / denom;
                 M_field[x][y*2+1] = (b * c - a * d) / denom;
