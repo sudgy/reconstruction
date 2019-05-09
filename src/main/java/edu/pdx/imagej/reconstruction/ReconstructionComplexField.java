@@ -28,6 +28,7 @@ class ReconstructionComplexField implements ComplexField {
     }
     public void shift()
     {
+        field_changed();
         int w = width();
         int h = height();
         int w2 = w / 2;
@@ -150,6 +151,7 @@ class ReconstructionComplexField implements ComplexField {
 
     @Override public void negate_in_place()
     {
+        field_changed();
         int w = width();
         int h = height();
         for (int x = 0; x < w; ++x) {
@@ -164,6 +166,7 @@ class ReconstructionComplexField implements ComplexField {
             add_in_place(((ReconstructionComplexField)other).M_field);
         }
         else {
+            field_changed();
             int w = width();
             int h = height();
             for (int x = 0; x < w; ++x) {
@@ -180,6 +183,7 @@ class ReconstructionComplexField implements ComplexField {
             subtract_in_place(((ReconstructionComplexField)other).M_field);
         }
         else {
+            field_changed();
             int w = width();
             int h = height();
             for (int x = 0; x < w; ++x) {
@@ -196,6 +200,7 @@ class ReconstructionComplexField implements ComplexField {
             multiply_in_place(((ReconstructionComplexField)other).M_field);
         }
         else {
+            field_changed();
             int w = width();
             int h = height();
             for (int x = 0; x < w; ++x) {
@@ -216,6 +221,7 @@ class ReconstructionComplexField implements ComplexField {
             divide_in_place(((ReconstructionComplexField)other).M_field);
         }
         else {
+            field_changed();
             int w = width();
             int h = height();
             for (int x = 0; x < w; ++x) {
@@ -233,6 +239,7 @@ class ReconstructionComplexField implements ComplexField {
     }
     @Override public void add_in_place(double[][] other)
     {
+        field_changed();
         int w = width();
         int h = height() * 2;
         for (int x = 0; x < w; ++x) {
@@ -243,6 +250,7 @@ class ReconstructionComplexField implements ComplexField {
     }
     @Override public void subtract_in_place(double[][] other)
     {
+        field_changed();
         int w = width();
         int h = height() * 2;
         for (int x = 0; x < w; ++x) {
@@ -253,6 +261,7 @@ class ReconstructionComplexField implements ComplexField {
     }
     @Override public void multiply_in_place(double[][] other)
     {
+        field_changed();
         int w = width();
         int h = height();
         for (int x = 0; x < w; ++x) {
@@ -268,6 +277,7 @@ class ReconstructionComplexField implements ComplexField {
     }
     @Override public void divide_in_place(double[][] other)
     {
+        field_changed();
         int w = width();
         int h = height();
         for (int x = 0; x < w; ++x) {
