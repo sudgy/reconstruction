@@ -22,20 +22,26 @@ package edu.pdx.imagej.reconstruction;
 public interface ComplexField {
     ComplexField copy();
 
-    float[][] get_field();
-    float[][] get_real();
-    float[][] get_imag();
-    float[][] get_amp();
-    float[][] get_arg();
-    float get(int x, int y);
+    double[][] get_field();
+    double[][] get_real();
+    double[][] get_imag();
+    double[][] get_amp();
+    double[][] get_amp2();
+    double[][] get_arg();
+    double get_real(int x, int y);
+    double get_imag(int x, int y);
+    int width();
+    int height();
 
     void negate_in_place();
     void add_in_place(ComplexField other);
     void subtract_in_place(ComplexField other);
     void multiply_in_place(ComplexField other);
     void divide_in_place(ComplexField other);
-    void fourier_in_place();
-    void inverse_fourier_in_place();
+    void add_in_place(double[][] other);
+    void subtract_in_place(double[][] other);
+    void multiply_in_place(double[][] other);
+    void divide_in_place(double[][] other);
 
     default ComplexField negate()
     {
@@ -67,16 +73,28 @@ public interface ComplexField {
         result.divide_in_place(other);
         return result;
     }
-    default ComplexField fourier()
+    default ComplexField add(double[][] other)
     {
         ComplexField result = copy();
-        result.fourier_in_place();
+        result.add_in_place(other);
         return result;
     }
-    default ComplexField inverse_fourier()
+    default ComplexField subtract(double[][] other)
     {
         ComplexField result = copy();
-        result.inverse_fourier_in_place();
+        result.subtract_in_place(other);
+        return result;
+    }
+    default ComplexField multiply(double[][] other)
+    {
+        ComplexField result = copy();
+        result.multiply_in_place(other);
+        return result;
+    }
+    default ComplexField divide(double[][] other)
+    {
+        ComplexField result = copy();
+        result.divide_in_place(other);
         return result;
     }
 }
