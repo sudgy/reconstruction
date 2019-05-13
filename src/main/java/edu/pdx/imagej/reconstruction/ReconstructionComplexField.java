@@ -26,9 +26,27 @@ class ReconstructionComplexField implements ComplexField {
         M_containing = containing;
         M_field = field;
     }
-    public void shift()
+    public void shift_forward()
     {
         field_changed();
+        int w = width();
+        int h = height();
+        // If both sides are even, the algorithm can be done in place with a
+        // single temporary value.  If not, several values rotate, and copying
+        // the whole thing is simpler.
+        if (w % 2 == 0 && h % 2 == 0) shift_even();
+        else shift_odd(true);
+    }
+    public void shift_backward()
+    {
+        field_changed();
+        int w = width();
+        int h = height();
+        if (w % 2 == 0 && h % 2 == 0) shift_even();
+        else shift_odd(false);
+    }
+    private void shift_even()
+    {
         int w = width();
         int h = height();
         int w2 = w / 2;
@@ -58,6 +76,80 @@ class ReconstructionComplexField implements ComplexField {
                 M_field[x1][y2i] = tmp;
             }
         }
+    }
+    private void shift_odd(boolean forward)
+    {
+        int w = width();
+        int h = height();
+        boolean width_even = w % 2 == 0;
+        boolean height_even = h % 2 == 0;
+        int w2 = w / 2;
+        int h2 = h / 2;
+        int wp = width_even ? 0 : 1;
+        int hp = height_even ? 0 : 1;
+        double[][] new_field = new double[w][h * 2];
+        for (int i = 0; i < w2 + wp; ++i) {
+            for (int j = 0; j < h2 + hp; ++j) {
+                // Coord one is on the top left
+                // Coord two is the closer one on the bottom right
+                // Coord three is the further one on the bottom right
+                int x1 = i;
+                int y1r = 2 * j;
+                int y1i = y1r + 1;
+                int x2 = x1 + w2;
+                int x3 = x2 + wp;
+                int y2r = 2 * (j + h2);
+                int y2i = y2r + 1;
+                int y3r = 2 * (j + h2 + hp);
+                int y3i = y3r + 1;
+
+                // Top left
+                if (forward || (i != w2 && j != h2)) {
+                    if (forward) {
+                        new_field[x1][y1r] = M_field[x2][y2r];
+                        new_field[x1][y1i] = M_field[x2][y2i];
+                    }
+                    else {
+                        new_field[x1][y1r] = M_field[x3][y3r];
+                        new_field[x1][y1i] = M_field[x3][y3i];
+                    }
+                }
+                // Top right
+                if ((forward && i != w2) || (!forward && j != h2)) {
+                    if (forward) {
+                        new_field[x3][y1r] = M_field[x1][y2r];
+                        new_field[x3][y1i] = M_field[x1][y2i];
+                    }
+                    else {
+                        new_field[x2][y1r] = M_field[x1][y3r];
+                        new_field[x2][y1i] = M_field[x1][y3i];
+                    }
+                }
+                // Bottom left
+                if ((forward && j != h2) || (!forward && i != w2)) {
+                    if (forward) {
+                        new_field[x1][y3r] = M_field[x2][y1r];
+                        new_field[x1][y3i] = M_field[x2][y1i];
+                    }
+                    else {
+                        new_field[x1][y2r] = M_field[x3][y1r];
+                        new_field[x1][y2i] = M_field[x3][y1i];
+                    }
+                }
+                // Bottom right
+                if (!forward || (i != w2 && j != h2)) {
+                    if (forward) {
+                        new_field[x3][y3r] = M_field[x1][y1r];
+                        new_field[x3][y3i] = M_field[x1][y1i];
+                    }
+                    else {
+                        new_field[x2][y2r] = M_field[x1][y1r];
+                        new_field[x2][y2i] = M_field[x1][y1i];
+                    }
+                }
+            }
+        }
+        M_field = new_field;
     }
 
     @Override public ReconstructionComplexField copy()
@@ -287,6 +379,55 @@ class ReconstructionComplexField implements ComplexField {
                 double c = other[x][2*y];
                 double d = other[x][2*y+1];
                 double denom = c*c + d*d;
+                M_field[x][y*2] = (a * c + b * d) / denom;
+                M_field[x][y*2+1] = (b * c - a * d) / denom;
+            }
+        }
+    }
+    @Override public void add_in_place(double real, double imag)
+    {
+        field_changed();
+        int w = width();
+        int h = height();
+        for (int x = 0; x < w; ++x) {
+            for (int y = 0; y < h; ++y) {
+                M_field[x][2*y] += real;
+                M_field[x][2*y+1] += imag;
+            }
+        }
+    }
+    @Override public void subtract_in_place(double real, double imag)
+    {
+        add_in_place(-real, -imag);
+    }
+    @Override public void multiply_in_place(double real, double imag)
+    {
+        field_changed();
+        int w = width();
+        int h = height();
+        double c = real;
+        double d = imag;
+        for (int x = 0; x < w; ++x) {
+            for (int y = 0; y < h; ++y) {
+                double a = M_field[x][y*2];
+                double b = M_field[x][y*2+1];
+                M_field[x][y*2] = a * c - b * d;
+                M_field[x][y*2+1] = a * d + b * c;
+            }
+        }
+    }
+    @Override public void divide_in_place(double real, double imag)
+    {
+        field_changed();
+        int w = width();
+        int h = height();
+        double c = real;
+        double d = imag;
+        double denom = c*c + d*d;
+        for (int x = 0; x < w; ++x) {
+            for (int y = 0; y < h; ++y) {
+                double a = M_field[x][y*2];
+                double b = M_field[x][y*2+1];
                 M_field[x][y*2] = (a * c + b * d) / denom;
                 M_field[x][y*2+1] = (b * c - a * d) / denom;
             }

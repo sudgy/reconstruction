@@ -42,6 +42,14 @@ public interface ComplexField {
     void subtract_in_place(double[][] other);
     void multiply_in_place(double[][] other);
     void divide_in_place(double[][] other);
+    void add_in_place(double real, double imag);
+    void subtract_in_place(double real, double imag);
+    void multiply_in_place(double real, double imag);
+    void divide_in_place(double real, double imag);
+    default void add_in_place(double real) {add_in_place(real, 0);}
+    default void subtract_in_place(double real) {subtract_in_place(real, 0);}
+    default void multiply_in_place(double real) {multiply_in_place(real, 0);}
+    default void divide_in_place(double real) {divide_in_place(real, 0);}
 
     default ComplexField negate()
     {
@@ -95,6 +103,30 @@ public interface ComplexField {
     {
         ComplexField result = copy();
         result.divide_in_place(other);
+        return result;
+    }
+    default ComplexField add(double real, double imag)
+    {
+        ComplexField result = copy();
+        result.add_in_place(real, imag);
+        return result;
+    }
+    default ComplexField subtract(double real, double imag)
+    {
+        ComplexField result = copy();
+        result.subtract_in_place(real, imag);
+        return result;
+    }
+    default ComplexField multiply(double real, double imag)
+    {
+        ComplexField result = copy();
+        result.multiply_in_place(real, imag);
+        return result;
+    }
+    default ComplexField divide(double real, double imag)
+    {
+        ComplexField result = copy();
+        result.divide_in_place(real, imag);
         return result;
     }
 }

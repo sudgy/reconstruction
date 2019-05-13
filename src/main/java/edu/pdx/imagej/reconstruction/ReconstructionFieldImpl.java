@@ -34,7 +34,7 @@ class ReconstructionFieldImpl implements ReconstructionField {
                 field[x][2*y+1] = imag[x][y];
             }
         }
-        //M_field = new ReconstructionComplexField(this, field);
+        M_field = new ReconstructionComplexField(field, this);
     }
     public void field_changed(ReconstructionComplexField field)
     {
@@ -46,7 +46,7 @@ class ReconstructionFieldImpl implements ReconstructionField {
     {
         if (!has_field()) {
             M_field = M_fourier.copy();
-            M_field.shift();
+            M_field.shift_backward();
             M_fft.complexInverse(M_field.M_field, true);
         }
         return M_field;
@@ -57,9 +57,9 @@ class ReconstructionFieldImpl implements ReconstructionField {
         if (!has_fourier()) {
             M_fourier = M_field.copy();
             M_fft.complexForward(M_fourier.M_field);
-            M_fourier.shift();
+            M_fourier.shift_forward();
         }
-        return M_field;
+        return M_fourier;
     }
     @Override public boolean has_field()   {return M_field   != null;}
     @Override public boolean has_fourier() {return M_fourier != null;}

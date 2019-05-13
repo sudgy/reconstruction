@@ -40,14 +40,14 @@ public class ReconstructionComplexFieldTest {
         assertEquals(field.get_real(1, 1), 0);
         assertEquals(field.get_imag(1, 1), -1);
     }
-    @Test public void test_shift()
+    @Test public void test_shift_even()
     {
         double[][] values = {
             { 1, 0,   0,  1},
             {-1, 0,   0, -1}
         };
         ReconstructionComplexField field = create_field(values);
-        field.shift();
+        field.shift_forward();
         assertEquals(field.get_real(0, 0), 0);
         assertEquals(field.get_imag(0, 0), -1);
         assertEquals(field.get_real(0, 1), -1);
@@ -56,6 +56,74 @@ public class ReconstructionComplexFieldTest {
         assertEquals(field.get_imag(1, 0), 1);
         assertEquals(field.get_real(1, 1), 1);
         assertEquals(field.get_imag(1, 1), 0);
+        field.shift_backward();
+        assertEquals(field.get_real(0, 0), 1);
+        assertEquals(field.get_imag(0, 0), 0);
+        assertEquals(field.get_real(0, 1), 0);
+        assertEquals(field.get_imag(0, 1), 1);
+        assertEquals(field.get_real(1, 0), -1);
+        assertEquals(field.get_imag(1, 0), 0);
+        assertEquals(field.get_real(1, 1), 0);
+        assertEquals(field.get_imag(1, 1), -1);
+    }
+    @Test public void test_shift_odd()
+    {
+        double[][] values = {
+            {1, 0,  2, 0,  3, 0},
+            {4, 0,  5, 0,  6, 0},
+            {7, 0,  8, 0,  9, 0}
+        };
+        ReconstructionComplexField field = create_field(values);
+        field.shift_forward();
+        assertEquals(field.get_real(0, 0), 5);
+        assertEquals(field.get_real(0, 1), 6);
+        assertEquals(field.get_real(0, 2), 4);
+        assertEquals(field.get_real(1, 0), 8);
+        assertEquals(field.get_real(1, 1), 9);
+        assertEquals(field.get_real(1, 2), 7);
+        assertEquals(field.get_real(2, 0), 2);
+        assertEquals(field.get_real(2, 1), 3);
+        assertEquals(field.get_real(2, 2), 1);
+        field.shift_backward();
+        assertEquals(field.get_real(0, 0), 1);
+        assertEquals(field.get_real(0, 1), 2);
+        assertEquals(field.get_real(0, 2), 3);
+        assertEquals(field.get_real(1, 0), 4);
+        assertEquals(field.get_real(1, 1), 5);
+        assertEquals(field.get_real(1, 2), 6);
+        assertEquals(field.get_real(2, 0), 7);
+        assertEquals(field.get_real(2, 1), 8);
+        assertEquals(field.get_real(2, 2), 9);
+    }
+    @Test public void test_shift_rectangle()
+    {
+        double[][] values = {
+            {0, 0,  1, 0,  2, 0,  3, 0,  4, 0},
+            {5, 0,  6, 0,  7, 0,  8, 0,  9, 0}
+        };
+        ReconstructionComplexField field = create_field(values);
+        field.shift_forward();
+        assertEquals(field.get_real(0, 0), 7);
+        assertEquals(field.get_real(0, 1), 8);
+        assertEquals(field.get_real(0, 2), 9);
+        assertEquals(field.get_real(0, 3), 5);
+        assertEquals(field.get_real(0, 4), 6);
+        assertEquals(field.get_real(1, 0), 2);
+        assertEquals(field.get_real(1, 1), 3);
+        assertEquals(field.get_real(1, 2), 4);
+        assertEquals(field.get_real(1, 3), 0);
+        assertEquals(field.get_real(1, 4), 1);
+        field.shift_backward();
+        assertEquals(field.get_real(0, 0), 0);
+        assertEquals(field.get_real(0, 1), 1);
+        assertEquals(field.get_real(0, 2), 2);
+        assertEquals(field.get_real(0, 3), 3);
+        assertEquals(field.get_real(0, 4), 4);
+        assertEquals(field.get_real(1, 0), 5);
+        assertEquals(field.get_real(1, 1), 6);
+        assertEquals(field.get_real(1, 2), 7);
+        assertEquals(field.get_real(1, 3), 8);
+        assertEquals(field.get_real(1, 4), 9);
     }
     @Test public void test_copy()
     {
@@ -243,6 +311,86 @@ public class ReconstructionComplexFieldTest {
         assertEquals(quotient.get_imag(1, 0), 1);
         assertEquals(quotient.get_real(1, 1), 0.4);
         assertEquals(quotient.get_imag(1, 1), -0.8);
+    }
+    @Test public void test_add_single()
+    {
+        double[][] values = {
+            {1, 0,   1,  2},
+            {0, 0,   8, -3.5}
+        };
+        ReconstructionComplexField field = create_field(values);
+        ComplexField sum = field.add(1, 2);
+        assertEquals(field.get_real(0, 0), 1, "Add should not affect the "
+            + "original field.");
+
+        assertEquals(sum.get_real(0, 0), 2);
+        assertEquals(sum.get_imag(0, 0), 2);
+        assertEquals(sum.get_real(0, 1), 2);
+        assertEquals(sum.get_imag(0, 1), 4);
+        assertEquals(sum.get_real(1, 0), 1);
+        assertEquals(sum.get_imag(1, 0), 2);
+        assertEquals(sum.get_real(1, 1), 9);
+        assertEquals(sum.get_imag(1, 1), -1.5);
+    }
+    @Test public void test_subtract_single()
+    {
+        double[][] values = {
+            {1, 0,   1,  2},
+            {0, 0,   8, -3.5}
+        };
+        ReconstructionComplexField field = create_field(values);
+        ComplexField difference = field.subtract(1, 2);
+        assertEquals(field.get_real(0, 0), 1, "Subtract should not affect the "
+            + "original field.");
+
+        assertEquals(difference.get_real(0, 0), 0);
+        assertEquals(difference.get_imag(0, 0), -2);
+        assertEquals(difference.get_real(0, 1), 0);
+        assertEquals(difference.get_imag(0, 1), 0);
+        assertEquals(difference.get_real(1, 0), -1);
+        assertEquals(difference.get_imag(1, 0), -2);
+        assertEquals(difference.get_real(1, 1), 7);
+        assertEquals(difference.get_imag(1, 1), -5.5);
+    }
+    @Test public void test_multiply_single()
+    {
+        double[][] values = {
+            {1, 0,   1,  2},
+            {0, 0,   8, -3.5}
+        };
+        ReconstructionComplexField field = create_field(values);
+        ComplexField product = field.multiply(1, 2);
+        assertEquals(field.get_real(0, 0), 1, "Multiply should not affect the "
+            + "original field.");
+
+        assertEquals(product.get_real(0, 0), 1);
+        assertEquals(product.get_imag(0, 0), 2);
+        assertEquals(product.get_real(0, 1), -3);
+        assertEquals(product.get_imag(0, 1), 4);
+        assertEquals(product.get_real(1, 0), 0);
+        assertEquals(product.get_imag(1, 0), 0);
+        assertEquals(product.get_real(1, 1), 15);
+        assertEquals(product.get_imag(1, 1), 12.5);
+    }
+    @Test public void test_divide_single()
+    {
+        double[][] values = {
+            {1, 0,   1,  2},
+            {0, 0,   8, -3.5}
+        };
+        ReconstructionComplexField field = create_field(values);
+        ComplexField quotient = field.divide(1, 2);
+        assertEquals(field.get_real(0, 0), 1, "Divide should not affect the "
+            + "original field.");
+
+        assertEquals(quotient.get_real(0, 0), 0.2);
+        assertEquals(quotient.get_imag(0, 0), -0.4);
+        assertEquals(quotient.get_real(0, 1), 1);
+        assertEquals(quotient.get_imag(0, 1), 0);
+        assertEquals(quotient.get_real(1, 0), 0);
+        assertEquals(quotient.get_imag(1, 0), 0);
+        assertEquals(quotient.get_real(1, 1), 0.2);
+        assertEquals(quotient.get_imag(1, 1), -3.9);
     }
 
     private ReconstructionComplexField create_field(double[][] values)
