@@ -26,6 +26,7 @@ import org.scijava.plugin.Plugin;
 import org.scijava.plugin.Parameter;
 
 import edu.pdx.imagej.dynamic_parameters.HoldingParameter;
+import edu.pdx.imagej.dynamic_parameters.ImageParameter;
 import edu.pdx.imagej.dynamic_parameters.DParameter;
 
 @Plugin(type = DParameter.class)

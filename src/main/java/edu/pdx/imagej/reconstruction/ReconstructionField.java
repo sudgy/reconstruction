@@ -24,4 +24,5 @@ public interface ReconstructionField {
     ComplexField fourier();
     boolean has_field();
     boolean has_fourier();
+    ReconstructionField copy();
 }

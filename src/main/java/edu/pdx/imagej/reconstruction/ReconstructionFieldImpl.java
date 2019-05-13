@@ -64,6 +64,18 @@ class ReconstructionFieldImpl implements ReconstructionField {
     @Override public boolean has_field()   {return M_field   != null;}
     @Override public boolean has_fourier() {return M_fourier != null;}
 
+    @Override
+    public ReconstructionFieldImpl copy()
+    {
+        ReconstructionFieldImpl result = new ReconstructionFieldImpl();
+        result.M_fft = M_fft;
+        if (M_fourier != null) result.M_fourier = M_fourier.copy();
+        else result.M_field = M_field.copy();
+        return result;
+    }
+
+    private ReconstructionFieldImpl() {}
+
     private DoubleFFT_2D M_fft;
     private ReconstructionComplexField M_field;
     private ReconstructionComplexField M_fourier;
