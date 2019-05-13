@@ -37,4 +37,11 @@ public interface ReconstructionPlugin extends ImageJPlugin, Prioritized {
     default void process_propagated_field(ReconstructionField field, int t,
                                           double z) {}
     default void process_ending() {}
+
+    default void set_beginning_priority()         {}
+    default void set_original_hologram_priority() {}
+    default void set_hologram_priority()          {}
+    default void set_filtered_field_priority()    {}
+    default void set_propagated_field_priority()  {}
+    default void set_ending_priority()            {}
 }
