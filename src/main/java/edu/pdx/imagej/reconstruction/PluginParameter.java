@@ -34,7 +34,11 @@ public class PluginParameter extends HoldingParameter<
     > {
     @Parameter private ReconstructionPluginService P_plugin_service;
 
-    public PluginParameter() {super("PluginParameters");}
+    public PluginParameter(ImageParameter hologram)
+    {
+        super("PluginParameters");
+        M_hologram = hologram;
+    }
 
     @Override
     public void initialize()
@@ -42,6 +46,9 @@ public class PluginParameter extends HoldingParameter<
         M_plugins = P_plugin_service.get_plugins();
         for (ReconstructionPlugin plugin : M_plugins.values()) {
             DParameter param = plugin.param();
+            if (param instanceof ReconstructionPluginParameter) {
+                ((ReconstructionPluginParameter)param).set_hologram(M_hologram);
+            }
             if (param != null) add_premade_parameter(param);
         }
     }
@@ -53,4 +60,5 @@ public class PluginParameter extends HoldingParameter<
     }
 
     LinkedHashMap<Class<?>, ReconstructionPlugin> M_plugins;
+    ImageParameter M_hologram;
 }
