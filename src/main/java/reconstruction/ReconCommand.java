@@ -53,7 +53,7 @@ import edu.pdx.imagej.reconstruction.parameter.RefParameter;
 import edu.pdx.imagej.reconstruction.parameter.CenterParameter;
 import edu.pdx.imagej.reconstruction.parameter.SaveParameter;
 
-@Plugin(type = Command.class, menuPath = "Plugins>DHM>Reconstruct")
+@Plugin(type = Command.class, menuPath = "Plugins>DHM>Old Reconstruct")
 public class ReconCommand extends ContextCommand implements Initializable {
     @Parameter private UIService P_ui;
     @Parameter private StatusService P_status;
