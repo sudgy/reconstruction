@@ -32,16 +32,26 @@ import net.imagej.ImageJService;
 public class ReconstructionPluginService
              extends    AbstractPTService<ReconstructionPlugin>
              implements ImageJService {
-    public HashMap<ReconstructionStep, Iterable<ReconstructionPlugin>> plugins()
+    public Iterable<ReconstructionPlugin> get_plugins()
+    {
+        ArrayList<ReconstructionPlugin> plugins = new ArrayList<>();
+        for (PluginInfo<ReconstructionPlugin> info : getPlugins()) {
+            plugins.add(pluginService().createInstance(info));
+        }
+        return plugins;
+    }
+    public HashMap<ReconstructionStep, Iterable<ReconstructionPlugin>>
+           get_plugins_map()
+    {
+        return get_plugins_map_from(get_plugins());
+    }
+    public HashMap<ReconstructionStep, Iterable<ReconstructionPlugin>>
+           get_plugins_map_from(Iterable<ReconstructionPlugin> plugins)
     {
         HashMap<ReconstructionStep, ArrayList<ReconstructionPlugin>> result1 =
             new HashMap<>();
         HashMap<ReconstructionStep, Iterable<ReconstructionPlugin>> result =
             new HashMap<>();
-        ArrayList<ReconstructionPlugin> plugins = new ArrayList<>();
-        for (PluginInfo<ReconstructionPlugin> info : getPlugins()) {
-            plugins.add(pluginService().createInstance(info));
-        }
         for (ReconstructionStep step : ReconstructionStep.values()) {
             ArrayList<ReconstructionPlugin> step_plugins = result1.get(step);
             for (ReconstructionPlugin plugin : plugins) {
