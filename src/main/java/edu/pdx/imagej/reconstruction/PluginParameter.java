@@ -19,7 +19,7 @@
 
 package edu.pdx.imagej.reconstruction;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Collection;
 
 import org.scijava.plugin.Plugin;
@@ -30,11 +30,8 @@ import edu.pdx.imagej.dynamic_parameters.DParameter;
 
 @Plugin(type = DParameter.class)
 public class PluginParameter extends HoldingParameter<
-    HashMap<
-        ReconstructionStep,
-        Iterable<ReconstructionPlugin>
-    >
-> {
+        LinkedHashMap<Class<?>, ReconstructionPlugin>
+    > {
     @Parameter private ReconstructionPluginService P_plugin_service;
 
     public PluginParameter() {super("PluginParameters");}
@@ -43,18 +40,17 @@ public class PluginParameter extends HoldingParameter<
     public void initialize()
     {
         M_plugins = P_plugin_service.get_plugins();
-        for (ReconstructionPlugin plugin : M_plugins) {
+        for (ReconstructionPlugin plugin : M_plugins.values()) {
             DParameter param = plugin.param();
             if (param != null) add_premade_parameter(param);
         }
     }
 
     @Override
-    public HashMap<ReconstructionStep, Iterable<ReconstructionPlugin>>
-           get_value()
+    public LinkedHashMap<Class<?>, ReconstructionPlugin> get_value()
     {
-        return P_plugin_service.get_plugins_map_from(M_plugins);
+        return M_plugins;
     }
 
-    Iterable<ReconstructionPlugin> M_plugins;
+    LinkedHashMap<Class<?>, ReconstructionPlugin> M_plugins;
 }

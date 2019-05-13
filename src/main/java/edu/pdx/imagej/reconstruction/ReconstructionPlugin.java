@@ -19,7 +19,7 @@
 
 package edu.pdx.imagej.reconstruction;
 
-import java.util.Collection;
+import java.util.LinkedHashMap;
 
 import org.scijava.Prioritized;
 import org.scijava.plugin.Plugin;
@@ -29,6 +29,12 @@ import edu.pdx.imagej.dynamic_parameters.DParameter;
 
 public interface ReconstructionPlugin extends ImageJPlugin, Prioritized {
     default DParameter param() {return null;}
-    Collection<ReconstructionStep> steps();
-    void process(ReconstructionStep step, ReconstructionField field);
+    default void process_beginning(
+        LinkedHashMap<Class<?>, ReconstructionPlugin> plugins) {}
+    default void process_original_hologram(ReconstructionField field) {}
+    default void process_hologram(ReconstructionField field, int t) {}
+    default void process_filtered_field(ReconstructionField field, int t) {}
+    default void process_propagated_field(ReconstructionField field, int t,
+                                          double z) {}
+    default void process_ending() {}
 }

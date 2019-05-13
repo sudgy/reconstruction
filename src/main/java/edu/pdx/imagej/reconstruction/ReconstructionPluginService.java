@@ -19,7 +19,7 @@
 
 package edu.pdx.imagej.reconstruction;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.ArrayList;
 
 import org.scijava.plugin.AbstractPTService;
@@ -32,34 +32,13 @@ import net.imagej.ImageJService;
 public class ReconstructionPluginService
              extends    AbstractPTService<ReconstructionPlugin>
              implements ImageJService {
-    public Iterable<ReconstructionPlugin> get_plugins()
+    public LinkedHashMap<Class<?>, ReconstructionPlugin> get_plugins()
     {
-        ArrayList<ReconstructionPlugin> plugins = new ArrayList<>();
+        LinkedHashMap<Class<?>, ReconstructionPlugin> result =
+            new LinkedHashMap<>();
         for (PluginInfo<ReconstructionPlugin> info : getPlugins()) {
-            plugins.add(pluginService().createInstance(info));
-        }
-        return plugins;
-    }
-    public HashMap<ReconstructionStep, Iterable<ReconstructionPlugin>>
-           get_plugins_map()
-    {
-        return get_plugins_map_from(get_plugins());
-    }
-    public HashMap<ReconstructionStep, Iterable<ReconstructionPlugin>>
-           get_plugins_map_from(Iterable<ReconstructionPlugin> plugins)
-    {
-        HashMap<ReconstructionStep, ArrayList<ReconstructionPlugin>> result1 =
-            new HashMap<>();
-        HashMap<ReconstructionStep, Iterable<ReconstructionPlugin>> result =
-            new HashMap<>();
-        for (ReconstructionStep step : ReconstructionStep.values()) {
-            ArrayList<ReconstructionPlugin> step_plugins = result1.get(step);
-            for (ReconstructionPlugin plugin : plugins) {
-                if (plugin.steps().contains(step)) {
-                    step_plugins.add(plugin);
-                }
-            }
-            result.put(step, step_plugins);
+            ReconstructionPlugin plugin = pluginService().createInstance(info);
+            result.put(plugin.getClass(), plugin);
         }
         return result;
     }
