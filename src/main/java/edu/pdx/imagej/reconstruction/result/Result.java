@@ -49,6 +49,11 @@ public class Result extends AbstractReconstructionPlugin {
     @Override
     public DParameter param() {return M_param;}
     @Override
+    public void process_before_param()
+    {
+        M_options = M_param.get_value();
+    }
+    @Override
     public void process_hologram_param(ImagePlus hologram)
     {
         M_hologram = hologram;
@@ -72,23 +77,23 @@ public class Result extends AbstractReconstructionPlugin {
     public void process_zs_param(AbstractList<Double> zs)
     {
         M_z_size = zs.size();
-        if (M_param.get_value().save_to_file) {
+        if (M_options.save_to_file) {
             try {
                 for (double z : zs) {
-                    if (M_param.get_value().amplitude) {
-                        new File(Paths.get(M_param.get_value().save_directory,
+                    if (M_options.amplitude) {
+                        new File(Paths.get(M_options.save_directory,
                             "Amplitude", format_z(z)).toString()).mkdirs();
                     }
-                    if (M_param.get_value().phase) {
-                        new File(Paths.get(M_param.get_value().save_directory,
+                    if (M_options.phase) {
+                        new File(Paths.get(M_options.save_directory,
                             "Phase", format_z(z)).toString()).mkdirs();
                     }
-                    if (M_param.get_value().real) {
-                        new File(Paths.get(M_param.get_value().save_directory,
+                    if (M_options.real) {
+                        new File(Paths.get(M_options.save_directory,
                             "Real", format_z(z)).toString()).mkdirs();
                     }
-                    if (M_param.get_value().imaginary) {
-                        new File(Paths.get(M_param.get_value().save_directory,
+                    if (M_options.imaginary) {
+                        new File(Paths.get(M_options.save_directory,
                             "Imaginary", format_z(z)).toString()).mkdirs();
                     }
                 }
@@ -104,17 +109,17 @@ public class Result extends AbstractReconstructionPlugin {
     @Override
     public void process_beginning()
     {
-        if (!M_param.get_value().save_to_file) {
-            if (M_param.get_value().amplitude) {
+        if (!M_options.save_to_file) {
+            if (M_options.amplitude) {
                 M_amplitude = new ImageStack(M_pixel_width, M_pixel_height);
             }
-            if (M_param.get_value().phase) {
+            if (M_options.phase) {
                 M_phase = new ImageStack(M_pixel_width, M_pixel_height);
             }
-            if (M_param.get_value().real) {
+            if (M_options.real) {
                 M_real = new ImageStack(M_pixel_width, M_pixel_height);
             }
-            if (M_param.get_value().imaginary) {
+            if (M_options.imaginary) {
                 M_imaginary = new ImageStack(M_pixel_width, M_pixel_height);
             }
         }
@@ -123,19 +128,19 @@ public class Result extends AbstractReconstructionPlugin {
     public void process_propagated_field(ReconstructionField field, int t,
                                          double z)
     {
-        if (M_param.get_value().amplitude) {
+        if (M_options.amplitude) {
             process_particular(field.field().get_amp(), t, z, M_amplitude,
                                "Amplitude", get_slice_label(t));
         }
-        if (M_param.get_value().phase) {
+        if (M_options.phase) {
             process_particular(field.field().get_arg(), t, z, M_phase,
                                "Phase", get_slice_label(t));
         }
-        if (M_param.get_value().real) {
+        if (M_options.real) {
             process_particular(field.field().get_real(), t, z, M_real,
                                "Real", get_slice_label(t));
         }
-        if (M_param.get_value().imaginary) {
+        if (M_options.imaginary) {
             process_particular(field.field().get_imag(), t, z, M_imaginary,
                                "Imaginary", get_slice_label(t));
         }
@@ -150,19 +155,18 @@ public class Result extends AbstractReconstructionPlugin {
             }
         }
         ImageProcessor proc = new FloatProcessor(result);
-        if (M_param.get_value().type == ResultOptions.Type.Type8Bit) {
+        if (M_options.type == ResultOptions.Type.Type8Bit) {
             proc = proc.convertToByteProcessor();
         }
-        else if (M_param.get_value().type == ResultOptions.Type.Type16Bit) {
+        else if (M_options.type == ResultOptions.Type.Type16Bit) {
             proc = proc.convertToShortProcessor();
         }
 
-        if (M_param.get_value().save_to_file) {
+        if (M_options.save_to_file) {
             ImagePlus temp_img = new ImagePlus("", proc);
             temp_img.setCalibration(M_cal);
-            IJ.saveAsTiff(temp_img, Paths.get(
-                M_param.get_value().save_directory, type, format_z(z),
-                format_t(t)).toString());
+            IJ.saveAsTiff(temp_img, Paths.get(M_options.save_directory, type,
+                format_z(z), format_t(t)).toString());
             temp_img.close();
         }
         // Not save to file
@@ -174,26 +178,22 @@ public class Result extends AbstractReconstructionPlugin {
     public void process_ending()
     {
         almost_process_ending();
-        if (!M_param.get_value().save_to_file) {
-            if (M_param.get_value().amplitude) M_amplitude_imp.show();
-            if (M_param.get_value().phase) M_phase_imp.show();
-            if (M_param.get_value().real) M_real_imp.show();
-            if (M_param.get_value().imaginary) M_imaginary_imp.show();
+        if (!M_options.save_to_file) {
+            if (M_options.amplitude) M_amplitude_imp.show();
+            if (M_options.phase) M_phase_imp.show();
+            if (M_options.real) M_real_imp.show();
+            if (M_options.imaginary) M_imaginary_imp.show();
         }
     }
     void almost_process_ending() // Package private for testing
     {
-        if (!M_param.get_value().save_to_file) {
-            if (M_param.get_value().amplitude) {
+        if (!M_options.save_to_file) {
+            if (M_options.amplitude) {
                 M_amplitude_imp = create_imp(M_amplitude, "Amplitude");
             }
-            if (M_param.get_value().phase) {
-                M_phase_imp = create_imp(M_phase, "Phase");
-            }
-            if (M_param.get_value().real) {
-                M_real_imp = create_imp(M_real, "Real");
-            }
-            if (M_param.get_value().imaginary) {
+            if (M_options.phase) M_phase_imp = create_imp(M_phase, "Phase");
+            if (M_options.real) M_real_imp = create_imp(M_real, "Real");
+            if (M_options.imaginary) {
                 M_imaginary_imp = create_imp(M_imaginary, "Imaginary");
             }
         }
@@ -201,12 +201,8 @@ public class Result extends AbstractReconstructionPlugin {
     private ImagePlus create_imp(ImageStack stack, String label)
     {
         int bit_depth = 8;
-        if (M_param.get_value().type == ResultOptions.Type.Type16Bit) {
-            bit_depth = 16;
-        }
-        else if (M_param.get_value().type == ResultOptions.Type.Type32Bit) {
-            bit_depth = 32;
-        }
+        if (M_options.type == ResultOptions.Type.Type16Bit) bit_depth = 16;
+        else if (M_options.type == ResultOptions.Type.Type32Bit) bit_depth = 32;
         ImagePlus imp = IJ.createHyperStack(label, M_pixel_width,
                                             M_pixel_height, 1, M_z_size,
                                             M_t_size, bit_depth);
@@ -226,11 +222,12 @@ public class Result extends AbstractReconstructionPlugin {
     }
 
     private ResultParameter M_param = new ResultParameter();
+    ResultOptions M_options; // Package private for testing
     private ImageStack M_amplitude;
     private ImageStack M_phase;
     private ImageStack M_real;
     private ImageStack M_imaginary;
-    ImagePlus M_amplitude_imp; // Package private to allow testing
+    ImagePlus M_amplitude_imp; // Package private for testing
     ImagePlus M_phase_imp;
     ImagePlus M_real_imp;
     ImagePlus M_imaginary_imp;

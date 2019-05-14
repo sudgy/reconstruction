@@ -35,6 +35,7 @@ public interface ReconstructionPlugin extends ImageJPlugin, Prioritized {
     default void read_plugins(
         LinkedHashMap<Class<?>, ReconstructionPlugin> plugins) {}
 
+    default void process_before_param() {}
     default void process_hologram_param(ImagePlus hologram) {}
     default void process_wavelength_param(double wavelength) {}
     default void process_dimensions_param(double width, double height) {}

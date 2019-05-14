@@ -79,6 +79,7 @@ public class ReconstructionCommand implements Command, Initializable {
         Collections.sort(plugins);
         for (ReconstructionPlugin plugin : plugins) {
             plugin.read_plugins(plugins_map);
+            plugin.process_before_param();
             plugin.process_hologram_param(P_hologram.get_value());
             plugin.process_wavelength_param(P_wavelength.get_value());
             plugin.process_dimensions_param(P_width.get_value(),
