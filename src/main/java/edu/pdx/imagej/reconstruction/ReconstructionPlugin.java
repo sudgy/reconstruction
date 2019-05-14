@@ -20,6 +20,9 @@
 package edu.pdx.imagej.reconstruction;
 
 import java.util.LinkedHashMap;
+import java.util.AbstractList;
+
+import ij.ImagePlus;
 
 import org.scijava.Prioritized;
 import org.scijava.plugin.Plugin;
@@ -29,8 +32,17 @@ import edu.pdx.imagej.dynamic_parameters.DParameter;
 
 public interface ReconstructionPlugin extends ImageJPlugin, Prioritized {
     default DParameter param() {return null;}
-    default void process_beginning(
+    default void read_plugins(
         LinkedHashMap<Class<?>, ReconstructionPlugin> plugins) {}
+
+    default void process_hologram_param(ImagePlus hologram) {}
+    default void process_wavelength_param(double wavelength) {}
+    default void process_dimensions_param(double width, double height) {}
+    default void process_ts_param(AbstractList<Integer> ts) {}
+    default void process_zs_param(AbstractList<Double> zs) {}
+
+    default void process_beginning() {}
+
     default void process_original_hologram(ReconstructionField field) {}
     default void process_hologram(ReconstructionField field, int t) {}
     default void process_filtered_field(ReconstructionField field, int t) {}
@@ -44,4 +56,6 @@ public interface ReconstructionPlugin extends ImageJPlugin, Prioritized {
     default void set_filtered_field_priority()    {}
     default void set_propagated_field_priority()  {}
     default void set_ending_priority()            {}
+
+    default boolean has_error() {return false;}
 }

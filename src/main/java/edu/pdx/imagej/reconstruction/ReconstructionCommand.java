@@ -31,22 +31,38 @@ import org.scijava.command.Command;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
+import edu.pdx.imagej.dynamic_parameters.DoubleParameter;
 import edu.pdx.imagej.dynamic_parameters.ImageParameter;
 
 @Plugin(type = Command.class, menuPath = "Plugins > DHM > Reconstruction")
 public class ReconstructionCommand implements Command, Initializable {
     @Parameter private ImageParameter  P_hologram;
-    @Parameter private TParameter      P_t;
-    @Parameter private ZParameter      P_z;
+    @Parameter private DoubleParameter P_wavelength;
+    @Parameter private DoubleParameter P_width;
+    @Parameter private DoubleParameter P_height;
+    @Parameter private TParameter      P_ts;
+    @Parameter private ZParameter      P_zs;
     @Parameter private PluginParameter P_plugins;
+
+    @Parameter private UnitService P_units;
 
     @Override
     public void initialize()
     {
         P_hologram = new ImageParameter("Hologram(s)");
-        P_t = new TParameter(P_hologram, TParameter.PossibleTypes.All, "Main");
-        P_z = new ZParameter();
+        P_wavelength = new DoubleParameter(500.0, "Wavelength",
+                                           P_units.wavelength().toString());
+        P_width = new DoubleParameter(0.0, "Image_Width",
+                                      P_units.image().toString());
+        P_height = new DoubleParameter(0.0, "Image_Height",
+                                       P_units.image().toString());
+        P_ts = new TParameter(P_hologram, TParameter.PossibleTypes.All, "Main");
+        P_zs = new ZParameter();
         P_plugins = new PluginParameter(P_hologram);
+
+        P_wavelength.set_bounds(Double.MIN_VALUE, Double.MAX_VALUE);
+        P_width.set_bounds(Double.MIN_VALUE, Double.MAX_VALUE);
+        P_height.set_bounds(Double.MIN_VALUE, Double.MAX_VALUE);
     }
     @Override
     public void run()
@@ -62,7 +78,15 @@ public class ReconstructionCommand implements Command, Initializable {
         }
         Collections.sort(plugins);
         for (ReconstructionPlugin plugin : plugins) {
-            plugin.process_beginning(plugins_map);
+            plugin.read_plugins(plugins_map);
+            plugin.process_hologram_param(P_hologram.get_value());
+            plugin.process_wavelength_param(P_wavelength.get_value());
+            plugin.process_dimensions_param(P_width.get_value(),
+                                            P_height.get_value());
+            plugin.process_ts_param(P_ts.get_value());
+            plugin.process_zs_param(P_zs.get_value());
+            plugin.process_beginning();
+            if (plugin.has_error()) return;
         }
 
         // Original Hologram
@@ -74,10 +98,11 @@ public class ReconstructionCommand implements Command, Initializable {
                                                            .getProcessor());
         for (ReconstructionPlugin plugin : plugins) {
             plugin.process_original_hologram(field);
+            if (plugin.has_error()) return;
         }
 
-        AbstractList<Integer> ts = P_t.get_value();
-        AbstractList<Double> zs = P_z.get_value();
+        AbstractList<Integer> ts = P_ts.get_value();
+        AbstractList<Double> zs = P_zs.get_value();
         for (int t : ts) {
             // Hologram
             for (ReconstructionPlugin plugin : plugins) {
@@ -88,6 +113,7 @@ public class ReconstructionCommand implements Command, Initializable {
                 P_hologram.get_value().getStack().getProcessor(t));
             for (ReconstructionPlugin plugin : plugins) {
                 plugin.process_hologram(field, t);
+                if (plugin.has_error()) return;
             }
 
             // Filtered Field
@@ -97,6 +123,7 @@ public class ReconstructionCommand implements Command, Initializable {
             Collections.sort(plugins);
             for (ReconstructionPlugin plugin : plugins) {
                 plugin.process_filtered_field(field, t);
+                if (plugin.has_error()) return;
             }
 
             for (double z : zs) {
@@ -108,6 +135,7 @@ public class ReconstructionCommand implements Command, Initializable {
                 ReconstructionField propagating_field = field.copy();
                 for (ReconstructionPlugin plugin : plugins) {
                     plugin.process_propagated_field(propagating_field, t, z);
+                    if (plugin.has_error()) return;
                 }
             }
         }
@@ -119,6 +147,7 @@ public class ReconstructionCommand implements Command, Initializable {
         Collections.sort(plugins);
         for (ReconstructionPlugin plugin : plugins) {
             plugin.process_ending();
+            if (plugin.has_error()) return;
         }
     }
 
