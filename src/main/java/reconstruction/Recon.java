@@ -105,13 +105,14 @@ public class Recon {
     protected void final_processing() {} // To be overriden by subclasses possibly
     public void set_parameters(float lambda, float z, float width, float height)
     {
-        M_lambda = (float)(lambda * 0.001);
+        M_lambda = lambda;
         M_z = z;
         M_dx = width / M_m;
         M_dy = height / M_n;
     }
     public void set_distance(float z)
     {
+        System.out.println("z: " + z);
         M_z = z;
     }
     public float[][] get_spectrum()
