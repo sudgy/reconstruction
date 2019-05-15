@@ -87,6 +87,6 @@ public class Filter extends AbstractReconstructionPlugin {
     }
     @Override public boolean has_error() {return M_error;}
 
-    private Roi M_roi;
+    Roi M_roi; // Package private for testing
     private boolean M_error = false;
 }
