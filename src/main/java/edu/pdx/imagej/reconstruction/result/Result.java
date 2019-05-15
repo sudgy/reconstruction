@@ -66,7 +66,7 @@ public class Result extends AbstractReconstructionPlugin {
         M_cal = new Calibration();
         M_cal.pixelWidth = width / M_pixel_width;
         M_cal.pixelHeight = height / M_pixel_height;
-        M_cal.setUnit(P_units.image().toString());
+        if (P_units != null) M_cal.setUnit(P_units.image().toString());
     }
     @Override
     public void process_ts_param(AbstractList<Integer> ts)

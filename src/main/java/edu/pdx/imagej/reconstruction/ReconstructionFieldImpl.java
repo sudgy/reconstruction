@@ -21,7 +21,7 @@ package edu.pdx.imagej.reconstruction;
 
 import org.jtransforms.fft.DoubleFFT_2D;
 
-class ReconstructionFieldImpl implements ReconstructionField {
+public class ReconstructionFieldImpl implements ReconstructionField {
     public ReconstructionFieldImpl(double[][] real, double[][] imag)
     {
         int width = real.length;
