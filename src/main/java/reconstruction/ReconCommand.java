@@ -127,7 +127,10 @@ public class ReconCommand extends ContextCommand implements Initializable {
         M_pixel_width = hologram.getProcessor().getWidth();
         M_pixel_height = hologram.getProcessor().getHeight();
         recon.set_input_images(M_pixel_width, M_pixel_height, hologram.getProcessor().getFloatArray(), null);
-        recon.set_parameters((float)wavelength, 0, (float)width, (float)height);
+        float micro_wavelength = (float)Units.convert(wavelength, P_units.wavelength(), Units.Micro);
+        float micro_width = (float)Units.convert(width, P_units.image(), Units.Micro);
+        float micro_height = (float)Units.convert(height, P_units.image(), Units.Micro);
+        recon.set_parameters(micro_wavelength, 0, micro_width, micro_height);
 
         ImageStack amplitude = null, phase = null, real = null, imaginary = null;
         if (!M_save_to_file) {
@@ -200,7 +203,8 @@ public class ReconCommand extends ContextCommand implements Initializable {
                 }
                 P_status.showStatus(current, total_size, "Processing " + get_slice_label(hologram, t) + " at z = " + format_z(z));
                 ++current;
-                recon.set_distance((float)z);
+                float micro_z = (float)Units.convert(z, P_units.z(), Units.Micro);
+                recon.set_distance(micro_z);
                 if (already_propagated) recon.propagate(false);
                 else {
                     recon.propagate(true);

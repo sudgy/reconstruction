@@ -22,6 +22,26 @@ package edu.pdx.imagej.reconstruction;
 public enum Units {
     Nano, Micro, Milli, Centi, Meter;
 
+    public static double convert(double value, Units from, Units to)
+    {
+        double mult = 1;
+        switch (from) {
+            case Nano: mult *= 1e-9; break;
+            case Micro: mult *= 1e-6; break;
+            case Milli: mult *= 1e-3; break;
+            case Centi: mult *= 1e-2; break;
+            case Meter: break;
+        }
+        switch (to) {
+            case Nano: mult *= 1e9; break;
+            case Micro: mult *= 1e6; break;
+            case Milli: mult *= 1e3; break;
+            case Centi: mult *= 1e2; break;
+            case Meter: break;
+        }
+        return value * mult;
+    }
+
     public static Units value_of(String s)
     {
         if (s == null) return null;
