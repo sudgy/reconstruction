@@ -23,6 +23,7 @@ public interface ComplexField {
     ComplexField copy();
 
     double[][] get_field();
+    void set_field(double[][] field);
     double[][] get_real();
     double[][] get_imag();
     double[][] get_amp();

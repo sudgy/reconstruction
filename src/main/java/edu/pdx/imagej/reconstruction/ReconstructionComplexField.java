@@ -170,6 +170,11 @@ class ReconstructionComplexField implements ComplexField {
         field_changed();
         return M_field;
     }
+    @Override public void set_field(double[][] field)
+    {
+        field_changed();
+        M_field = field;
+    }
     @Override public double[][] get_real()
     {
         int w = width();
