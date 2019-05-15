@@ -25,7 +25,6 @@ import java.util.AbstractList;
 import ij.ImagePlus;
 
 import org.scijava.Prioritized;
-import org.scijava.plugin.Plugin;
 import net.imagej.ImageJPlugin;
 
 import edu.pdx.imagej.dynamic_parameters.DParameter;
