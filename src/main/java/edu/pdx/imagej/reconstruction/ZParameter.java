@@ -43,7 +43,7 @@ public class ZParameter extends HoldingParameter<AbstractList<DistanceUnitValue>
     @Override
     public void initialize()
     {
-        M_choice = add_parameter(ChoiceParameter.class, this, "Z_plane selection", S_choices, "Single");
+        M_choice = add_parameter(ChoiceParameter.class, "Z_plane selection", S_choices, "Single");
         M_param_single = add_parameter(SingleZ.class, this);
         M_param_list = add_parameter(ListZ.class, this);
         M_param_range = add_parameter(RangeZ.class, this);
