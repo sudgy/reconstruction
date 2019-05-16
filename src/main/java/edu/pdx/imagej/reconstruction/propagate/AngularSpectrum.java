@@ -23,13 +23,14 @@ import org.scijava.Priority;
 import org.scijava.plugin.Plugin;
 
 import edu.pdx.imagej.reconstruction.ReconstructionField;
+import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
 
 @Plugin(type = PropagationPlugin.class,
         name = "Angular Spectrum",
         priority = Priority.VERY_HIGH)
 public class AngularSpectrum extends AbstractPropagationPlugin {
     @Override
-    public void propagate(ReconstructionField field, double z)
+    public void propagate(ReconstructionField field, DistanceUnitValue z)
     {
 
     }

@@ -19,6 +19,11 @@
 
 package edu.pdx.imagej.reconstruction.propagation;
 
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+
+import ij.ImagePlus;
+
 import org.scijava.Priority;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
@@ -27,10 +32,48 @@ import edu.pdx.imagej.dynamic_parameters.DParameter;
 import edu.pdx.imagej.reconstruction.ReconstructionPlugin;
 import edu.pdx.imagej.reconstruction.AbstractReconstructionPlugin;
 import edu.pdx.imagej.reconstruction.ReconstructionField;
+import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
 
 @Plugin(type = ReconstructionPlugin.class, priority = Priority.FIRST)
 public class Propagation extends AbstractReconstructionPlugin {
     @Override public DParameter param() {return M_param;}
+    @Override public void read_plugins(
+        LinkedHashMap<Class<?>, ReconstructionPlugin> plugins)
+    {
+        M_param.get_value().read_plugins(plugins);
+    }
+    @Override public void process_hologram_param(ImagePlus hologram)
+    {
+        M_hologram = hologram;
+    }
+    @Override public void process_wavelength_param(DistanceUnitValue wavelength)
+    {
+        M_wavelength = wavelength;
+    }
+    @Override public void process_dimensions_param(DistanceUnitValue width,
+                                                   DistanceUnitValue height)
+    {
+        M_width = width;
+        M_height = height;
+    }
+    @Override public void process_beginning()
+    {
+        M_param.get_value()
+               .process_beginning(M_hologram, M_wavelength, M_width, M_height);
+    }
+    @Override public void process_propagated_field(ReconstructionField field,
+                                                   int t, DistanceUnitValue z)
+    {
+        if (M_ts_processed.add(t)) {
+            M_param.get_value().process_starting_field(field);
+        }
+        M_param.get_value().propagate(field, z);
+    }
 
     private PropagationParameter M_param = new PropagationParameter();
+    private ImagePlus M_hologram;
+    private DistanceUnitValue M_wavelength;
+    private DistanceUnitValue M_width;
+    private DistanceUnitValue M_height;
+    private HashSet<Integer> M_ts_processed = new HashSet<>();
 }

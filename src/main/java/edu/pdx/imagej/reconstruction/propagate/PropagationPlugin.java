@@ -21,19 +21,25 @@ package edu.pdx.imagej.reconstruction.propagation;
 
 import java.util.LinkedHashMap;
 
+import ij.ImagePlus;
+
 import org.scijava.Prioritized;
 import net.imagej.ImageJPlugin;
 
 import edu.pdx.imagej.dynamic_parameters.DParameter;
 import edu.pdx.imagej.reconstruction.ReconstructionField;
 import edu.pdx.imagej.reconstruction.ReconstructionPlugin;
+import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
 
 public interface PropagationPlugin extends ImageJPlugin, Prioritized {
     default DParameter param() {return null;}
     default void read_plugins(
         LinkedHashMap<Class<?>, ReconstructionPlugin> plugins) {}
-    default void process_starting_field(ReconstructionField field,
-                                        double wavelength, double width,
-                                        double height) {}
-    void propagate(ReconstructionField field, double z);
+
+    default void process_beginning(ImagePlus hologram,
+                                   DistanceUnitValue wavelength,
+                                   DistanceUnitValue width,
+                                   DistanceUnitValue height) {}
+    default void process_starting_field(ReconstructionField field) {}
+    void propagate(ReconstructionField field, DistanceUnitValue z);
 }
