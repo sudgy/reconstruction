@@ -1,4 +1,4 @@
-/* Copyright (C) 2018 Portland State University
+/* Copyright (C) 2019 Portland State University
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of version 3 of the GNU Lesser General Public License
@@ -19,10 +19,11 @@
 
 package edu.pdx.imagej.reconstruction;
 
-public enum Units {
+public enum DistanceUnits {
     Nano, Micro, Milli, Centi, Meter;
 
-    public static double convert(double value, Units from, Units to)
+    public static double convert(double value, DistanceUnits from,
+                                 DistanceUnits to)
     {
         double mult = 1;
         switch (from) {
@@ -42,7 +43,7 @@ public enum Units {
         return value * mult;
     }
 
-    public static Units value_of(String s)
+    public static DistanceUnits value_of(String s)
     {
         if (s == null) return null;
         switch (s) {

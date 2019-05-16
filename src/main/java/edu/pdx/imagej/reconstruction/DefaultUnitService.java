@@ -1,4 +1,4 @@
-/* Copyright (C) 2018 Portland State University
+/* Copyright (C) 2019 Portland State University
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of version 3 of the GNU Lesser General Public License
@@ -28,18 +28,39 @@ import org.scijava.service.AbstractService;
 @Plugin(type = Service.class)
 public class DefaultUnitService extends AbstractService implements UnitService {
     @Override
-    public Units wavelength() {return Units.value_of(P_prefs.get(UnitService.class, "wavelength", "Nanometers"));}
+    public DistanceUnits wavelength()
+    {
+        return DistanceUnits.value_of(P_prefs.get(UnitService.class,
+                                                  "wavelength", "Nanometers"));
+    }
     @Override
-    public Units image() {return Units.value_of(P_prefs.get(UnitService.class, "image", "Micrometers"));}
+    public DistanceUnits image()
+    {
+        return DistanceUnits.value_of(P_prefs.get(UnitService.class, "image",
+                                                  "Micrometers"));
+    }
     @Override
-    public Units z() {return Units.value_of(P_prefs.get(UnitService.class, "z", "Micrometers"));}
+    public DistanceUnits z()
+    {
+        return DistanceUnits.value_of(P_prefs.get(UnitService.class, "z",
+                                                  "Micrometers"));
+    }
 
     @Override
-    public void set_wavelength(String val) {P_prefs.put(UnitService.class, "wavelength", val);}
+    public void set_wavelength(String val)
+    {
+        P_prefs.put(UnitService.class, "wavelength", val);
+    }
     @Override
-    public void set_image(String val) {P_prefs.put(UnitService.class, "image", val);}
+    public void set_image(String val)
+    {
+        P_prefs.put(UnitService.class, "image", val);
+    }
     @Override
-    public void set_z(String val) {P_prefs.put(UnitService.class, "z", val);}
+    public void set_z(String val)
+    {
+        P_prefs.put(UnitService.class, "z", val);
+    }
 
     @Parameter private PrefService P_prefs;
 }
