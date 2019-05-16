@@ -248,7 +248,7 @@ public class ReconCommand extends ContextCommand implements Initializable {
         imp.show();
     }
     private String format_z(double z) {return String.format("%.3f", z);}
-    private String format_t(int t) {return Integer.toString(t);}
+    private String format_t(int t) {return String.format("%05d", t);}
     private String get_slice_label(ImagePlus image, int t)
     {
         String result = image.getImageStack().getSliceLabel(t);
