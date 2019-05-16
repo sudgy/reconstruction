@@ -24,9 +24,11 @@ import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import ij.IJ;
 import ij.process.ImageProcessor;
 
 import org.scijava.Initializable;
+import org.scijava.app.StatusService;
 import org.scijava.command.Command;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
@@ -46,6 +48,7 @@ public class ReconstructionCommand implements Command, Initializable {
     @Parameter private ZParameter      P_zs;
     @Parameter private PluginParameter P_plugins;
 
+    @Parameter private StatusService P_status;
     @Parameter private UnitService P_units;
 
     @Override
@@ -136,6 +139,10 @@ public class ReconstructionCommand implements Command, Initializable {
             }
 
             for (DistanceUnitValue z : zs) {
+                if (IJ.escapePressed()) {
+                    P_status.showStatus(1, 1, "Command canceled");
+                    return;
+                }
                 // Propagated Field
                 for (ReconstructionPlugin plugin : plugins) {
                     plugin.set_propagated_field_priority();
