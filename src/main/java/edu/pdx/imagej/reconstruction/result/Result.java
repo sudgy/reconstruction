@@ -213,7 +213,7 @@ public class Result extends AbstractReconstructionPlugin {
     @Override public boolean has_error() {return M_error;}
 
     private String format_z(double z) {return String.format("%.3f", z);}
-    private String format_t(int t) {return Integer.toString(t);}
+    private String format_t(int t) {return String.format("%05d", t);}
     private String get_slice_label(int t)
     {
         String result = M_hologram.getImageStack().getSliceLabel(t);

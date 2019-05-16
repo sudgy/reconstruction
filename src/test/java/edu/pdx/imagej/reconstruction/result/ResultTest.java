@@ -180,13 +180,13 @@ public class ResultTest {
             assertTrue(test.M_real_imp == null, "There should be no result in "
                 + "memory when saving to file.");
             String real10_path
-                = Paths.get(dir, "Real", "0.000", "1.tif").toString();
+                = Paths.get(dir, "Real", "0.000", "00001.tif").toString();
             String real11_path
-                = Paths.get(dir, "Real", "1.000", "1.tif").toString();
+                = Paths.get(dir, "Real", "1.000", "00001.tif").toString();
             String real30_path
-                = Paths.get(dir, "Real", "0.000", "3.tif").toString();
+                = Paths.get(dir, "Real", "0.000", "00003.tif").toString();
             String real31_path
-                = Paths.get(dir, "Real", "1.000", "3.tif").toString();
+                = Paths.get(dir, "Real", "1.000", "00003.tif").toString();
             assertTrue(new File(real10_path).exists());
             assertTrue(new File(real11_path).exists());
             assertTrue(new File(real30_path).exists());
@@ -209,10 +209,10 @@ public class ResultTest {
             assertEquals(real11[0][0], 1);
             assertEquals(real30[0][0], 2);
             assertEquals(real31[0][0], 3);
-            assertEquals(real10_label, "1.tif");
-            assertEquals(real11_label, "1.tif");
-            assertEquals(real30_label, "3.tif");
-            assertEquals(real31_label, "3.tif");
+            assertEquals(real10_label, "00001.tif");
+            assertEquals(real11_label, "00001.tif");
+            assertEquals(real30_label, "00003.tif");
+            assertEquals(real31_label, "00003.tif");
         }
         finally {
             FileUtils.deleteDirectory(new File(dir));
