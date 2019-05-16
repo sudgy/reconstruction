@@ -19,8 +19,15 @@
 
 package edu.pdx.imagej.reconstruction.propagation;
 
+import java.util.HashMap;
+
+import ij.IJ;
+import ij.ImagePlus;
+
 import org.scijava.Priority;
+import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
+import net.imagej.options.OptionsMemoryAndThreads;
 
 import edu.pdx.imagej.reconstruction.ReconstructionField;
 import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
@@ -30,8 +37,87 @@ import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
         priority = Priority.VERY_HIGH)
 public class AngularSpectrum extends AbstractPropagationPlugin {
     @Override
+    public void process_beginning(ImagePlus hologram,
+                                  DistanceUnitValue wavelength,
+                                  DistanceUnitValue width,
+                                  DistanceUnitValue height)
+    {
+        int hwidth = hologram.getWidth();
+        int hheight = hologram.getHeight();
+        // Eight for sizeof(double), two for real and imaginary
+        M_image_memory_size = hwidth * hheight * 8 * 2;
+
+        double lambda = wavelength.as_micro();
+
+        M_core = new double[hwidth][hheight];
+        double k = 2.0 * Math.PI / lambda;
+        double l2 = lambda * lambda;
+        double dx = 1.0 / width.as_micro();
+        double dx2 = dx * dx;
+        double dy = 1.0 / height.as_micro();
+        double dy2 = dy * dy;
+        int width2 = hwidth / 2;
+        int height2 = hheight / 2;
+
+        for (int x = 0; x < width2; ++x) {
+            int fx = x - width2 + 1;
+            double val1 = fx * fx * dx2;
+            for (int y = 0; y < height2; ++y) {
+                int fy = y - height2 + 1;
+                double val2 = val1 + fy * fy * dy2;
+                val2 = 1 - l2 * val2;
+                if (val2 < 0) val2 = 0;
+                else val2 = k*Math.sqrt(val2);
+                M_core[x][y]                    =
+                M_core[x][hheight-y-1]          =
+                M_core[hwidth-x-1][y]           =
+                M_core[hwidth-x-1][hheight-y-1] = val2;
+            }
+        }
+        // TODO: deal with odd images
+    }
+    @Override
     public void propagate(ReconstructionField field, DistanceUnitValue z)
     {
-
+        double zm = z.as_micro();
+        double[][] kernel = M_kernels.get(zm);
+        if (kernel == null) {
+            int width = M_core.length;
+            int height = M_core[0].length;
+            int width2 = width / 2;
+            int height2 = height / 2;
+            kernel = new double[width][height*2];
+            for (int x = 0; x < width2; ++x) {
+                for (int y = 0; y < height2; ++y) {
+                    kernel[x][2*y]                    =
+                    kernel[x][2*(height-y-1)]         =
+                    kernel[width-x-1][2*y]            =
+                    kernel[width-x-1][2*(height-y-1)] =
+                        Math.cos(zm * M_core[x][y]);
+                    kernel[x][2*y+1]                    =
+                    kernel[x][2*(height-y-1)+1]         =
+                    kernel[width-x-1][2*y+1]            =
+                    kernel[width-x-1][2*(height-y-1)+1] =
+                        Math.sin(zm * M_core[x][y]);
+                }
+            }
+            // TODO: deal with odd images
+            if (M_kernels.size() * M_image_memory_size < IJ.maxMemory()) {
+                M_kernels.put(zm, kernel);
+            }
+        }
+        field.fourier().multiply_in_place(kernel);
     }
+    // The angular spectrum equation is generally
+    // IFFT(FFT(U_0) exp(zik*sqrt(...)))
+
+    // M_core holds the "k*sqrt(...)" as it is constant no matter what
+    private double[][] M_core;
+    // M_kernels holds the exp(zik*sqrt(...)) part for different z values, but
+    // will stop storing these if it is starting to use up too much memory.
+    // ("too much memory" is half of what ImageJ has set as maximum)
+    private HashMap<Double, double[][]> M_kernels = new HashMap<>();
+    // The size of a single image, in bytes.
+    private long M_image_memory_size;
+    @Parameter private OptionsMemoryAndThreads P_memory;
 }
