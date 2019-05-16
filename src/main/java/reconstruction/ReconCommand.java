@@ -52,6 +52,8 @@ import edu.pdx.imagej.reconstruction.parameter.TParameter;
 import edu.pdx.imagej.reconstruction.parameter.RefParameter;
 import edu.pdx.imagej.reconstruction.parameter.CenterParameter;
 import edu.pdx.imagej.reconstruction.parameter.SaveParameter;
+import edu.pdx.imagej.reconstruction.units.DistanceUnits;
+import edu.pdx.imagej.reconstruction.units.UnitService;
 
 @Plugin(type = Command.class, menuPath = "Plugins>DHM>Old Reconstruct")
 public class ReconCommand extends ContextCommand implements Initializable {
@@ -127,9 +129,9 @@ public class ReconCommand extends ContextCommand implements Initializable {
         M_pixel_width = hologram.getProcessor().getWidth();
         M_pixel_height = hologram.getProcessor().getHeight();
         recon.set_input_images(M_pixel_width, M_pixel_height, hologram.getProcessor().getFloatArray(), null);
-        float micro_wavelength = (float)Units.convert(wavelength, P_units.wavelength(), Units.Micro);
-        float micro_width = (float)Units.convert(width, P_units.image(), Units.Micro);
-        float micro_height = (float)Units.convert(height, P_units.image(), Units.Micro);
+        float micro_wavelength = (float)DistanceUnits.convert(wavelength, P_units.wavelength(), DistanceUnits.Micro);
+        float micro_width = (float)DistanceUnits.convert(width, P_units.image(), DistanceUnits.Micro);
+        float micro_height = (float)DistanceUnits.convert(height, P_units.image(), DistanceUnits.Micro);
         recon.set_parameters(micro_wavelength, 0, micro_width, micro_height);
 
         ImageStack amplitude = null, phase = null, real = null, imaginary = null;
@@ -203,7 +205,7 @@ public class ReconCommand extends ContextCommand implements Initializable {
                 }
                 P_status.showStatus(current, total_size, "Processing " + get_slice_label(hologram, t) + " at z = " + format_z(z));
                 ++current;
-                float micro_z = (float)Units.convert(z, P_units.z(), Units.Micro);
+                float micro_z = (float)DistanceUnits.convert(z, P_units.z(), DistanceUnits.Micro);
                 recon.set_distance(micro_z);
                 if (already_propagated) recon.propagate(false);
                 else {

@@ -17,34 +17,16 @@
  * David Cohoe at dcohoe@pdx.edu.
  */
 
-package edu.pdx.imagej.reconstruction;
+package edu.pdx.imagej.reconstruction.units;
 
-public class UnitValue {
-    public UnitValue(double value, Units unit)
-    {
-        M_value = value;
-        M_unit = unit;
-    }
-    public double as_nano()
-    {
-        return Units.convert(M_value, M_unit, Units.Nano);
-    }
-    public double as_micro()
-    {
-        return Units.convert(M_value, M_unit, Units.Micro);
-    }
-    public double as_milli()
-    {
-        return Units.convert(M_value, M_unit, Units.Milli);
-    }
-    public double as_centi()
-    {
-        return Units.convert(M_value, M_unit, Units.Centi);
-    }
-    public double as_meter()
-    {
-        return Units.convert(M_value, M_unit, Units.Meter);
-    }
-    private double M_value;
-    private Units M_unit;
+import net.imagej.ImageJService;
+
+public interface UnitService extends ImageJService {
+    DistanceUnits wavelength();
+    DistanceUnits image();
+    DistanceUnits z();
+
+    void set_wavelength(String val);
+    void set_image(String val);
+    void set_z(String val);
 }

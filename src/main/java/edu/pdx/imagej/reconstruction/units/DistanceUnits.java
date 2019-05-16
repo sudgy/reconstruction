@@ -17,7 +17,7 @@
  * David Cohoe at dcohoe@pdx.edu.
  */
 
-package edu.pdx.imagej.reconstruction;
+package edu.pdx.imagej.reconstruction.units;
 
 public enum DistanceUnits {
     Nano, Micro, Milli, Centi, Meter;

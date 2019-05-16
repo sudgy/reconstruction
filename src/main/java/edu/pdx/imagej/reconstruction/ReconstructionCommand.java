@@ -33,6 +33,7 @@ import org.scijava.plugin.Plugin;
 
 import edu.pdx.imagej.dynamic_parameters.DoubleParameter;
 import edu.pdx.imagej.dynamic_parameters.ImageParameter;
+import edu.pdx.imagej.reconstruction.units.UnitService;
 
 @Plugin(type = Command.class, menuPath = "Plugins > DHM > Reconstruction")
 public class ReconstructionCommand implements Command, Initializable {

@@ -34,7 +34,7 @@ import edu.pdx.imagej.dynamic_parameters.AbstractDParameter;
 import edu.pdx.imagej.dynamic_parameters.DParameter;
 import edu.pdx.imagej.dynamic_parameters.DoubleParameter;
 import edu.pdx.imagej.dynamic_parameters.ChoiceParameter;
-import edu.pdx.imagej.reconstruction.UnitService;
+import edu.pdx.imagej.reconstruction.units.UnitService;
 
 @Plugin(type = DParameter.class)
 public class ZParameter extends HoldingParameter<AbstractList<Double>> {
