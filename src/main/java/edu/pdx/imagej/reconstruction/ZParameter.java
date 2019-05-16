@@ -34,18 +34,19 @@ import edu.pdx.imagej.dynamic_parameters.AbstractDParameter;
 import edu.pdx.imagej.dynamic_parameters.DParameter;
 import edu.pdx.imagej.dynamic_parameters.DoubleParameter;
 import edu.pdx.imagej.dynamic_parameters.ChoiceParameter;
+import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
 import edu.pdx.imagej.reconstruction.units.UnitService;
 
 @Plugin(type = DParameter.class)
-public class ZParameter extends HoldingParameter<AbstractList<Double>> {
+public class ZParameter extends HoldingParameter<AbstractList<DistanceUnitValue>> {
     public ZParameter() {super("Zs");}
     @Override
     public void initialize()
     {
-        M_choice = add_parameter(ChoiceParameter.class, "Z_plane selection", S_choices, "Single");
-        M_param_single = add_parameter(SingleZ.class);
-        M_param_list = add_parameter(ListZ.class);
-        M_param_range = add_parameter(RangeZ.class);
+        M_choice = add_parameter(ChoiceParameter.class, this, "Z_plane selection", S_choices, "Single");
+        M_param_single = add_parameter(SingleZ.class, this);
+        M_param_list = add_parameter(ListZ.class, this);
+        M_param_range = add_parameter(RangeZ.class, this);
         set_visibilities();
     }
     @Override
@@ -61,7 +62,10 @@ public class ZParameter extends HoldingParameter<AbstractList<Double>> {
         set_visibilities();
     }
     @Override
-    public AbstractList<Double> get_value() {return current_param().get_value();}
+    public AbstractList<DistanceUnitValue> get_value()
+    {
+        return current_param().get_value();
+    }
 
     private void set_visibilities()
     {
@@ -70,7 +74,7 @@ public class ZParameter extends HoldingParameter<AbstractList<Double>> {
         M_param_range.set_new_visibility(false);
         current_param().set_new_visibility(true);
     }
-    private DParameter<AbstractList<Double>> current_param()
+    private DParameter<AbstractList<DistanceUnitValue>> current_param()
     {
         switch (Choices.valueOf(M_choice.get_value())) {
             case Single: return M_param_single;
@@ -90,10 +94,11 @@ public class ZParameter extends HoldingParameter<AbstractList<Double>> {
     private SingleZ M_param_single;
     private ListZ M_param_list;
     private RangeZ M_param_range;
+    @Parameter private UnitService P_units;
 
 
 
-    public static class SingleZ extends HoldingParameter<AbstractList<Double>> {
+    public class SingleZ extends HoldingParameter<AbstractList<DistanceUnitValue>> {
         public SingleZ() {super("SingleZ");}
         @Override
         public void initialize()
@@ -107,12 +112,12 @@ public class ZParameter extends HoldingParameter<AbstractList<Double>> {
             process_errors();
         }
         @Override
-        public AbstractList<Double> get_value()
+        public AbstractList<DistanceUnitValue> get_value()
         {
-            return new AbstractList<Double>() {
+            return new AbstractList<DistanceUnitValue>() {
                 @Override
-                public Double get(int index)
-                {return M_z.get_value();}
+                public DistanceUnitValue get(int index)
+                {return new DistanceUnitValue(M_z.get_value(), P_units.z());}
                 @Override
                 public int size()
                 {return 1;}
@@ -124,12 +129,11 @@ public class ZParameter extends HoldingParameter<AbstractList<Double>> {
             set_error(M_z.get_error());
         }
         private DoubleParameter M_z;
-        @Parameter private UnitService P_units;
     }
 
 
 
-    public static class ListZ extends AbstractDParameter<AbstractList<Double>> {
+    public class ListZ extends AbstractDParameter<AbstractList<DistanceUnitValue>> {
         public ListZ() {super("ListZ");}
         @Override
         public void initialize()
@@ -159,14 +163,14 @@ public class ZParameter extends HoldingParameter<AbstractList<Double>> {
             process_errors();
         }
         @Override
-        public AbstractList<Double> get_value() {return M_zs;}
+        public AbstractList<DistanceUnitValue> get_value() {return M_zs;}
 
         private void process_errors()
         {
             List<String> zs_as_string = Arrays.asList(M_current_string.split("\\s*,\\s*"));
-            M_zs = new ArrayList<Double>(zs_as_string.size());
+            M_zs = new ArrayList<DistanceUnitValue>(zs_as_string.size());
             for (String s : zs_as_string) {
-                try {M_zs.add(Double.parseDouble(s));}
+                try {M_zs.add(new DistanceUnitValue(Double.parseDouble(s), P_units.z()));}
                 catch (NumberFormatException e) {
                     set_error("Unable to parse Z list.  \"" + s + "\" is not a number.");
                     return;
@@ -174,14 +178,14 @@ public class ZParameter extends HoldingParameter<AbstractList<Double>> {
             }
             set_error(null);
         }
-        private ArrayList<Double> M_zs;
+        private ArrayList<DistanceUnitValue> M_zs;
         private String M_current_string;
         private Supplier<String> M_supplier;
     }
 
 
 
-    public static class RangeZ extends HoldingParameter<AbstractList<Double>> {
+    public class RangeZ extends HoldingParameter<AbstractList<DistanceUnitValue>> {
         public RangeZ() {super("RangeZ");}
         @Override
         public void initialize()
@@ -204,12 +208,12 @@ public class ZParameter extends HoldingParameter<AbstractList<Double>> {
             process_errors();
         }
         @Override
-        public AbstractList<Double> get_value()
+        public AbstractList<DistanceUnitValue> get_value()
         {
-            return new AbstractList<Double>() {
+            return new AbstractList<DistanceUnitValue>() {
                 @Override
-                public Double get(int index)
-                {return M_begin.get_value() + M_step.get_value() * index;}
+                public DistanceUnitValue get(int index)
+                {return new DistanceUnitValue(M_begin.get_value() + M_step.get_value() * index, P_units.z());}
                 @Override
                 public int size()
                 {return (int)((M_end.get_value() - M_begin.get_value()) / M_step.get_value()) + 1;}
@@ -237,6 +241,5 @@ public class ZParameter extends HoldingParameter<AbstractList<Double>> {
         private DoubleParameter M_begin;
         private DoubleParameter M_end;
         private DoubleParameter M_step;
-        @Parameter private UnitService P_units;
     }
 }

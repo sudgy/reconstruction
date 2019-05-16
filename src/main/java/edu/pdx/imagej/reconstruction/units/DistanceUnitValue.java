@@ -25,6 +25,8 @@ public class DistanceUnitValue {
         M_value = value;
         M_unit = unit;
     }
+    public double value() {return M_value;}
+    public DistanceUnits unit() {return M_unit;}
     public double as_nano()
     {
         return DistanceUnits.convert(M_value, M_unit, DistanceUnits.Nano);

@@ -36,6 +36,8 @@ import org.junit.jupiter.api.Test;
 
 import edu.pdx.imagej.reconstruction.ReconstructionField;
 import edu.pdx.imagej.reconstruction.ReconstructionFieldImpl;
+import edu.pdx.imagej.reconstruction.units.DistanceUnits;
+import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
 
 public class ResultTest {
     @Test public void test_normal()
@@ -48,11 +50,11 @@ public class ResultTest {
         test.M_options.real = true;
         ArrayList<Integer> ts = new ArrayList<>();
         ts.add(1);
-        ArrayList<Double> zs = new ArrayList<>();
-        zs.add(0.0);
+        ArrayList<DistanceUnitValue> zs = new ArrayList<>();
+        zs.add(unit0);
 
         test.process_hologram_param(imp);
-        test.process_dimensions_param(2, 3);
+        test.process_dimensions_param(unit2, unit3);
         test.process_ts_param(ts);
         test.process_zs_param(zs);
         test.process_beginning();
@@ -65,7 +67,7 @@ public class ResultTest {
             {4, 1}
         };
         ReconstructionField field = new ReconstructionFieldImpl(real, imag);
-        test.process_propagated_field(field, 1, 0);
+        test.process_propagated_field(field, 1, unit0);
         test.almost_process_ending();
 
         assertTrue(test.M_phase_imp == null);
@@ -94,11 +96,11 @@ public class ResultTest {
         test.M_options.real = true;
         ArrayList<Integer> ts = new ArrayList<>();
         ts.add(1); ts.add(3);
-        ArrayList<Double> zs = new ArrayList<>();
-        zs.add(0.0); zs.add(1.0);
+        ArrayList<DistanceUnitValue> zs = new ArrayList<>();
+        zs.add(unit0); zs.add(unit1);
 
         test.process_hologram_param(stack);
-        test.process_dimensions_param(2, 3);
+        test.process_dimensions_param(unit2, unit3);
         test.process_ts_param(ts);
         test.process_zs_param(zs);
         test.process_beginning();
@@ -106,13 +108,13 @@ public class ResultTest {
         double[][] real = {{0, 0}, {0, 0}};
         double[][] imag = {{0, 0}, {0, 0}};
         ReconstructionField field = new ReconstructionFieldImpl(real, imag);
-        test.process_propagated_field(field, 1, 0.0);
+        test.process_propagated_field(field, 1, unit0);
         field.field().get_field()[0][0] = 1;
-        test.process_propagated_field(field, 1, 1.0);
+        test.process_propagated_field(field, 1, unit1);
         field.field().get_field()[0][0] = 2;
-        test.process_propagated_field(field, 3, 0.0);
+        test.process_propagated_field(field, 3, unit0);
         field.field().get_field()[0][0] = 3;
-        test.process_propagated_field(field, 3, 1.0);
+        test.process_propagated_field(field, 3, unit1);
         test.almost_process_ending();
 
         ImagePlus imp = test.M_real_imp;
@@ -151,11 +153,11 @@ public class ResultTest {
             test.M_options.save_directory = dir;
             ArrayList<Integer> ts = new ArrayList<>();
             ts.add(1); ts.add(3);
-            ArrayList<Double> zs = new ArrayList<>();
-            zs.add(0.0); zs.add(1.0);
+            ArrayList<DistanceUnitValue> zs = new ArrayList<>();
+            zs.add(unit0); zs.add(unit1);
 
             test.process_hologram_param(stack);
-            test.process_dimensions_param(2, 3);
+            test.process_dimensions_param(unit2, unit3);
             test.process_ts_param(ts);
             test.process_zs_param(zs);
             test.process_beginning();
@@ -168,13 +170,13 @@ public class ResultTest {
             double[][] real = {{0, 0}, {0, 0}};
             double[][] imag = {{0, 0}, {0, 0}};
             ReconstructionField field = new ReconstructionFieldImpl(real, imag);
-            test.process_propagated_field(field, 1, 0.0);
+            test.process_propagated_field(field, 1, unit0);
             field.field().get_field()[0][0] = 1;
-            test.process_propagated_field(field, 1, 1.0);
+            test.process_propagated_field(field, 1, unit1);
             field.field().get_field()[0][0] = 2;
-            test.process_propagated_field(field, 3, 0.0);
+            test.process_propagated_field(field, 3, unit0);
             field.field().get_field()[0][0] = 3;
-            test.process_propagated_field(field, 3, 1.0);
+            test.process_propagated_field(field, 3, unit1);
             test.almost_process_ending();
 
             assertTrue(test.M_real_imp == null, "There should be no result in "
@@ -229,4 +231,13 @@ public class ResultTest {
         imp.setDimensions(1, 1, 3);
         return imp;
     }
+
+    private static DistanceUnitValue unit0
+        = new DistanceUnitValue(0.0, DistanceUnits.Meter);
+    private static DistanceUnitValue unit1
+        = new DistanceUnitValue(1.0, DistanceUnits.Meter);
+    private static DistanceUnitValue unit2
+        = new DistanceUnitValue(2.0, DistanceUnits.Meter);
+    private static DistanceUnitValue unit3
+        = new DistanceUnitValue(3.0, DistanceUnits.Meter);
 }

@@ -34,6 +34,7 @@ import org.scijava.plugin.Plugin;
 import edu.pdx.imagej.dynamic_parameters.DoubleParameter;
 import edu.pdx.imagej.dynamic_parameters.ImageParameter;
 import edu.pdx.imagej.reconstruction.units.UnitService;
+import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
 
 @Plugin(type = Command.class, menuPath = "Plugins > DHM > Reconstruction")
 public class ReconstructionCommand implements Command, Initializable {
@@ -68,6 +69,13 @@ public class ReconstructionCommand implements Command, Initializable {
     @Override
     public void run()
     {
+        DistanceUnitValue wavelength
+            = new DistanceUnitValue(P_wavelength.get_value(),
+                                    P_units.wavelength());
+        DistanceUnitValue width
+            = new DistanceUnitValue(P_width.get_value(), P_units.image());
+        DistanceUnitValue height
+            = new DistanceUnitValue(P_height.get_value(), P_units.image());
         LinkedHashMap<Class<?>, ReconstructionPlugin> plugins_map
             = P_plugins.get_value();
         ArrayList<ReconstructionPlugin> plugins
@@ -82,9 +90,8 @@ public class ReconstructionCommand implements Command, Initializable {
             plugin.read_plugins(plugins_map);
             plugin.process_before_param();
             plugin.process_hologram_param(P_hologram.get_value());
-            plugin.process_wavelength_param(P_wavelength.get_value());
-            plugin.process_dimensions_param(P_width.get_value(),
-                                            P_height.get_value());
+            plugin.process_wavelength_param(wavelength);
+            plugin.process_dimensions_param(width, height);
             plugin.process_ts_param(P_ts.get_value());
             plugin.process_zs_param(P_zs.get_value());
             plugin.process_beginning();
@@ -104,7 +111,7 @@ public class ReconstructionCommand implements Command, Initializable {
         }
 
         AbstractList<Integer> ts = P_ts.get_value();
-        AbstractList<Double> zs = P_zs.get_value();
+        AbstractList<DistanceUnitValue> zs = P_zs.get_value();
         for (int t : ts) {
             // Hologram
             for (ReconstructionPlugin plugin : plugins) {
@@ -128,7 +135,7 @@ public class ReconstructionCommand implements Command, Initializable {
                 if (plugin.has_error()) return;
             }
 
-            for (double z : zs) {
+            for (DistanceUnitValue z : zs) {
                 // Propagated Field
                 for (ReconstructionPlugin plugin : plugins) {
                     plugin.set_propagated_field_priority();

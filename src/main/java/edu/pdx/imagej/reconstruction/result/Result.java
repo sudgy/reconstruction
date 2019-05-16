@@ -39,12 +39,11 @@ import edu.pdx.imagej.dynamic_parameters.DParameter;
 import edu.pdx.imagej.reconstruction.ReconstructionPlugin;
 import edu.pdx.imagej.reconstruction.AbstractReconstructionPlugin;
 import edu.pdx.imagej.reconstruction.ReconstructionField;
-import edu.pdx.imagej.reconstruction.units.UnitService;
+import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
 
 @Plugin(type = ReconstructionPlugin.class, priority = Priority.LAST)
 public class Result extends AbstractReconstructionPlugin {
     @Parameter UIService P_ui;
-    @Parameter UnitService P_units;
 
     @Override
     public DParameter param() {return M_param;}
@@ -61,12 +60,13 @@ public class Result extends AbstractReconstructionPlugin {
         M_pixel_height = hologram.getProcessor().getHeight();
     }
     @Override
-    public void process_dimensions_param(double width, double height)
+    public void process_dimensions_param(DistanceUnitValue width,
+                                         DistanceUnitValue height)
     {
         M_cal = new Calibration();
-        M_cal.pixelWidth = width / M_pixel_width;
-        M_cal.pixelHeight = height / M_pixel_height;
-        if (P_units != null) M_cal.setUnit(P_units.image().toString());
+        M_cal.pixelWidth = width.value() / M_pixel_width;
+        M_cal.pixelHeight = height.value() / M_pixel_height;
+        M_cal.setUnit(width.unit().toString());
     }
     @Override
     public void process_ts_param(AbstractList<Integer> ts)
@@ -74,12 +74,12 @@ public class Result extends AbstractReconstructionPlugin {
         M_t_size = ts.size();
     }
     @Override
-    public void process_zs_param(AbstractList<Double> zs)
+    public void process_zs_param(AbstractList<DistanceUnitValue> zs)
     {
         M_z_size = zs.size();
         if (M_options.save_to_file) {
             try {
-                for (double z : zs) {
+                for (DistanceUnitValue z : zs) {
                     if (M_options.amplitude) {
                         new File(Paths.get(M_options.save_directory,
                             "Amplitude", format_z(z)).toString()).mkdirs();
@@ -126,7 +126,7 @@ public class Result extends AbstractReconstructionPlugin {
     }
     @Override
     public void process_propagated_field(ReconstructionField field, int t,
-                                         double z)
+                                         DistanceUnitValue z)
     {
         if (M_options.amplitude) {
             process_particular(field.field().get_amp(), t, z, M_amplitude,
@@ -145,8 +145,9 @@ public class Result extends AbstractReconstructionPlugin {
                                "Imaginary", get_slice_label(t));
         }
     }
-    private void process_particular(double[][] d_result, int t, double z,
-                                    ImageStack stack, String type, String label)
+    private void process_particular(double[][] d_result, int t,
+                                    DistanceUnitValue z, ImageStack stack,
+                                    String type, String label)
     {
         float[][] result = new float[d_result.length][d_result[0].length];
         for (int x = 0; x < result.length; ++x) {
@@ -212,7 +213,8 @@ public class Result extends AbstractReconstructionPlugin {
     }
     @Override public boolean has_error() {return M_error;}
 
-    private String format_z(double z) {return String.format("%.3f", z);}
+    private String format_z(DistanceUnitValue z)
+        {return String.format("%.3f", z.value());}
     private String format_t(int t) {return String.format("%05d", t);}
     private String get_slice_label(int t)
     {

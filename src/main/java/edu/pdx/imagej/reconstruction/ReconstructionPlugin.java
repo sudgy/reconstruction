@@ -28,6 +28,7 @@ import org.scijava.Prioritized;
 import net.imagej.ImageJPlugin;
 
 import edu.pdx.imagej.dynamic_parameters.DParameter;
+import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
 
 public interface ReconstructionPlugin extends ImageJPlugin, Prioritized {
     default DParameter param() {return null;}
@@ -36,10 +37,11 @@ public interface ReconstructionPlugin extends ImageJPlugin, Prioritized {
 
     default void process_before_param() {}
     default void process_hologram_param(ImagePlus hologram) {}
-    default void process_wavelength_param(double wavelength) {}
-    default void process_dimensions_param(double width, double height) {}
+    default void process_wavelength_param(DistanceUnitValue wavelength) {}
+    default void process_dimensions_param(DistanceUnitValue width,
+                                          DistanceUnitValue height) {}
     default void process_ts_param(AbstractList<Integer> ts) {}
-    default void process_zs_param(AbstractList<Double> zs) {}
+    default void process_zs_param(AbstractList<DistanceUnitValue> zs) {}
 
     default void process_beginning() {}
 
@@ -47,7 +49,7 @@ public interface ReconstructionPlugin extends ImageJPlugin, Prioritized {
     default void process_hologram(ReconstructionField field, int t) {}
     default void process_filtered_field(ReconstructionField field, int t) {}
     default void process_propagated_field(ReconstructionField field, int t,
-                                          double z) {}
+                                          DistanceUnitValue z) {}
     default void process_ending() {}
 
     default void set_beginning_priority()         {}
