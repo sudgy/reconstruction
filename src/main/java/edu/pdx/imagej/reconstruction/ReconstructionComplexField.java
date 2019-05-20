@@ -19,12 +19,16 @@
 
 package edu.pdx.imagej.reconstruction;
 
-class ReconstructionComplexField implements ComplexField {
+public class ReconstructionComplexField implements ComplexField {
     public ReconstructionComplexField(double[][] field,
                                       ReconstructionFieldImpl containing)
     {
         M_containing = containing;
         M_field = field;
+    }
+    public void set_containing(ReconstructionFieldImpl containing)
+    {
+        M_containing = containing;
     }
     public void shift_forward()
     {
@@ -448,7 +452,9 @@ class ReconstructionComplexField implements ComplexField {
 
     private void field_changed()
     {
-        if (M_containing != null) M_containing.field_changed(this);
+        if (M_containing != null) {
+            M_containing.field_changed(this);
+        }
     }
     private ReconstructionComplexField() {}
 

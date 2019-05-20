@@ -27,7 +27,6 @@ import ij.ImagePlus;
 import org.scijava.Priority;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
-import net.imagej.options.OptionsMemoryAndThreads;
 
 import edu.pdx.imagej.reconstruction.ConstReconstructionField;
 import edu.pdx.imagej.reconstruction.ReconstructionField;
@@ -108,7 +107,7 @@ public class AngularSpectrum extends AbstractPropagationPlugin {
                         Math.sin(dz * M_core[x][y]);
                 }
             }
-            if (M_kernels.size() * M_image_memory_size < IJ.maxMemory()) {
+            if (M_kernels.size() * M_image_memory_size < IJ.maxMemory() / 2) {
                 M_kernels.put(key, kernel);
             }
         }
@@ -119,12 +118,11 @@ public class AngularSpectrum extends AbstractPropagationPlugin {
     // IFFT(FFT(U_0) exp(zik*sqrt(...)))
 
     // M_core holds the "k*sqrt(...)" as it is constant no matter what
-    private double[][] M_core;
+    double[][] M_core; // Package private for testing
     // M_kernels holds the exp(zik*sqrt(...)) part for different z values, but
     // will stop storing these if it is starting to use up too much memory.
     // ("too much memory" is half of what ImageJ has set as maximum)
     private HashMap<Integer, double[][]> M_kernels = new HashMap<>();
     // The size of a single image, in bytes.
     private long M_image_memory_size;
-    @Parameter private OptionsMemoryAndThreads P_memory;
 }

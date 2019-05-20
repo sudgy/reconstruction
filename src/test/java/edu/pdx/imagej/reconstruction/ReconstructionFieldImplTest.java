@@ -40,7 +40,7 @@ public class ReconstructionFieldImplTest {
         assertTrue(!test.has_fourier(), "It should still not have a fourier "
             + "when the field is retrieved.");
 
-        test.field_changed(field);
+        field.get_field(); // This triggers field_changed
         assertTrue(test.has_field(), "It should still have a field when the "
             + "field has changed.");
         assertTrue(!test.has_fourier(), "It should still not have a fourier "
@@ -52,7 +52,7 @@ public class ReconstructionFieldImplTest {
         assertTrue(test.has_fourier(), "It should have a fourier when the "
             + "fourier is retrieved.");
 
-        test.field_changed(field);
+        field.get_field();
         assertTrue(test.has_field(), "It should still have a field when the "
             + "field has changed, again.");
         assertTrue(!test.has_fourier(), "It should not have a fourier when the "
@@ -61,7 +61,7 @@ public class ReconstructionFieldImplTest {
         assertTrue(test.fourier() != fourier, "When the fourier has to be "
             + "recreated, it should not be the same object as before.");
         fourier = test.fourier();
-        test.field_changed(fourier);
+        fourier.get_field();
         assertTrue(!test.has_field(), "It should not have a field when the "
             + "fourier has changed.");
         assertTrue(test.has_fourier(), "It should have a fourier when the "

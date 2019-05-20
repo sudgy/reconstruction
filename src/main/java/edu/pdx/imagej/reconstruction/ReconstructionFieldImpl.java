@@ -48,6 +48,7 @@ public class ReconstructionFieldImpl implements ReconstructionField {
             M_field = M_fourier.copy();
             M_field.shift_backward();
             M_fft.complexInverse(M_field.M_field, true);
+            M_field.set_containing(this);
         }
         return M_field;
     }
@@ -58,6 +59,7 @@ public class ReconstructionFieldImpl implements ReconstructionField {
             M_fourier = M_field.copy();
             M_fft.complexForward(M_fourier.M_field);
             M_fourier.shift_forward();
+            M_fourier.set_containing(this);
         }
         return M_fourier;
     }
