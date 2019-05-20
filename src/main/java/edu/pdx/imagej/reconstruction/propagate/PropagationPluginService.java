@@ -19,48 +19,10 @@
 
 package edu.pdx.imagej.reconstruction.propagation;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-import org.scijava.plugin.AbstractPTService;
-import org.scijava.plugin.Plugin;
-import org.scijava.plugin.PluginInfo;
-import org.scijava.service.Service;
 import net.imagej.ImageJService;
 
-@Plugin(type = Service.class)
-public class PropagationPluginService
-             extends AbstractPTService<PropagationPlugin>
-             implements ImageJService
-{
-    public LinkedHashMap<String, PropagationPlugin> get_plugins()
-    {
-        LinkedHashMap<String, PropagationPlugin> result
-            = new LinkedHashMap<>();
-        for (HashMap.Entry<String, PluginInfo<PropagationPlugin>> entry :
-                M_plugins.entrySet()) {
-            String name = entry.getKey();
-            PluginInfo<PropagationPlugin> info = entry.getValue();
-            PropagationPlugin plugins = pluginService().createInstance(info);
-            result.put(name, plugins);
-        }
-        return result;
-    }
-    @Override
-    public void initialize()
-    {
-        for (PluginInfo<PropagationPlugin> info : getPlugins()) {
-            String name = info.getName();
-            if (name == null || name.isEmpty()) {
-                name = info.getClassName();
-            }
-            M_plugins.put(name, info);
-        }
-    }
-    @Override
-    public Class<PropagationPlugin> getPluginType()
-        {return PropagationPlugin.class;}
-
-    private LinkedHashMap<String, PluginInfo<PropagationPlugin>> M_plugins
-        = new LinkedHashMap<>();
+public interface PropagationPluginService extends ImageJService {
+    LinkedHashMap<String, PropagationPlugin> get_plugins();
 }
