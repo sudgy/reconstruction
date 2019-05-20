@@ -66,7 +66,48 @@ public class AngularSpectrumTest {
     }
     @Test public void test_units()
     {
+        double[][] real = new double[][] {
+            {0.7491333299, 0.5542820629, 0.1879272540, 0.8584170661},
+            {0.0305604090, 0.7808111477, 0.6247602260, 0.6811765293},
+            {0.6611121864, 0.3942249921, 0.1238077507, 0.1966343374},
+            {0.5457368629, 0.9026601034, 0.7550818323, 0.5276090343}
+        };
+        double[][] imag = new double[][] {
+            {0.6906533149, 0.1062510323, 0.5731869642, 0.2101399789},
+            {0.6916196061, 0.2327204311, 0.9912915487, 0.5350163478},
+            {0.2655718145, 0.1526346228, 0.2690232265, 0.7611883011},
+            {0.7277631769, 0.6861068860, 0.9135765966, 0.0137632145}
+        };
+        ReconstructionFieldImpl field = new ReconstructionFieldImpl(real, imag);
+        AngularSpectrum test = new AngularSpectrum();
+        test.process_beginning(M_even_hologram,
+                               new DistanceUnitValue(500, DistanceUnits.Nano),
+                               new DistanceUnitValue(300, DistanceUnits.Micro),
+                               new DistanceUnitValue(310, DistanceUnits.Micro));
+        test.propagate(null, field, M_z0,
+                       new DistanceUnitValue(100, DistanceUnits.Micro));
+        double[][] result1 = field.field().get_field();
 
+        field = new ReconstructionFieldImpl(real, imag);
+        test = new AngularSpectrum();
+        test.process_beginning(M_even_hologram,
+                               new DistanceUnitValue(0.5, DistanceUnits.Micro),
+                               new DistanceUnitValue(0.3, DistanceUnits.Milli),
+                               new DistanceUnitValue(0.031, DistanceUnits.Centi)
+                              );
+        test.propagate(null, field, M_z0,
+                       new DistanceUnitValue(0.0001, DistanceUnits.Meter));
+        double[][] result2 = field.field().get_field();
+
+        for (int x = 0; x < 4; ++x) {
+            for (int y = 0; y < 4; ++y) {
+                String coord = "(" + x + ", " + y + ").";
+                assertEquals(result1[x][2*y], result2[x][2*y], "The real value "
+                    + "should be the same at " + coord);
+                assertEquals(result1[x][2*y+1], result2[x][2*y+1], "The "
+                    + "imaginary value should be the same at " + coord);
+            }
+        }
     }
     @Test public void test_inverse_even()
     {
