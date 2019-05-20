@@ -165,6 +165,13 @@ class ReconstructionComplexField implements ComplexField {
         }
         return result;
     }
+    public ReconstructionComplexField copy_in(
+        ReconstructionFieldImpl containing)
+    {
+        ReconstructionComplexField result = copy();
+        result.M_containing = containing;
+        return result;
+    }
     @Override public double[][] get_field()
     {
         field_changed();

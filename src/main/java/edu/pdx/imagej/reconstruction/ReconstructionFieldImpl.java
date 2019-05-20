@@ -69,8 +69,8 @@ public class ReconstructionFieldImpl implements ReconstructionField {
     {
         ReconstructionFieldImpl result = new ReconstructionFieldImpl();
         result.M_fft = M_fft;
-        if (M_fourier != null) result.M_fourier = M_fourier.copy();
-        else result.M_field = M_field.copy();
+        if (M_fourier != null) result.M_fourier = M_fourier.copy_in(result);
+        if (M_field != null) result.M_field = M_field.copy_in(result);
         return result;
     }
 
