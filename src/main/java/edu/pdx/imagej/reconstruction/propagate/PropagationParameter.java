@@ -42,14 +42,16 @@ public class PropagationParameter extends HoldingParameter<PropagationPlugin> {
     public void initialize()
     {
         M_plugins = P_quality_service.get_plugins();
-        ArrayList<String> choices_list = new ArrayList<>();
-        for (Entry<String, PropagationPlugin> entry : M_plugins.entrySet()) {
-            choices_list.add(entry.getKey());
+        if (M_plugins.size() > 1) {
+            ArrayList<String> choices_list = new ArrayList<>();
+            for (Entry<String, PropagationPlugin> entry : M_plugins.entrySet()) {
+                choices_list.add(entry.getKey());
+            }
+            String[] choices = new String[choices_list.size()];
+            choices = choices_list.toArray(choices);
+            M_choice = add_parameter(ChoiceParameter.class,
+                                     "Propagation Algorithm", choices, choices[0]);
         }
-        String[] choices = new String[choices_list.size()];
-        choices = choices_list.toArray(choices);
-        M_choice = add_parameter(ChoiceParameter.class,
-                                 "Propagation Algorithm", choices, choices[0]);
         for (HashMap.Entry<String, PropagationPlugin> entry
                 : M_plugins.entrySet()) {
             if (entry.getValue().param() != null) {
@@ -74,11 +76,14 @@ public class PropagationParameter extends HoldingParameter<PropagationPlugin> {
     @Override
     public PropagationPlugin get_value()
     {
-        return M_plugins.get(M_choice.get_value());
+        // If only one choice
+        if (M_choice == null) return M_plugins.values().iterator().next();
+        else return M_plugins.get(M_choice.get_value());
     }
 
     private void set_visibilities()
     {
+        if (M_choice == null) return; // If only one choice
         for (DParameter param : M_parameters.values()) {
             param.set_new_visibility(false);
         }
