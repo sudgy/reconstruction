@@ -44,13 +44,15 @@ public class PropagationParameter extends HoldingParameter<PropagationPlugin> {
         M_plugins = P_quality_service.get_plugins();
         if (M_plugins.size() > 1) {
             ArrayList<String> choices_list = new ArrayList<>();
-            for (Entry<String, PropagationPlugin> entry : M_plugins.entrySet()) {
+            for (Entry<String, PropagationPlugin> entry :
+                    M_plugins.entrySet()) {
                 choices_list.add(entry.getKey());
             }
             String[] choices = new String[choices_list.size()];
             choices = choices_list.toArray(choices);
             M_choice = add_parameter(ChoiceParameter.class,
-                                     "Propagation Algorithm", choices, choices[0]);
+                                     "Propagation Algorithm",
+                                     choices, choices[0]);
         }
         for (HashMap.Entry<String, PropagationPlugin> entry
                 : M_plugins.entrySet()) {
