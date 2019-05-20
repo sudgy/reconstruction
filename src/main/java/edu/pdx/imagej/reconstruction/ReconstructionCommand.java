@@ -35,8 +35,9 @@ import org.scijava.plugin.Plugin;
 
 import edu.pdx.imagej.dynamic_parameters.DoubleParameter;
 import edu.pdx.imagej.dynamic_parameters.ImageParameter;
-import edu.pdx.imagej.reconstruction.units.UnitService;
+import edu.pdx.imagej.reconstruction.units.DistanceUnits;
 import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
+import edu.pdx.imagej.reconstruction.units.UnitService;
 
 @Plugin(type = Command.class, menuPath = "Plugins > DHM > Reconstruction")
 public class ReconstructionCommand implements Command, Initializable {
@@ -138,21 +139,25 @@ public class ReconstructionCommand implements Command, Initializable {
                 if (plugin.has_error()) return;
             }
 
+            // Propagated Field
+            for (ReconstructionPlugin plugin : plugins) {
+                plugin.set_propagated_field_priority();
+            }
+            Collections.sort(plugins);
+            ReconstructionField propagating_field = field.copy();
+            DistanceUnitValue z_from
+                = new DistanceUnitValue(0, DistanceUnits.Micro);
             for (DistanceUnitValue z : zs) {
                 if (IJ.escapePressed()) {
                     P_status.showStatus(1, 1, "Command canceled");
                     return;
                 }
-                // Propagated Field
                 for (ReconstructionPlugin plugin : plugins) {
-                    plugin.set_propagated_field_priority();
-                }
-                Collections.sort(plugins);
-                ReconstructionField propagating_field = field.copy();
-                for (ReconstructionPlugin plugin : plugins) {
-                    plugin.process_propagated_field(propagating_field, t, z);
+                    plugin.process_propagated_field(field, propagating_field,
+                                                    t, z_from, z);
                     if (plugin.has_error()) return;
                 }
+                z_from = z;
             }
         }
 

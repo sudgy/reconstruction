@@ -61,13 +61,15 @@ public class Propagation extends AbstractReconstructionPlugin {
         M_param.get_value()
                .process_beginning(M_hologram, M_wavelength, M_width, M_height);
     }
-    @Override public void process_propagated_field(ReconstructionField field,
-                                                   int t, DistanceUnitValue z)
+    @Override public void process_propagated_field(
+        ReconstructionField original_field, ReconstructionField current_field,
+        int t, DistanceUnitValue z_from, DistanceUnitValue z_to)
     {
         if (M_ts_processed.add(t)) {
-            M_param.get_value().process_starting_field(field);
+            M_param.get_value().process_starting_field(original_field);
         }
-        M_param.get_value().propagate(field, z);
+        M_param.get_value()
+               .propagate(original_field, current_field, z_from, z_to);
     }
 
     private PropagationParameter M_param = new PropagationParameter();

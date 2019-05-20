@@ -41,5 +41,7 @@ public interface PropagationPlugin extends ImageJPlugin, Prioritized {
                                    DistanceUnitValue width,
                                    DistanceUnitValue height) {}
     default void process_starting_field(ReconstructionField field) {}
-    void propagate(ReconstructionField field, DistanceUnitValue z);
+    void propagate(ReconstructionField original_field,
+                   ReconstructionField current_field,
+                   DistanceUnitValue z_from, DistanceUnitValue z_to);
 }

@@ -77,10 +77,13 @@ public class AngularSpectrum extends AbstractPropagationPlugin {
         // TODO: deal with odd images
     }
     @Override
-    public void propagate(ReconstructionField field, DistanceUnitValue z)
+    public void propagate(ReconstructionField original_field,
+                          ReconstructionField current_field,
+                          DistanceUnitValue z_from, DistanceUnitValue z_to)
     {
-        double zm = z.as_micro();
-        double[][] kernel = M_kernels.get(zm);
+        double dz = z_to.as_micro() - z_from.as_micro();
+        int key = (int)Math.round(dz * 1000);
+        double[][] kernel = M_kernels.get(key);
         if (kernel == null) {
             int width = M_core.length;
             int height = M_core[0].length;
@@ -93,21 +96,22 @@ public class AngularSpectrum extends AbstractPropagationPlugin {
                     kernel[x][2*(height-y-1)]         =
                     kernel[width-x-1][2*y]            =
                     kernel[width-x-1][2*(height-y-1)] =
-                        Math.cos(zm * M_core[x][y]);
+                        Math.cos(dz * M_core[x][y]);
                     kernel[x][2*y+1]                    =
                     kernel[x][2*(height-y-1)+1]         =
                     kernel[width-x-1][2*y+1]            =
                     kernel[width-x-1][2*(height-y-1)+1] =
-                        Math.sin(zm * M_core[x][y]);
+                        Math.sin(dz * M_core[x][y]);
                 }
             }
             // TODO: deal with odd images
             if (M_kernels.size() * M_image_memory_size < IJ.maxMemory()) {
-                M_kernels.put(zm, kernel);
+                M_kernels.put(key, kernel);
             }
         }
-        field.fourier().multiply_in_place(kernel);
+        current_field.fourier().multiply_in_place(kernel);
     }
+
     // The angular spectrum equation is generally
     // IFFT(FFT(U_0) exp(zik*sqrt(...)))
 
@@ -116,7 +120,7 @@ public class AngularSpectrum extends AbstractPropagationPlugin {
     // M_kernels holds the exp(zik*sqrt(...)) part for different z values, but
     // will stop storing these if it is starting to use up too much memory.
     // ("too much memory" is half of what ImageJ has set as maximum)
-    private HashMap<Double, double[][]> M_kernels = new HashMap<>();
+    private HashMap<Integer, double[][]> M_kernels = new HashMap<>();
     // The size of a single image, in bytes.
     private long M_image_memory_size;
     @Parameter private OptionsMemoryAndThreads P_memory;
