@@ -37,11 +37,13 @@ import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
 
 @Plugin(type = ReconstructionPlugin.class, priority = Priority.FIRST)
 public class Propagation extends AbstractReconstructionPlugin {
+    public Propagation() {}
+    public Propagation(PropagationPlugin plugin) {M_plugin = plugin;}
     @Override public DParameter param() {return M_param;}
     @Override public void read_plugins(
         LinkedHashMap<Class<?>, ReconstructionPlugin> plugins)
     {
-        M_param.get_value().read_plugins(plugins);
+        get_plugin().read_plugins(plugins);
     }
     @Override public void process_hologram_param(ImagePlus hologram)
     {
@@ -59,7 +61,7 @@ public class Propagation extends AbstractReconstructionPlugin {
     }
     @Override public void process_beginning()
     {
-        M_param.get_value()
+        get_plugin()
                .process_beginning(M_hologram, M_wavelength, M_width, M_height);
     }
     @Override public void process_propagated_field(
@@ -68,13 +70,19 @@ public class Propagation extends AbstractReconstructionPlugin {
         int t, DistanceUnitValue z_from, DistanceUnitValue z_to)
     {
         if (M_ts_processed.add(t)) {
-            M_param.get_value().process_starting_field(original_field);
+            get_plugin().process_starting_field(original_field);
         }
-        M_param.get_value()
-               .propagate(original_field, current_field, z_from, z_to);
+        get_plugin().propagate(original_field, current_field, z_from, z_to);
+    }
+
+    private PropagationPlugin get_plugin()
+    {
+        if (M_plugin == null) M_plugin = M_param.get_value();
+        return M_plugin;
     }
 
     private PropagationParameter M_param = new PropagationParameter();
+    private PropagationPlugin M_plugin;
     private ImagePlus M_hologram;
     private DistanceUnitValue M_wavelength;
     private DistanceUnitValue M_width;
