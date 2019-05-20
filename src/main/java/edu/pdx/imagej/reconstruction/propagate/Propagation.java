@@ -29,6 +29,7 @@ import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
 import edu.pdx.imagej.dynamic_parameters.DParameter;
+import edu.pdx.imagej.reconstruction.ConstReconstructionField;
 import edu.pdx.imagej.reconstruction.ReconstructionPlugin;
 import edu.pdx.imagej.reconstruction.AbstractReconstructionPlugin;
 import edu.pdx.imagej.reconstruction.ReconstructionField;
@@ -62,7 +63,8 @@ public class Propagation extends AbstractReconstructionPlugin {
                .process_beginning(M_hologram, M_wavelength, M_width, M_height);
     }
     @Override public void process_propagated_field(
-        ReconstructionField original_field, ReconstructionField current_field,
+        ConstReconstructionField original_field,
+        ReconstructionField current_field,
         int t, DistanceUnitValue z_from, DistanceUnitValue z_to)
     {
         if (M_ts_processed.add(t)) {

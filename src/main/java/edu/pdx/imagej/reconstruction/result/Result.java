@@ -38,6 +38,7 @@ import org.scijava.ui.UIService;
 import edu.pdx.imagej.dynamic_parameters.DParameter;
 import edu.pdx.imagej.reconstruction.ReconstructionPlugin;
 import edu.pdx.imagej.reconstruction.AbstractReconstructionPlugin;
+import edu.pdx.imagej.reconstruction.ConstReconstructionField;
 import edu.pdx.imagej.reconstruction.ReconstructionField;
 import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
 
@@ -126,7 +127,8 @@ public class Result extends AbstractReconstructionPlugin {
     }
     @Override
     public void process_propagated_field(
-        ReconstructionField original_field, ReconstructionField current_field,
+        ConstReconstructionField original_field,
+        ReconstructionField current_field,
         int t, DistanceUnitValue z_from, DistanceUnitValue z_to)
     {
         if (M_options.amplitude) {

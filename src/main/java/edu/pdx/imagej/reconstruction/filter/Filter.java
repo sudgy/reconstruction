@@ -35,11 +35,12 @@ import org.scijava.plugin.Plugin;
 import edu.pdx.imagej.reconstruction.ReconstructionPlugin;
 import edu.pdx.imagej.reconstruction.AbstractReconstructionPlugin;
 import edu.pdx.imagej.reconstruction.ReconstructionField;
+import edu.pdx.imagej.reconstruction.ConstReconstructionField;
 
 @Plugin(type = ReconstructionPlugin.class, priority = Priority.LAST)
 public class Filter extends AbstractReconstructionPlugin {
     @Override
-    public void process_original_hologram(ReconstructionField field)
+    public void process_original_hologram(ConstReconstructionField field)
     {
         double[][] fourier = field.fourier().get_amp();
         float[][] array = new float[fourier.length][fourier[0].length];

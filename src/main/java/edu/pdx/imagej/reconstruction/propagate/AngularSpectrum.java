@@ -29,6 +29,7 @@ import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 import net.imagej.options.OptionsMemoryAndThreads;
 
+import edu.pdx.imagej.reconstruction.ConstReconstructionField;
 import edu.pdx.imagej.reconstruction.ReconstructionField;
 import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
 
@@ -77,7 +78,7 @@ public class AngularSpectrum extends AbstractPropagationPlugin {
         // TODO: deal with odd images
     }
     @Override
-    public void propagate(ReconstructionField original_field,
+    public void propagate(ConstReconstructionField original_field,
                           ReconstructionField current_field,
                           DistanceUnitValue z_from, DistanceUnitValue z_to)
     {

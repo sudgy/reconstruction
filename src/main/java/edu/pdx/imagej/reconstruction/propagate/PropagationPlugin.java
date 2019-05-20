@@ -27,6 +27,7 @@ import org.scijava.Prioritized;
 import net.imagej.ImageJPlugin;
 
 import edu.pdx.imagej.dynamic_parameters.DParameter;
+import edu.pdx.imagej.reconstruction.ConstReconstructionField;
 import edu.pdx.imagej.reconstruction.ReconstructionField;
 import edu.pdx.imagej.reconstruction.ReconstructionPlugin;
 import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
@@ -40,8 +41,8 @@ public interface PropagationPlugin extends ImageJPlugin, Prioritized {
                                    DistanceUnitValue wavelength,
                                    DistanceUnitValue width,
                                    DistanceUnitValue height) {}
-    default void process_starting_field(ReconstructionField field) {}
-    void propagate(ReconstructionField original_field,
+    default void process_starting_field(ConstReconstructionField field) {}
+    void propagate(ConstReconstructionField original_field,
                    ReconstructionField current_field,
                    DistanceUnitValue z_from, DistanceUnitValue z_to);
 }

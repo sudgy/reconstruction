@@ -28,6 +28,7 @@ import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
 import edu.pdx.imagej.reconstruction.AbstractReconstructionPlugin;
+import edu.pdx.imagej.reconstruction.ConstReconstructionField;
 import edu.pdx.imagej.reconstruction.ReconstructionField;
 import edu.pdx.imagej.reconstruction.ReconstructionPlugin;
 import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
@@ -43,7 +44,8 @@ public class Status extends AbstractReconstructionPlugin {
     @Override public void process_beginning()
         {M_total_size = M_t_size * M_z_size;}
     @Override public void process_propagated_field(
-        ReconstructionField original_field, ReconstructionField current_field,
+        ConstReconstructionField original_field,
+        ReconstructionField current_field,
         int t, DistanceUnitValue z_from, DistanceUnitValue z_to)
     {
         String label = M_hologram.getStack().getSliceLabel(t);
