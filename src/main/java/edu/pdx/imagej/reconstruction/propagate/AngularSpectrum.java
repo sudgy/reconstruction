@@ -59,11 +59,13 @@ public class AngularSpectrum extends AbstractPropagationPlugin {
         double dy2 = dy * dy;
         int width2 = hwidth / 2;
         int height2 = hheight / 2;
+        int xbound = width2  + (hwidth  % 2 == 0 ? 0 : 1);
+        int ybound = height2 + (hheight % 2 == 0 ? 0 : 1);
 
-        for (int x = 0; x < width2; ++x) {
+        for (int x = 0; x < xbound; ++x) {
             int fx = x - width2 + 1;
             double val1 = fx * fx * dx2;
-            for (int y = 0; y < height2; ++y) {
+            for (int y = 0; y < ybound; ++y) {
                 int fy = y - height2 + 1;
                 double val2 = val1 + fy * fy * dy2;
                 val2 = 1 - l2 * val2;
@@ -75,7 +77,6 @@ public class AngularSpectrum extends AbstractPropagationPlugin {
                 M_core[hwidth-x-1][hheight-y-1] = val2;
             }
         }
-        // TODO: deal with odd images
     }
     @Override
     public void propagate(ConstReconstructionField original_field,
@@ -90,9 +91,11 @@ public class AngularSpectrum extends AbstractPropagationPlugin {
             int height = M_core[0].length;
             int width2 = width / 2;
             int height2 = height / 2;
+            int xbound = width2  + (width  % 2 == 0 ? 0 : 1);
+            int ybound = height2 + (height % 2 == 0 ? 0 : 1);
             kernel = new double[width][height*2];
-            for (int x = 0; x < width2; ++x) {
-                for (int y = 0; y < height2; ++y) {
+            for (int x = 0; x < xbound; ++x) {
+                for (int y = 0; y < ybound; ++y) {
                     kernel[x][2*y]                    =
                     kernel[x][2*(height-y-1)]         =
                     kernel[width-x-1][2*y]            =
@@ -105,7 +108,6 @@ public class AngularSpectrum extends AbstractPropagationPlugin {
                         Math.sin(dz * M_core[x][y]);
                 }
             }
-            // TODO: deal with odd images
             if (M_kernels.size() * M_image_memory_size < IJ.maxMemory()) {
                 M_kernels.put(key, kernel);
             }
