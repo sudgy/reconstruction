@@ -174,6 +174,32 @@ public class AngularSpectrumTest {
             }
         }
     }
+    // Test that many reconstructions on the same field is stable
+    // This is mainly a numerical accuracy test
+    @Test public void test_big_combination()
+    {
+        ReconstructionFieldImpl field = make_even_field();
+        AngularSpectrum test = new AngularSpectrum();
+        test.process_beginning(M_even_hologram, M_wavelength,
+                               M_width, M_height);
+        DistanceUnitValue z1 = new DistanceUnitValue(1, DistanceUnits.Micro);
+        for (int i = 0; i < 100; ++i) {
+            test.propagate(null, field, M_z0, z1);
+        }
+        double[][] result1 = field.field().get_field();
+        field = make_even_field();
+        test.propagate(null, field, M_z0, M_z100);
+        double[][] result2 = field.field().get_field();
+        for (int x = 0; x < 4; ++x) {
+            for (int y = 0; y < 4; ++y) {
+                String coord = "(" + x + ", " + y + ").";
+                assertEquals(result1[x][2*y], result2[x][2*y], 1e-6,
+                    "The real value should be the same at " + coord);
+                assertEquals(result1[x][2*y+1], result2[x][2*y+1], 1e-6,
+                    "The imaginary value should be the same at " + coord);
+            }
+        }
+    }
     // Test that the amplitude of the fourier transform is constant
     @Test public void test_amplitude()
     {
