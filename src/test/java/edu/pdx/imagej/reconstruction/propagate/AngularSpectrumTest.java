@@ -111,8 +111,7 @@ public class AngularSpectrumTest {
     {
         ReconstructionFieldImpl field = make_odd_field();
         AngularSpectrum test = new AngularSpectrum();
-        test.process_beginning(M_odd_hologram, M_wavelength,
-                               M_width, M_height);
+        test.process_beginning(M_odd_hologram, M_wavelength, M_width, M_height);
         test.propagate(null, field, M_z0, M_z100);
         test.propagate(null, field, M_z100, M_z0);
         double[][] result = field.field().get_field();
@@ -156,8 +155,7 @@ public class AngularSpectrumTest {
     {
         ReconstructionFieldImpl field = make_odd_field();
         AngularSpectrum test = new AngularSpectrum();
-        test.process_beginning(M_odd_hologram, M_wavelength,
-                               M_width, M_height);
+        test.process_beginning(M_odd_hologram, M_wavelength, M_width, M_height);
         test.propagate(null, field, M_z0, M_z100);
         test.propagate(null, field, M_z100, M_z200);
         double[][] result1 = field.field().get_field();
@@ -226,8 +224,7 @@ public class AngularSpectrumTest {
         ReconstructionFieldImpl field = make_odd_field();
         double[][] arg1 = field.fourier().get_arg();
         AngularSpectrum test = new AngularSpectrum();
-        test.process_beginning(M_odd_hologram, M_wavelength,
-                               M_width, M_height);
+        test.process_beginning(M_odd_hologram, M_wavelength, M_width, M_height);
         test.propagate(null, field, M_z0, z10);
         double[][] arg2 = field.fourier().get_arg();
         test.propagate(null, field, z10, z20);
@@ -247,9 +244,60 @@ public class AngularSpectrumTest {
         }
     }
     // Test that in the middle of the image, changing the wavelength should
-    // cause a linear change in the phase of the fourier transform
+    // cause an inverse-linear change in the phase of the fourier transform
     @Test public void test_wavelength_middle()
     {
+        ReconstructionFieldImpl field = make_odd_field();
+        double arg1 = field.fourier().get_arg()[2][2];
+        DistanceUnitValue z10 = new DistanceUnitValue(10, DistanceUnits.Nano);
+        DistanceUnitValue wavelength500
+            = new DistanceUnitValue(500, DistanceUnits.Nano);
+        DistanceUnitValue wavelength600
+            = new DistanceUnitValue(600, DistanceUnits.Nano);
+        DistanceUnitValue wavelength700
+            = new DistanceUnitValue(700, DistanceUnits.Nano);
+        AngularSpectrum test = new AngularSpectrum();
+
+        test.process_beginning(M_odd_hologram, wavelength500,
+                               M_width, M_height);
+        test.propagate(null, field, M_z0, z10);
+        double arg2 = field.fourier().get_arg()[2][2];
+
+        field = make_odd_field();
+        test = new AngularSpectrum();
+        test.process_beginning(M_odd_hologram, wavelength600,
+                               M_width, M_height);
+        test.propagate(null, field, M_z0, z10);
+        double arg3 = field.fourier().get_arg()[2][2];
+
+        field = make_odd_field();
+        test = new AngularSpectrum();
+        test.process_beginning(M_odd_hologram, wavelength700,
+                               M_width, M_height);
+        test.propagate(null, field, M_z0, z10);
+        double arg4 = field.fourier().get_arg()[2][2];
+
+        double dif1 = arg2 - arg1;
+        double dif2 = arg3 - arg1;
+        double dif3 = arg4 - arg1;
+        if (dif1 < 0) dif1 += 2*Math.PI;
+        if (dif2 < 0) dif2 += 2*Math.PI;
+        if (dif3 < 0) dif3 += 2*Math.PI;
+        double val1 = dif1 * 500;
+        double val2 = dif2 * 600;
+        double val3 = dif3 * 700;
+        assertEquals(val1, val2, 1e-6, "The phase should be inversely "
+            + "proportional to the wavelength.  Before propagation, the phase "
+            + "was " + arg1 + ", and after propagation at 500, 600, and 700 nm "
+            + "the phase was " + arg2 + ", " + arg3 + ", and " + arg4
+            + ", respectively.  The differences were " + dif1 + ", " + dif2
+            + ", and " + dif3 + ".");
+        assertEquals(val1, val3, 1e-6, "The phase should be inversely "
+            + "proportional to the wavelength.  Before propagation, the phase "
+            + "was " + arg1 + ", and after propagation at 500, 600, and 700 nm "
+            + "the phase was " + arg2 + ", " + arg3 + ", and " + arg4
+            + ", respectively.  The differences were " + dif1 + ", " + dif2
+            + ", and " + dif3 + ".");
     }
     // Test that in the outer parts of the image, changing the wavelength with
     // a corresponding change in z to compensate for the linear change yields

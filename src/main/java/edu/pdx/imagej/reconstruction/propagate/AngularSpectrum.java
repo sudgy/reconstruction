@@ -61,11 +61,14 @@ public class AngularSpectrum extends AbstractPropagationPlugin {
         int xbound = width2  + (hwidth  % 2 == 0 ? 0 : 1);
         int ybound = height2 + (hheight % 2 == 0 ? 0 : 1);
 
+        // The calculations of fx and fy are not perfectly exact.  Is that okay?
+        // As the size of images gets bigger, the error is less and less, so
+        // maybe it is okay.
         for (int x = 0; x < xbound; ++x) {
-            int fx = x - width2 + 1;
+            int fx = x - xbound + 1;
             double val1 = fx * fx * dx2;
             for (int y = 0; y < ybound; ++y) {
-                int fy = y - height2 + 1;
+                int fy = y - ybound + 1;
                 double val2 = val1 + fy * fy * dy2;
                 val2 = 1 - l2 * val2;
                 if (val2 < 0) val2 = 0;
