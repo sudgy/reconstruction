@@ -301,9 +301,80 @@ public class AngularSpectrumTest {
     }
     // Test that in the outer parts of the image, changing the wavelength with
     // a corresponding change in z to compensate for the linear change yields
-    // a sqrt(1-λ^2) change
+    // a sqrt(1-aλ^2) change
     @Test public void test_wavelength_outer()
     {
+        // Here's what we do:
+        // Given two different wavelengths λ₁ and λ₂ such that λ₂ = aλ₁, then
+        // the phase difference for λ₁ is Δϕ₁ = b*sqrt(1 - (cλ₁)²) for some
+        // constants b and c, and the phase difference for λ₂ is
+        // Δϕ₂ = b*sqrt(1 - a²(cλ₁)²).  Squaring each one and taking the
+        // difference yields Δϕ₁² - Δϕ₂² = b²(cλ₁)²(a² - 1).  This means that
+        // (Δϕ₁² - Δϕ₂²)/(a² - 1) = b²(cλ₁)², a constant.  So, the test computes
+        // the left-hand side of the equation and checks if it's constant for
+        // various values of λ.
+        ReconstructionFieldImpl field = make_odd_field();
+        double[][] arg1_array = field.fourier().get_arg();
+        DistanceUnitValue z5  = new DistanceUnitValue(5,  DistanceUnits.Nano);
+        DistanceUnitValue z10 = new DistanceUnitValue(10, DistanceUnits.Nano);
+        DistanceUnitValue z20 = new DistanceUnitValue(20, DistanceUnits.Nano);
+        DistanceUnitValue wavelength500
+            = new DistanceUnitValue(500, DistanceUnits.Nano);
+        DistanceUnitValue wavelength1000
+            = new DistanceUnitValue(1000, DistanceUnits.Nano);
+        DistanceUnitValue wavelength2000
+            = new DistanceUnitValue(2000, DistanceUnits.Nano);
+        AngularSpectrum test = new AngularSpectrum();
+
+        test.process_beginning(M_odd_hologram, wavelength500,
+                               M_width, M_height);
+        test.propagate(null, field, M_z0, z5);
+        double[][] arg2_array = field.fourier().get_arg();
+
+        field = make_odd_field();
+        test = new AngularSpectrum();
+        test.process_beginning(M_odd_hologram, wavelength1000,
+                               M_width, M_height);
+        test.propagate(null, field, M_z0, z10);
+        double[][] arg3_array = field.fourier().get_arg();
+
+        field = make_odd_field();
+        test = new AngularSpectrum();
+        test.process_beginning(M_odd_hologram, wavelength2000,
+                               M_width, M_height);
+        test.propagate(null, field, M_z0, z20);
+        double[][] arg4_array = field.fourier().get_arg();
+
+        for (int x = 0; x < 5; ++x) {
+            for (int y = 0; y < 5; ++y) {
+                double arg1 = arg1_array[x][y];
+                double arg2 = arg2_array[x][y];
+                double arg3 = arg3_array[x][y];
+                double arg4 = arg4_array[x][y];
+                double dif1 = arg2 - arg1;
+                double dif2 = arg3 - arg1;
+                double dif3 = arg4 - arg1;
+                if (dif1 < 0) dif1 += 2*Math.PI;
+                if (dif2 < 0) dif2 += 2*Math.PI;
+                if (dif3 < 0) dif3 += 2*Math.PI;
+                // 3 is (2² - 1), and 15 is (4² - 1)
+                double val1 = (dif1 * dif1 - dif2 * dif2) / 3;
+                double val2 = (dif2 * dif2 - dif3 * dif3) / 3;
+                double val3 = (dif1 * dif1 - dif3 * dif3) / 15;
+                assertEquals(val1, val2, 1e-6, "At (" + x + ", " + y + "), "
+                    + "before propagation, the phase was " + arg1 + ", and "
+                    + "after propagation at 500, 1000, and 2000 nm the phase "
+                    + "was " + arg2 + ", " + arg3 + ", and " + arg4 + ", "
+                    + "respectively.  The differences were " + dif1 + ", "
+                    + dif2 + ", and " + dif3 + ".");
+                assertEquals(val1, val3, 1e-6, "At (" + x + ", " + y + "), "
+                    + "before propagation, the phase was " + arg1 + ", and "
+                    + "after propagation at 500, 1000, and 2000 nm the phase "
+                    + "was " + arg2 + ", " + arg3 + ", and " + arg4 + ", "
+                    + "respectively.  The differences were " + dif1 + ", "
+                    + dif2 + ", and " + dif3 + ".");
+            }
+        }
     }
     // Test Δx TODO: describe
     @Test public void test_dimensions()
