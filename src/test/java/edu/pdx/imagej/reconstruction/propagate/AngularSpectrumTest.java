@@ -33,6 +33,8 @@ import edu.pdx.imagej.reconstruction.units.DistanceUnits;
 import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
 
 public class AngularSpectrumTest {
+    // Test that the process changes anything at all
+    // Yes, this does need to be here.  It failed after I first wrote it :/
     @Test public void test_change()
     {
         AngularSpectrum test = new AngularSpectrum();
@@ -51,6 +53,7 @@ public class AngularSpectrumTest {
             }
         }
     }
+    // Test that changing units but having the same values does nothing
     @Test public void test_units()
     {
         ReconstructionFieldImpl field = make_even_field();
@@ -83,6 +86,7 @@ public class AngularSpectrumTest {
             }
         }
     }
+    // Test that propagating forwards then backwards gives the original image
     @Test public void test_inverse_even()
     {
         ReconstructionFieldImpl field = make_even_field();
@@ -102,6 +106,7 @@ public class AngularSpectrumTest {
             }
         }
     }
+    // Test that propagating forwards then backwards gives the original image
     @Test public void test_inverse_odd()
     {
         ReconstructionFieldImpl field = make_odd_field();
@@ -121,6 +126,8 @@ public class AngularSpectrumTest {
             }
         }
     }
+    // Test that propagating forwards twice in smaller increments is the same as
+    // propagating forwards once in a bigger increment
     @Test public void test_combination_even()
     {
         ReconstructionFieldImpl field = make_even_field();
@@ -143,6 +150,8 @@ public class AngularSpectrumTest {
             }
         }
     }
+    // Test that propagating forwards twice in smaller increments is the same as
+    // propagating forwards once in a bigger increment
     @Test public void test_combination_odd()
     {
         ReconstructionFieldImpl field = make_odd_field();
@@ -165,10 +174,11 @@ public class AngularSpectrumTest {
             }
         }
     }
+    // Test that the amplitude of the fourier transform is constant
     @Test public void test_amplitude()
     {
         ReconstructionFieldImpl field = make_even_field();
-        double[][] amp1 = field.fourier().copy().get_amp();
+        double[][] amp1 = field.fourier().get_amp();
         AngularSpectrum test = new AngularSpectrum();
         test.process_beginning(M_even_hologram, M_wavelength,
                                M_width, M_height);
@@ -181,19 +191,53 @@ public class AngularSpectrumTest {
             }
         }
     }
-    @Test public void test_wavelength()
+    // Test that a change in z causes a linear change in the fourier transform's
+    // phase, no matter where on the image
+    @Test public void test_z()
     {
-
+        DistanceUnitValue z10 = new DistanceUnitValue(10, DistanceUnits.Nano);
+        DistanceUnitValue z20 = new DistanceUnitValue(20, DistanceUnits.Nano);
+        ReconstructionFieldImpl field = make_odd_field();
+        double[][] arg1 = field.fourier().get_arg();
+        AngularSpectrum test = new AngularSpectrum();
+        test.process_beginning(M_odd_hologram, M_wavelength,
+                               M_width, M_height);
+        test.propagate(null, field, M_z0, z10);
+        double[][] arg2 = field.fourier().get_arg();
+        test.propagate(null, field, z10, z20);
+        double[][] arg3 = field.fourier().get_arg();
+        for (int x = 0; x < 5; ++x) {
+            for (int y = 0; y < 5; ++y) {
+                double dif1 = arg2[x][y] - arg1[x][y];
+                double dif2 = arg3[x][y] - arg2[x][y];
+                if (dif1 < 0) dif1 += 2*Math.PI;
+                if (dif2 < 0) dif2 += 2*Math.PI;
+                String coord = "(" + x + ", " + y + ").";
+                assertEquals(dif1, dif2, 1e-6, "The difference in phase should "
+                    + "be identical at " + coord + "  The actual values were "
+                    + arg1[x][y] + ", " + arg2[x][y] + ", and " + arg3[x][y]
+                    + ".");
+            }
+        }
     }
+    // Test that in the middle of the image, changing the wavelength should
+    // cause a linear change in the phase of the fourier transform
+    @Test public void test_wavelength_middle()
+    {
+    }
+    // Test that in the outer parts of the image, changing the wavelength with
+    // a corresponding change in z to compensate for the linear change yields
+    // a sqrt(1-λ^2) change
+    @Test public void test_wavelength_outer()
+    {
+    }
+    // Test Δx TODO: describe
     @Test public void test_dimensions()
     {
 
     }
+    // Test fₓ TODO: describe
     @Test public void test_fx()
-    {
-
-    }
-    @Test public void test_z()
     {
 
     }
