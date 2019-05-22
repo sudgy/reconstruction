@@ -19,6 +19,8 @@
 
 package edu.pdx.imagej.reconstruction.propagation;
 
+import java.util.HashMap;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
@@ -376,10 +378,104 @@ public class AngularSpectrumTest {
             }
         }
     }
-    // Test Δx TODO: describe
+    // Test that Δx and Δy cause a sqrt(1-a/(Δx)^2) change
     @Test public void test_dimensions()
     {
+        // The idea here is kind of similar to test_wavelength_outer, but more
+        // complicated.  To be more general, let f(x) and g(y) be functions.
+        // The phase difference for given values of x and y is
+        // Δϕ = a*sqrt(1 - bf(x) - cg(y)) for some constants a, b and c.  The
+        // difference of the squares at x₁, y₁ and at x₂, y₂ ends up as
+        // Δϕ₁² - Δϕ₂² = a²(b(f(x₂) - f(x₁)) + c(g(y₂) - g(y₁))).  To make
+        // things simpler, let Δf = f(x₂) - f(x₁) and Δg = g(y₂) - g(y₁) so that
+        // the equation now reads Δϕ₁² - Δϕ₂² = a²(bΔf + cΔg).  To do anything
+        // with this equation, assume that there is some constant value d such
+        // that Δg = dΔf, so that (Δϕ₁² - Δϕ₂²)/Δf = a²(b + cd), a constant, and
+        // this value can be checked for being constant.
+        //
+        // In our case, x = Δx and f(Δx) = 1/Δx², and likewise for y.  We
+        // calculate Δf and Δg, calculate d, and then check if all of the values
+        // for a given d are constant.
+        double[][][] arg_array = new double[16][][];
+        int[] width_array = new int[16];
+        int[] height_array = new int[16];
+        ReconstructionFieldImpl field = make_odd_field();
+        double[][] arg0_array = field.fourier().get_arg();
+        DistanceUnitValue z10 = new DistanceUnitValue(10, DistanceUnits.Nano);
+        AngularSpectrum test;
 
+        int i = 0;
+        for (int width = 100; width < 500; width += 100) {
+            for (int height = 100; height < 500; height += 100) {
+                field = make_odd_field();
+                test = new AngularSpectrum();
+                test.process_beginning(
+                    M_odd_hologram, M_wavelength,
+                    new DistanceUnitValue(width, DistanceUnits.Micro),
+                    new DistanceUnitValue(height, DistanceUnits.Micro));
+                test.propagate(null, field, M_z0, z10);
+                arg_array[i] = field.fourier().get_arg();
+                width_array[i] = width;
+                height_array[i] = height;
+                ++i;
+            }
+        }
+        HashMap<Integer, double[][]> vals = new HashMap<>();
+        for (i = 0; i < 16; ++i) {
+            for (int j = 0; j < 16; ++j) {
+                if (i == j) continue;
+
+                double df = 1.0 / (width_array[j]  * width_array[j])
+                          - 1.0 / (width_array[i]  * width_array[i]);
+                double dg = 1.0 / (height_array[j] * height_array[j])
+                          - 1.0 / (height_array[i] * height_array[i]);
+                int d = (int)Math.round(dg / df * 1000);
+                boolean df0 = Math.abs(df) < 1e-6;
+                if (df0) d = Integer.MAX_VALUE;
+
+                double[][] current_vals = vals.get(d);
+                boolean first = current_vals == null;
+                if (first) {
+                    current_vals = new double[5][5];
+                    vals.put(d, current_vals);
+                }
+
+                for (int x = 0; x < 5; ++x) {
+                    for (int y = 0; y < 5; ++y) {
+
+                        double arg1 = arg_array[i][x][y];
+                        double arg2 = arg_array[j][x][y];
+                        double dif1 = arg1 - arg0_array[x][y];
+                        double dif2 = arg2 - arg0_array[x][y];
+                        if (dif1 < 0) dif1 += 2*Math.PI;
+                        if (dif2 < 0) dif2 += 2*Math.PI;
+                        double val = dif1*dif1 - dif2*dif2;
+                        if (df0) val /= dg;
+                        else val /= df;
+
+                        if (first) current_vals[x][y] = val;
+                        else {
+                            assertEquals(current_vals[x][y], val, 1e-6,
+                                  "\ni       = " + i
+                                + "\nj       = " + j
+                                + "\nx       = " + x
+                                + "\ny       = " + y
+                                + "\ndf      = " + df
+                                + "\ndg      = " + dg
+                                + "\narg1    = " + arg1
+                                + "\narg2    = " + arg2
+                                + "\ndif1    = " + dif1
+                                + "\ndif2    = " + dif2
+                                + "\nwidth1  = " + width_array[i]
+                                + "\nwidth2  = " + width_array[j]
+                                + "\nheight1 = " + height_array[i]
+                                + "\nheight2 = " + height_array[j]
+                            );
+                        }
+                    }
+                }
+            }
+        }
     }
     // Test fₓ TODO: describe
     @Test public void test_fx()
