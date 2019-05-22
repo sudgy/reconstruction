@@ -560,6 +560,20 @@ public class AngularSpectrumTest {
             }
         }
     }
+    // Test that the algorithm deals with the negative square root correctly
+    @Test public void test_square_root()
+    {
+        ReconstructionFieldImpl field = make_odd_field();
+        double arg1 = field.fourier().get_arg()[0][0];
+        AngularSpectrum test = new AngularSpectrum();
+        // Yes, the size and the wavelength are supposed to be swapped.  It
+        // makes the square root negative.
+        test.process_beginning(M_odd_hologram, M_width,
+                               M_wavelength, M_wavelength);
+        test.propagate(null, field, M_z0, M_z100);
+        double arg2 = field.fourier().get_arg()[0][0];
+        assertEquals(arg1, arg2);
+    }
 
     private static ImagePlus M_even_hologram
         = new ImagePlus("", new FloatProcessor(new float[4][4]));
