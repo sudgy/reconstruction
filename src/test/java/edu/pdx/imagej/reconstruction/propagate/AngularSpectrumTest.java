@@ -477,10 +477,88 @@ public class AngularSpectrumTest {
             }
         }
     }
-    // Test fₓ TODO: describe
+    // Test that fₓ and f_y decrease the change in phase further out on the
+    // Fourier transform all at the same rate
     @Test public void test_fx()
     {
+        // Sadly, because fₓ and f_y are allowed to be off by tiny amounts, no
+        // exact answer can be calculated here.  The best we can do is check
+        // that the phase changes slower on the outside than on the inside.
+        DistanceUnitValue z10 = new DistanceUnitValue(10, DistanceUnits.Nano);
+        ReconstructionFieldImpl field = make_odd_field();
+        double[][] arg1_array = field.fourier().get_arg();
+        AngularSpectrum test = new AngularSpectrum();
+        test.process_beginning(M_odd_hologram, M_wavelength, M_width, M_z200);
+        test.propagate(null, field, M_z0, z10);
+        double[][] arg2_array = field.fourier().get_arg();
 
+        double[][] difs = new double[5][5];
+        for (int x = 0; x < 5; ++x) {
+            for (int y = 0; y < 5; ++y) {
+                double arg1 = arg1_array[x][y];
+                double arg2 = arg2_array[x][y];
+                double dif = arg2 - arg1;
+                if (dif < 0) dif += 2*Math.PI;
+                difs[x][y] = dif;
+            }
+        }
+        // At this point difs should be something like
+        // 4 3 2 3 4
+        // 3 2 1 2 3
+        // 2 1 0 1 2
+        // 3 2 1 2 3
+        // 4 3 2 3 4
+        // We want to test that all the values increase as they should, and that
+        // all values are equal that should be equal.
+
+        // Check that all that need to be equal are equal
+        assertEquals(difs[2][1], difs[2][3], 1e-6);
+        assertEquals(difs[2][0], difs[2][4], 1e-6);
+        assertEquals(difs[1][2], difs[3][2], 1e-6);
+        assertEquals(difs[0][2], difs[4][2], 1e-6);
+
+        assertEquals(difs[1][1], difs[1][3], 1e-6);
+        assertEquals(difs[1][1], difs[3][3], 1e-6);
+        assertEquals(difs[1][1], difs[3][1], 1e-6);
+        assertEquals(difs[0][0], difs[0][4], 1e-6);
+        assertEquals(difs[0][0], difs[4][4], 1e-6);
+        assertEquals(difs[0][0], difs[4][0], 1e-6);
+
+        assertEquals(difs[1][0], difs[3][0], 1e-6);
+        assertEquals(difs[1][0], difs[3][4], 1e-6);
+        assertEquals(difs[1][0], difs[1][4], 1e-6);
+        assertEquals(difs[0][1], difs[0][3], 1e-6);
+        assertEquals(difs[0][1], difs[4][3], 1e-6);
+        assertEquals(difs[0][1], difs[4][1], 1e-6);
+
+        // Check that all that need to be greater than are greater than
+        for (int x = -2; x <= 2; ++x) {
+            for (int y = -2; y <= 2; ++y) {
+                int ix = x + 2;
+                int iy = y + 2;
+                String err = "\nx    = " + x
+                           + "\ny    = " + y
+                           + "\ndif1 = " + difs[ix][iy]
+                           + "\ndif2 = ";
+
+                if (x >= 0 && x != 2) {
+                    assertTrue(difs[ix+1][iy] < difs[ix][iy],
+                               err + difs[ix+1][iy]);
+                }
+                if (x <= 0 && x != -2) {
+                    assertTrue(difs[ix-1][iy] < difs[ix][iy],
+                               err + difs[ix-1][iy]);
+                }
+                if (y >= 0 && y != 2) {
+                    assertTrue(difs[ix][iy+1] < difs[ix][iy],
+                               err + difs[ix][iy+1]);
+                }
+                if (y <= 0 && y != -2) {
+                    assertTrue(difs[ix][iy-1] < difs[ix][iy],
+                               err + difs[ix][iy-1]);
+                }
+            }
+        }
     }
 
     private static ImagePlus M_even_hologram
