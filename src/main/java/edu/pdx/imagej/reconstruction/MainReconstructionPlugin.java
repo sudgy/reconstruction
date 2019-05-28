@@ -19,7 +19,4 @@
 
 package edu.pdx.imagej.reconstruction;
 
-import org.scijava.plugin.AbstractRichPlugin;
-
-public abstract class AbstractReconstructionPlugin
-    extends AbstractRichPlugin implements MainReconstructionPlugin {}
+public interface MainReconstructionPlugin extends ReconstructionPlugin {}

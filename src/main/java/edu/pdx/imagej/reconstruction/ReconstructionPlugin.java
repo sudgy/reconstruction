@@ -27,11 +27,10 @@ import ij.ImagePlus;
 import org.scijava.Prioritized;
 import net.imagej.ImageJPlugin;
 
-import edu.pdx.imagej.dynamic_parameters.DParameter;
+import edu.pdx.imagej.dynamic_parameters.ParameterPlugin;
 import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
 
-public interface ReconstructionPlugin extends ImageJPlugin, Prioritized {
-    default DParameter param() {return null;}
+public interface ReconstructionPlugin extends ImageJPlugin, ParameterPlugin {
     default void read_plugins(
         LinkedHashMap<Class<?>, ReconstructionPlugin> plugins) {}
 

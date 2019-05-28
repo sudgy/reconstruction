@@ -37,8 +37,12 @@ public class ReconstructionPluginService
         LinkedHashMap<Class<?>, ReconstructionPlugin> result =
             new LinkedHashMap<>();
         for (PluginInfo<ReconstructionPlugin> info : getPlugins()) {
-            ReconstructionPlugin plugin = pluginService().createInstance(info);
-            result.put(plugin.getClass(), plugin);
+            if (MainReconstructionPlugin.class.isAssignableFrom(
+                                                    info.getPluginClass())) {
+                ReconstructionPlugin plugin
+                    = pluginService().createInstance(info);
+                result.put(plugin.getClass(), plugin);
+            }
         }
         return result;
     }
