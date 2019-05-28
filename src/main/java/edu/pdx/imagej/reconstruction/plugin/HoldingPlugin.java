@@ -31,7 +31,7 @@ import edu.pdx.imagej.reconstruction.ConstReconstructionField;
 import edu.pdx.imagej.reconstruction.ReconstructionField;
 import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
 
-public interface SubPlugin<T extends ReconstructionPlugin>
+public interface HoldingPlugin<T extends ReconstructionPlugin>
     extends ReconstructionPlugin
 {
     @Override

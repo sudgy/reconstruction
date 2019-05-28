@@ -29,12 +29,14 @@ import org.scijava.plugin.Plugin;
 
 import edu.pdx.imagej.reconstruction.plugin.AbstractReconstructionPlugin;
 import edu.pdx.imagej.reconstruction.plugin.ReconstructionPlugin;
+import edu.pdx.imagej.reconstruction.plugin.MainReconstructionPlugin;
 import edu.pdx.imagej.reconstruction.ConstReconstructionField;
 import edu.pdx.imagej.reconstruction.ReconstructionField;
 import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
 
 @Plugin(type = ReconstructionPlugin.class)
-public class Status extends AbstractReconstructionPlugin {
+public class Status extends AbstractReconstructionPlugin
+                    implements MainReconstructionPlugin {
     @Override public void process_hologram_param(ImagePlus hologram)
         {M_hologram = hologram;}
     @Override public void process_ts_param(AbstractList<Integer> ts)

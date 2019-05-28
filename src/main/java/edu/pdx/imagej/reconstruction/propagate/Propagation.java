@@ -32,11 +32,13 @@ import edu.pdx.imagej.dynamic_parameters.DParameter;
 import edu.pdx.imagej.reconstruction.ConstReconstructionField;
 import edu.pdx.imagej.reconstruction.plugin.ReconstructionPlugin;
 import edu.pdx.imagej.reconstruction.plugin.AbstractReconstructionPlugin;
+import edu.pdx.imagej.reconstruction.plugin.MainReconstructionPlugin;
 import edu.pdx.imagej.reconstruction.ReconstructionField;
 import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
 
 @Plugin(type = ReconstructionPlugin.class, priority = Priority.FIRST)
-public class Propagation extends AbstractReconstructionPlugin {
+public class Propagation extends AbstractReconstructionPlugin
+                         implements MainReconstructionPlugin {
     public Propagation() {}
     public Propagation(PropagationPlugin plugin) {M_plugin = plugin;}
     @Override public DParameter param() {return M_param;}

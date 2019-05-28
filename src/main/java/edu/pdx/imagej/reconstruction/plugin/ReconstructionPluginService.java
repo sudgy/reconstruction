@@ -37,11 +37,16 @@ public class ReconstructionPluginService
         LinkedHashMap<Class<?>, ReconstructionPlugin> result =
             new LinkedHashMap<>();
         for (PluginInfo<ReconstructionPlugin> info : getPlugins()) {
-            if (MainReconstructionPlugin.class.isAssignableFrom(
-                                                    info.getPluginClass())) {
+            Class<?> cls = info.getPluginClass();
+            if (MainReconstructionPlugin.class.isAssignableFrom(cls)) {
                 ReconstructionPlugin plugin
                     = pluginService().createInstance(info);
                 result.put(plugin.getClass(), plugin);
+            }
+            else if (!SubReconstructionPlugin.class.isAssignableFrom(cls)) {
+                throw new RuntimeException(cls.getName() + " must inherit from "
+                    + "either MainReconstructionPlugin or "
+                    + "SubReconstructionPlugin.");
             }
         }
         return result;

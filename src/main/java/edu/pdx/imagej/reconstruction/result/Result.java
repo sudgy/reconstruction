@@ -38,12 +38,14 @@ import org.scijava.ui.UIService;
 import edu.pdx.imagej.dynamic_parameters.DParameter;
 import edu.pdx.imagej.reconstruction.plugin.ReconstructionPlugin;
 import edu.pdx.imagej.reconstruction.plugin.AbstractReconstructionPlugin;
+import edu.pdx.imagej.reconstruction.plugin.MainReconstructionPlugin;
 import edu.pdx.imagej.reconstruction.ConstReconstructionField;
 import edu.pdx.imagej.reconstruction.ReconstructionField;
 import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
 
 @Plugin(type = ReconstructionPlugin.class, priority = Priority.LAST)
-public class Result extends AbstractReconstructionPlugin {
+public class Result extends AbstractReconstructionPlugin
+                    implements MainReconstructionPlugin {
     @Parameter UIService P_ui;
 
     @Override

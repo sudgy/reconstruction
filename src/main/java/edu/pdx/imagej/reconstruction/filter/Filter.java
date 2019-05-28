@@ -34,11 +34,13 @@ import org.scijava.plugin.Plugin;
 
 import edu.pdx.imagej.reconstruction.plugin.ReconstructionPlugin;
 import edu.pdx.imagej.reconstruction.plugin.AbstractReconstructionPlugin;
+import edu.pdx.imagej.reconstruction.plugin.MainReconstructionPlugin;
 import edu.pdx.imagej.reconstruction.ReconstructionField;
 import edu.pdx.imagej.reconstruction.ConstReconstructionField;
 
 @Plugin(type = ReconstructionPlugin.class, priority = Priority.LAST)
-public class Filter extends AbstractReconstructionPlugin {
+public class Filter extends AbstractReconstructionPlugin
+                    implements MainReconstructionPlugin {
     @Override
     public void process_original_hologram(ConstReconstructionField field)
     {
