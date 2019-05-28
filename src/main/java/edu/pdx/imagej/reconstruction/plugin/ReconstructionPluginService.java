@@ -22,6 +22,7 @@ package edu.pdx.imagej.reconstruction.plugin;
 import java.util.LinkedHashMap;
 import java.util.ArrayList;
 
+import org.scijava.InstantiableException;
 import org.scijava.plugin.AbstractPTService;
 import org.scijava.plugin.Plugin;
 import org.scijava.plugin.PluginInfo;
@@ -37,7 +38,13 @@ public class ReconstructionPluginService
         LinkedHashMap<Class<?>, ReconstructionPlugin> result =
             new LinkedHashMap<>();
         for (PluginInfo<ReconstructionPlugin> info : getPlugins()) {
-            Class<?> cls = info.getPluginClass();
+            Class<?> cls;
+            try {
+                cls = info.loadClass();
+            }
+            catch (InstantiableException e) {
+                throw new RuntimeException(e);
+            }
             if (MainReconstructionPlugin.class.isAssignableFrom(cls)) {
                 ReconstructionPlugin plugin
                     = pluginService().createInstance(info);
