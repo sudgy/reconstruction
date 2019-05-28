@@ -17,10 +17,6 @@
  * David Cohoe at dcohoe@pdx.edu.
  */
 
-package edu.pdx.imagej.reconstruction;
+package edu.pdx.imagej.reconstruction.plugin;
 
-import edu.pdx.imagej.dynamic_parameters.ImageParameter;
-
-public interface ReconstructionPluginParameter {
-    public void set_hologram(ImageParameter hologram);
-}
+public interface MainReconstructionPlugin extends ReconstructionPlugin {}

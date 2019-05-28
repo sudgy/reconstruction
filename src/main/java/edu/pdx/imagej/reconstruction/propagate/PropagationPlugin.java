@@ -29,7 +29,7 @@ import net.imagej.ImageJPlugin;
 import edu.pdx.imagej.dynamic_parameters.DParameter;
 import edu.pdx.imagej.reconstruction.ConstReconstructionField;
 import edu.pdx.imagej.reconstruction.ReconstructionField;
-import edu.pdx.imagej.reconstruction.ReconstructionPlugin;
+import edu.pdx.imagej.reconstruction.plugin.ReconstructionPlugin;
 import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
 
 public interface PropagationPlugin extends ImageJPlugin, Prioritized {

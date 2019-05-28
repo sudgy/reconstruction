@@ -38,6 +38,8 @@ import edu.pdx.imagej.dynamic_parameters.ImageParameter;
 import edu.pdx.imagej.reconstruction.units.DistanceUnits;
 import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
 import edu.pdx.imagej.reconstruction.units.UnitService;
+import edu.pdx.imagej.reconstruction.plugin.ReconstructionPlugin;
+import edu.pdx.imagej.reconstruction.plugin.PluginParameter;
 
 @Plugin(type = Command.class, menuPath = "Plugins > DHM > Reconstruction")
 public class ReconstructionCommand implements Command, Initializable {

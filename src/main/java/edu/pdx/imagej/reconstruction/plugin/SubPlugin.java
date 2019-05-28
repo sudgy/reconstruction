@@ -17,7 +17,7 @@
  * David Cohoe at dcohoe@pdx.edu.
  */
 
-package edu.pdx.imagej.reconstruction;
+package edu.pdx.imagej.reconstruction.plugin;
 
 import java.util.AbstractList;
 import java.util.LinkedHashMap;
@@ -27,6 +27,8 @@ import ij.ImagePlus;
 import org.scijava.plugin.AbstractRichPlugin;
 
 import edu.pdx.imagej.dynamic_parameters.PluginParameter;
+import edu.pdx.imagej.reconstruction.ConstReconstructionField;
+import edu.pdx.imagej.reconstruction.ReconstructionField;
 import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
 
 public interface SubPlugin<T extends ReconstructionPlugin>

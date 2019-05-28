@@ -32,8 +32,8 @@ import org.scijava.Priority;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
-import edu.pdx.imagej.reconstruction.ReconstructionPlugin;
-import edu.pdx.imagej.reconstruction.AbstractReconstructionPlugin;
+import edu.pdx.imagej.reconstruction.plugin.ReconstructionPlugin;
+import edu.pdx.imagej.reconstruction.plugin.AbstractReconstructionPlugin;
 import edu.pdx.imagej.reconstruction.ReconstructionField;
 import edu.pdx.imagej.reconstruction.ConstReconstructionField;
 

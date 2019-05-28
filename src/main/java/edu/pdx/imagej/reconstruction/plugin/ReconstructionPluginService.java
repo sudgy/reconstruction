@@ -17,7 +17,7 @@
  * David Cohoe at dcohoe@pdx.edu.
  */
 
-package edu.pdx.imagej.reconstruction;
+package edu.pdx.imagej.reconstruction.plugin;
 
 import java.util.LinkedHashMap;
 import java.util.ArrayList;
