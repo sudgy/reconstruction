@@ -31,40 +31,21 @@ import org.scijava.plugin.Plugin;
 import edu.pdx.imagej.dynamic_parameters.DParameter;
 import edu.pdx.imagej.reconstruction.ConstReconstructionField;
 import edu.pdx.imagej.reconstruction.plugin.ReconstructionPlugin;
-import edu.pdx.imagej.reconstruction.plugin.AbstractReconstructionPlugin;
+import edu.pdx.imagej.reconstruction.plugin.HoldingSinglePlugin;
 import edu.pdx.imagej.reconstruction.plugin.MainReconstructionPlugin;
 import edu.pdx.imagej.reconstruction.ReconstructionField;
 import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
 
 @Plugin(type = ReconstructionPlugin.class, priority = Priority.FIRST)
-public class Propagation extends AbstractReconstructionPlugin
+public class Propagation extends HoldingSinglePlugin<PropagationPlugin>
                          implements MainReconstructionPlugin {
-    public Propagation() {}
-    public Propagation(PropagationPlugin plugin) {M_plugin = plugin;}
-    @Override public DParameter param() {return M_param;}
-    @Override public void read_plugins(
-        LinkedHashMap<Class<?>, ReconstructionPlugin> plugins)
+    public Propagation()
     {
-        get_plugin().read_plugins(plugins);
+        super("Propagation Algorithm", PropagationPlugin.class);
     }
-    @Override public void process_hologram_param(ImagePlus hologram)
+    public Propagation(PropagationPlugin plugin)
     {
-        M_hologram = hologram;
-    }
-    @Override public void process_wavelength_param(DistanceUnitValue wavelength)
-    {
-        M_wavelength = wavelength;
-    }
-    @Override public void process_dimensions_param(DistanceUnitValue width,
-                                                   DistanceUnitValue height)
-    {
-        M_width = width;
-        M_height = height;
-    }
-    @Override public void process_beginning()
-    {
-        get_plugin()
-               .process_beginning(M_hologram, M_wavelength, M_width, M_height);
+        super(plugin);
     }
     @Override public void process_propagated_field(
         ConstReconstructionField original_field,
@@ -77,17 +58,5 @@ public class Propagation extends AbstractReconstructionPlugin
         get_plugin().propagate(original_field, current_field, z_from, z_to);
     }
 
-    private PropagationPlugin get_plugin()
-    {
-        if (M_plugin == null) M_plugin = M_param.get_value();
-        return M_plugin;
-    }
-
-    private PropagationParameter M_param = new PropagationParameter();
-    private PropagationPlugin M_plugin;
-    private ImagePlus M_hologram;
-    private DistanceUnitValue M_wavelength;
-    private DistanceUnitValue M_width;
-    private DistanceUnitValue M_height;
     private HashSet<Integer> M_ts_processed = new HashSet<>();
 }

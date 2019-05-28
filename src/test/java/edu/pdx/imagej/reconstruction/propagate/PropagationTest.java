@@ -53,6 +53,7 @@ public class PropagationTest {
         assertEquals(plugin.M_wavelength.as_micro(), 100);
         assertEquals(plugin.M_width.as_micro(), 200);
         assertEquals(plugin.M_height.as_micro(), 300);
+        assertTrue(plugin.M_processed_beginning);
 
         prop.process_propagated_field(null, null, 0, width, width);
         assertTrue(plugin.M_processed);
@@ -74,15 +75,26 @@ public class PropagationTest {
 
     private static class TestPlugin extends AbstractPropagationPlugin {
         @Override
-        public void process_beginning(ImagePlus hologram,
-                                      DistanceUnitValue wavelength,
-                                      DistanceUnitValue width,
-                                      DistanceUnitValue height)
+        public void process_hologram_param(ImagePlus hologram)
         {
             M_hologram = hologram;
+        }
+        @Override
+        public void process_wavelength_param(DistanceUnitValue wavelength)
+        {
             M_wavelength = wavelength;
+        }
+        @Override
+        public void process_dimensions_param(DistanceUnitValue width,
+                                             DistanceUnitValue height)
+        {
             M_width = width;
             M_height = height;
+        }
+        @Override
+        public void process_beginning()
+        {
+            M_processed_beginning = true;
         }
         @Override
         public void process_starting_field(ConstReconstructionField field)
@@ -103,6 +115,7 @@ public class PropagationTest {
         public DistanceUnitValue M_width;
         public DistanceUnitValue M_height;
 
+        public boolean M_processed_beginning = false;
         public boolean M_processed = false;
         public boolean M_propagated = false;
     }

@@ -29,18 +29,10 @@ import net.imagej.ImageJPlugin;
 import edu.pdx.imagej.dynamic_parameters.DParameter;
 import edu.pdx.imagej.reconstruction.ConstReconstructionField;
 import edu.pdx.imagej.reconstruction.ReconstructionField;
-import edu.pdx.imagej.reconstruction.plugin.ReconstructionPlugin;
+import edu.pdx.imagej.reconstruction.plugin.SubReconstructionPlugin;
 import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
 
-public interface PropagationPlugin extends ImageJPlugin, Prioritized {
-    default DParameter param() {return null;}
-    default void read_plugins(
-        LinkedHashMap<Class<?>, ReconstructionPlugin> plugins) {}
-
-    default void process_beginning(ImagePlus hologram,
-                                   DistanceUnitValue wavelength,
-                                   DistanceUnitValue width,
-                                   DistanceUnitValue height) {}
+public interface PropagationPlugin extends SubReconstructionPlugin {
     default void process_starting_field(ConstReconstructionField field) {}
     void propagate(ConstReconstructionField original_field,
                    ReconstructionField current_field,

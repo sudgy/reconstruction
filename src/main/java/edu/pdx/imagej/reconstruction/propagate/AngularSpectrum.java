@@ -37,29 +37,41 @@ import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
         priority = Priority.VERY_HIGH)
 public class AngularSpectrum extends AbstractPropagationPlugin {
     @Override
-    public void process_beginning(ImagePlus hologram,
-                                  DistanceUnitValue wavelength,
-                                  DistanceUnitValue width,
-                                  DistanceUnitValue height)
+    public void process_hologram_param(ImagePlus hologram)
     {
-        int hwidth = hologram.getWidth();
-        int hheight = hologram.getHeight();
+        M_pixel_width = hologram.getWidth();
+        M_pixel_height = hologram.getHeight();
+    }
+    @Override
+    public void process_wavelength_param(DistanceUnitValue wavelength)
+    {
+        M_wavelength = wavelength.as_micro();
+    }
+    @Override
+    public void process_dimensions_param(DistanceUnitValue width,
+                                         DistanceUnitValue height)
+    {
+        M_width = width.as_micro();
+        M_height = height.as_micro();
+    }
+    @Override
+    public void process_beginning()
+    {
         // Eight for sizeof(double), two for real and imaginary
-        M_image_memory_size = hwidth * hheight * 8 * 2;
+        M_image_memory_size = M_pixel_width * M_pixel_height * 8 * 2;
 
-        double lambda = wavelength.as_micro();
 
-        M_core = new double[hwidth][hheight];
-        double k = 2.0 * Math.PI / lambda;
-        double l2 = lambda * lambda;
-        double dx = 1.0 / width.as_micro();
+        M_core = new double[M_pixel_width][M_pixel_height];
+        double k = 2.0 * Math.PI / M_wavelength;
+        double l2 = M_wavelength * M_wavelength;
+        double dx = 1.0 / M_width;
         double dx2 = dx * dx;
-        double dy = 1.0 / height.as_micro();
+        double dy = 1.0 / M_height;
         double dy2 = dy * dy;
-        int width2 = hwidth / 2;
-        int height2 = hheight / 2;
-        int xbound = width2  + (hwidth  % 2 == 0 ? 0 : 1);
-        int ybound = height2 + (hheight % 2 == 0 ? 0 : 1);
+        int width2 = M_pixel_width / 2;
+        int height2 = M_pixel_height / 2;
+        int xbound = width2  + (M_pixel_width  % 2 == 0 ? 0 : 1);
+        int ybound = height2 + (M_pixel_height % 2 == 0 ? 0 : 1);
 
         // The calculations of fx and fy are not perfectly exact.  Is that okay?
         // As the size of images gets bigger, the error is less and less, so
@@ -73,10 +85,10 @@ public class AngularSpectrum extends AbstractPropagationPlugin {
                 val2 = 1 - l2 * val2;
                 if (val2 < 0) val2 = 0;
                 else val2 = k*Math.sqrt(val2);
-                M_core[x][y]                    =
-                M_core[x][hheight-y-1]          =
-                M_core[hwidth-x-1][y]           =
-                M_core[hwidth-x-1][hheight-y-1] = val2;
+                M_core[x][y]                                  =
+                M_core[x][M_pixel_height-y-1]                 =
+                M_core[M_pixel_width-x-1][y]                  =
+                M_core[M_pixel_width-x-1][M_pixel_height-y-1] = val2;
             }
         }
     }
@@ -89,24 +101,22 @@ public class AngularSpectrum extends AbstractPropagationPlugin {
         int key = (int)Math.round(dz * 1000);
         double[][] kernel = M_kernels.get(key);
         if (kernel == null) {
-            int width = M_core.length;
-            int height = M_core[0].length;
-            int width2 = width / 2;
-            int height2 = height / 2;
-            int xbound = width2  + (width  % 2 == 0 ? 0 : 1);
-            int ybound = height2 + (height % 2 == 0 ? 0 : 1);
-            kernel = new double[width][height*2];
+            int width2 = M_pixel_width / 2;
+            int height2 = M_pixel_height / 2;
+            int xbound = width2  + (M_pixel_width  % 2 == 0 ? 0 : 1);
+            int ybound = height2 + (M_pixel_height % 2 == 0 ? 0 : 1);
+            kernel = new double[M_pixel_width][M_pixel_height*2];
             for (int x = 0; x < xbound; ++x) {
                 for (int y = 0; y < ybound; ++y) {
-                    kernel[x][2*y]                    =
-                    kernel[x][2*(height-y-1)]         =
-                    kernel[width-x-1][2*y]            =
-                    kernel[width-x-1][2*(height-y-1)] =
+                    kernel[x][2*y]                                    =
+                    kernel[x][2*(M_pixel_height-y-1)]                 =
+                    kernel[M_pixel_width-x-1][2*y]                    =
+                    kernel[M_pixel_width-x-1][2*(M_pixel_height-y-1)] =
                         Math.cos(dz * M_core[x][y]);
-                    kernel[x][2*y+1]                    =
-                    kernel[x][2*(height-y-1)+1]         =
-                    kernel[width-x-1][2*y+1]            =
-                    kernel[width-x-1][2*(height-y-1)+1] =
+                    kernel[x][2*y+1]                                    =
+                    kernel[x][2*(M_pixel_height-y-1)+1]                 =
+                    kernel[M_pixel_width-x-1][2*y+1]                    =
+                    kernel[M_pixel_width-x-1][2*(M_pixel_height-y-1)+1] =
                         Math.sin(dz * M_core[x][y]);
                 }
             }
@@ -128,4 +138,10 @@ public class AngularSpectrum extends AbstractPropagationPlugin {
     private HashMap<Integer, double[][]> M_kernels = new HashMap<>();
     // The size of a single image, in bytes.
     private long M_image_memory_size;
+
+    int M_pixel_width;
+    int M_pixel_height;
+    double M_wavelength;
+    double M_width;
+    double M_height;
 }
