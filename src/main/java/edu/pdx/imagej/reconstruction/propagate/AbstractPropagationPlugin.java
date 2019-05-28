@@ -21,6 +21,22 @@ package edu.pdx.imagej.reconstruction.propagation;
 
 import org.scijava.plugin.AbstractRichPlugin;
 
+import edu.pdx.imagej.reconstruction.ConstReconstructionField;
+import edu.pdx.imagej.reconstruction.ReconstructionField;
+import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
+
 public abstract class AbstractPropagationPlugin
     extends AbstractRichPlugin
-    implements PropagationPlugin {}
+    implements PropagationPlugin
+{
+    @Override
+    final public void process_propagated_field(
+        ConstReconstructionField original_field,
+        ReconstructionField current_field,
+        int t, DistanceUnitValue z_from, DistanceUnitValue z_to)
+    {
+        PropagationPlugin.super.process_propagated_field(original_field,
+                                                         current_field,
+                                                         t, z_from, z_to);
+    }
+}

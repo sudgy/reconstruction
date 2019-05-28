@@ -37,4 +37,14 @@ public interface PropagationPlugin extends SubReconstructionPlugin {
     void propagate(ConstReconstructionField original_field,
                    ReconstructionField current_field,
                    DistanceUnitValue z_from, DistanceUnitValue z_to);
+    @Override
+    default void process_propagated_field(
+        ConstReconstructionField original_field,
+        ReconstructionField current_field,
+        int t, DistanceUnitValue z_from, DistanceUnitValue z_to)
+    {
+        throw new UnsupportedOperationException("PropagationPlugin should use "
+            + "the process_starting_field and propagate functions instead of "
+            + "process_propagated_field.");
+    }
 }
