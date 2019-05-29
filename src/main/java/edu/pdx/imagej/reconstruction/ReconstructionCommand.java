@@ -39,17 +39,17 @@ import edu.pdx.imagej.reconstruction.units.DistanceUnits;
 import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
 import edu.pdx.imagej.reconstruction.units.UnitService;
 import edu.pdx.imagej.reconstruction.plugin.ReconstructionPlugin;
-import edu.pdx.imagej.reconstruction.plugin.PluginParameter;
+import edu.pdx.imagej.reconstruction.plugin.AllPluginsParameter;
 
 @Plugin(type = Command.class, menuPath = "Plugins > DHM > Reconstruction")
 public class ReconstructionCommand implements Command, Initializable {
-    @Parameter private ImageParameter  P_hologram;
-    @Parameter private DoubleParameter P_wavelength;
-    @Parameter private DoubleParameter P_width;
-    @Parameter private DoubleParameter P_height;
-    @Parameter private TParameter      P_ts;
-    @Parameter private ZParameter      P_zs;
-    @Parameter private PluginParameter P_plugins;
+    @Parameter private ImageParameter      P_hologram;
+    @Parameter private DoubleParameter     P_wavelength;
+    @Parameter private DoubleParameter     P_width;
+    @Parameter private DoubleParameter     P_height;
+    @Parameter private TParameter          P_ts;
+    @Parameter private ZParameter          P_zs;
+    @Parameter private AllPluginsParameter P_plugins;
 
     @Parameter private StatusService P_status;
     @Parameter private UnitService P_units;
@@ -66,7 +66,7 @@ public class ReconstructionCommand implements Command, Initializable {
                                        P_units.image().toString());
         P_ts = new TParameter(P_hologram, TParameter.PossibleTypes.All, "Main");
         P_zs = new ZParameter();
-        P_plugins = new PluginParameter(P_hologram);
+        P_plugins = new AllPluginsParameter(P_hologram);
 
         P_wavelength.set_bounds(Double.MIN_VALUE, Double.MAX_VALUE);
         P_width.set_bounds(Double.MIN_VALUE, Double.MAX_VALUE);

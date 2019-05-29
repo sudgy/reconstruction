@@ -19,27 +19,8 @@
 
 package edu.pdx.imagej.reconstruction.plugin;
 
-import org.scijava.plugin.Plugin;
-
-import edu.pdx.imagej.dynamic_parameters.PluginParameter;
 import edu.pdx.imagej.dynamic_parameters.ImageParameter;
-import edu.pdx.imagej.dynamic_parameters.DParameter;
 
-@Plugin(type = DParameter.class)
-public class ReconstructionPluginParameter<T extends ReconstructionPlugin>
-             extends PluginParameter<T> implements HologramPluginParameter {
-    public ReconstructionPluginParameter(String label, Class<T> cls)
-    {
-        super(label, cls);
-    }
-    @Override
-    public void set_hologram(ImageParameter hologram)
-    {
-        for (T plugin : get_all_plugins()) {
-            DParameter<?> param = plugin.param();
-            if (param instanceof HologramPluginParameter) {
-                ((HologramPluginParameter)param).set_hologram(hologram);
-            }
-        }
-    }
+public interface HologramPluginParameter {
+    public void set_hologram(ImageParameter hologram);
 }

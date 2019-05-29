@@ -21,20 +21,21 @@ package edu.pdx.imagej.reconstruction.plugin;
 
 import java.util.Collections;
 
+import edu.pdx.imagej.dynamic_parameters.DParameter;
 import edu.pdx.imagej.dynamic_parameters.PluginParameter;
 
 public class HoldingSinglePlugin<T extends ReconstructionPlugin>
              extends AbstractHoldingPlugin<T> {
     public HoldingSinglePlugin(String label, Class<T> cls)
     {
-        M_param = new PluginParameter<T>(label, cls);
+        M_param = new ReconstructionPluginParameter<T>(label, cls);
     }
     public HoldingSinglePlugin(T plugin)
     {
         M_plugin = plugin;
     }
     @Override
-    public PluginParameter<T> param() {return M_param;}
+    public DParameter<T> param() {return M_param;}
     public T get_plugin()
     {
         if (M_plugin == null) M_plugin = M_param.get_value();
@@ -47,6 +48,6 @@ public class HoldingSinglePlugin<T extends ReconstructionPlugin>
     }
     @Override public void sort_plugins() {}
 
-    private PluginParameter<T> M_param;
+    private ReconstructionPluginParameter<T> M_param;
     private T M_plugin;
 }

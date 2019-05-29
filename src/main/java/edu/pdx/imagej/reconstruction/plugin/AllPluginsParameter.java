@@ -19,27 +19,47 @@
 
 package edu.pdx.imagej.reconstruction.plugin;
 
-import org.scijava.plugin.Plugin;
+import java.util.LinkedHashMap;
+import java.util.Collection;
 
-import edu.pdx.imagej.dynamic_parameters.PluginParameter;
+import org.scijava.plugin.Plugin;
+import org.scijava.plugin.Parameter;
+
+import edu.pdx.imagej.dynamic_parameters.HoldingParameter;
 import edu.pdx.imagej.dynamic_parameters.ImageParameter;
 import edu.pdx.imagej.dynamic_parameters.DParameter;
 
 @Plugin(type = DParameter.class)
-public class ReconstructionPluginParameter<T extends ReconstructionPlugin>
-             extends PluginParameter<T> implements HologramPluginParameter {
-    public ReconstructionPluginParameter(String label, Class<T> cls)
+public class AllPluginsParameter extends HoldingParameter<
+        LinkedHashMap<Class<?>, ReconstructionPlugin>
+    > {
+    @Parameter private ReconstructionPluginService P_plugin_service;
+
+    public AllPluginsParameter(ImageParameter hologram)
     {
-        super(label, cls);
+        super("PluginParameters");
+        M_hologram = hologram;
     }
+
     @Override
-    public void set_hologram(ImageParameter hologram)
+    public void initialize()
     {
-        for (T plugin : get_all_plugins()) {
-            DParameter<?> param = plugin.param();
+        M_plugins = P_plugin_service.get_plugins();
+        for (ReconstructionPlugin plugin : M_plugins.values()) {
+            DParameter param = plugin.param();
+            if (param != null) add_premade_parameter(param);
             if (param instanceof HologramPluginParameter) {
-                ((HologramPluginParameter)param).set_hologram(hologram);
+                ((HologramPluginParameter)param).set_hologram(M_hologram);
             }
         }
     }
+
+    @Override
+    public LinkedHashMap<Class<?>, ReconstructionPlugin> get_value()
+    {
+        return M_plugins;
+    }
+
+    LinkedHashMap<Class<?>, ReconstructionPlugin> M_plugins;
+    ImageParameter M_hologram;
 }
