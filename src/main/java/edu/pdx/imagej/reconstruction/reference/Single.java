@@ -34,7 +34,7 @@ import edu.pdx.imagej.reconstruction.ReconstructionFieldImpl;
 import edu.pdx.imagej.reconstruction.plugin.HologramPluginParameter;
 
 @Plugin(type = ReferencePlugin.class,
-        name = "Single",
+        name = "Single Image",
         priority = Priority.VERY_HIGH)
 public class Single extends AbstractReferencePlugin {
     @Override

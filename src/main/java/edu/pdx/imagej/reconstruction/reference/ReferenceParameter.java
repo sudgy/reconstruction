@@ -83,7 +83,7 @@ public class ReferenceParameter
     }
 
     private DParameter<ReferencePlugin> M_param;
-    private BoolParameter M_phase;
-    private BoolParameter M_amplitude;
-    private BoolParameter M_use_same_roi;
+    BoolParameter M_phase;
+    BoolParameter M_amplitude;
+    BoolParameter M_use_same_roi;
 }
