@@ -44,6 +44,10 @@ public class Filter extends AbstractReconstructionPlugin
     @Override
     public void process_original_hologram(ConstReconstructionField field)
     {
+        get_filter(field, "Please select the ROI and then press OK.");
+    }
+    public void get_filter(ConstReconstructionField field, String message)
+    {
         double[][] fourier = field.fourier().get_amp();
         float[][] array = new float[fourier.length][fourier[0].length];
         for (int x = 0; x < fourier.length; ++x) {
@@ -55,8 +59,7 @@ public class Filter extends AbstractReconstructionPlugin
         proc.log();
         ImagePlus imp = new ImagePlus("FFT", proc);
         imp.show();
-        WaitForUserDialog dialog = new WaitForUserDialog(
-            "Please select the ROI and then press OK.");
+        WaitForUserDialog dialog = new WaitForUserDialog(message);
         dialog.show();
         if (dialog.escPressed()) {
             imp.hide();
