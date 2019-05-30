@@ -56,7 +56,7 @@ public class FilterTest {
     @Test public void test_filter()
     {
         Filter test = new Filter();
-        test.M_roi = new PointRoi(0, 0);
+        test.set_filter(new PointRoi(0, 0));
         double[][] real = {
             {1, 2, 3},
             {3, 4, 5},

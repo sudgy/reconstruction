@@ -41,10 +41,18 @@ import edu.pdx.imagej.reconstruction.ConstReconstructionField;
 @Plugin(type = ReconstructionPlugin.class, priority = Priority.LAST)
 public class Filter extends AbstractReconstructionPlugin
                     implements MainReconstructionPlugin {
+    public void set_filter(Roi roi)
+    {
+        M_roi = roi;
+        M_filtered = true;
+    }
     @Override
     public void process_original_hologram(ConstReconstructionField field)
     {
-        get_filter(field, "Please select the ROI and then press OK.");
+        if (!M_filtered) {
+            get_filter(field, "Please select the ROI and then press OK.");
+            M_filtered = true;
+        }
     }
     public void get_filter(ConstReconstructionField field, String message)
     {
@@ -93,6 +101,7 @@ public class Filter extends AbstractReconstructionPlugin
     }
     @Override public boolean has_error() {return M_error;}
 
-    Roi M_roi; // Package private for testing
+    private Roi M_roi;
     private boolean M_error = false;
+    private boolean M_filtered = false;
 }
