@@ -85,8 +85,12 @@ public class Reference extends HoldingSinglePlugin<ReferencePlugin>
                                M_param.phase(), M_param.amplitude());
         field.field().multiply_in_place(reference_field.field());
     }
+    public void set_not_same_filter(Filter filter)
+    {
+        M_not_same_filter = filter;
+    }
 
     private Filter M_filter;
     private Filter M_not_same_filter;
-    private ReferenceParameter M_param;
+    ReferenceParameter M_param; // Package private for testing
 }
