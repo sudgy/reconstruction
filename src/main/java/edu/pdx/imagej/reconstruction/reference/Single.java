@@ -19,6 +19,8 @@
 
 package edu.pdx.imagej.reconstruction.reference;
 
+import java.util.Collection;
+
 import ij.ImagePlus;
 
 import org.scijava.Priority;
@@ -37,6 +39,14 @@ import edu.pdx.imagej.reconstruction.plugin.HologramPluginParameter;
         name = "Single Image",
         priority = Priority.VERY_HIGH)
 public class Single extends AbstractReferencePlugin {
+    public Single()
+    {
+        M_param = new SingleParameter();
+    }
+    public Single(Collection<ImagePlus> images)
+    {
+        M_param = new SingleParameter(images);
+    }
     @Override
     public ReconstructionField get_reference_holo(
         ConstReconstructionField field, int t)
@@ -69,6 +79,10 @@ public class Single extends AbstractReferencePlugin {
     public class SingleParameter extends ImageParameter
                                  implements HologramPluginParameter {
         public SingleParameter() {super("Reference Hologram Image");}
+        public SingleParameter(Collection<ImagePlus> images)
+        {
+            super("Reference Hologram Image", images);
+        }
         @Override
         public void read_from_dialog()
         {
