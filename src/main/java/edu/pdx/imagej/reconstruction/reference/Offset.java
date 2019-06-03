@@ -51,7 +51,7 @@ public class Offset extends AbstractReferencePlugin {
         ConstReconstructionField field, int t)
     {
         // This should maybe be cached, but is it worth it?  That would use up a
-        // lot of extra memory.
+        // lot of extra memory, and most of them should be a new calculation.
 
         int offset = OffsetUtil.get_offset(M_param.get_value().offset,
                                            t, 1,
