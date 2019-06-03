@@ -174,7 +174,7 @@ public interface DynamicReferenceHolo {
         final int width = imp.getWidth();
         final int height = imp.getHeight();
         final int size = times.size();
-        float[][][] slices = new float[width][height][size];
+        float[][][] slices = new float[size][width][height];
         float[] values = new float[size];
         int middle = size / 2;
         boolean even = size % 2 == 0;
