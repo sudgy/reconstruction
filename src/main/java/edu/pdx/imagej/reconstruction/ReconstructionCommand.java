@@ -20,7 +20,7 @@
 package edu.pdx.imagej.reconstruction;
 
 import java.util.LinkedHashMap;
-import java.util.AbstractList;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -117,8 +117,8 @@ public class ReconstructionCommand implements Command, Initializable {
             if (plugin.has_error()) return;
         }
 
-        AbstractList<Integer> ts = P_ts.get_value();
-        AbstractList<DistanceUnitValue> zs = P_zs.get_value();
+        List<Integer> ts = P_ts.get_value();
+        List<DistanceUnitValue> zs = P_zs.get_value();
         for (int t : ts) {
             // Hologram
             for (ReconstructionPlugin plugin : plugins) {

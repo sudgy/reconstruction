@@ -19,7 +19,7 @@
 
 package edu.pdx.imagej.reconstruction.reference;
 
-import java.util.AbstractList;
+import java.util.Collection;
 
 import ij.ImagePlus;
 
@@ -46,7 +46,7 @@ public class Median extends AbstractReferencePlugin {
         return get_reference_holo(params.imp, params.ts);
     }
     public ReconstructionField get_reference_holo(ImagePlus imp,
-                                                  AbstractList<Integer> ts)
+                                                  Collection<Integer> ts)
     {
         if (M_result == null) {
             double[][] real = MedianUtil.calculate_median(imp, ts);
@@ -66,7 +66,7 @@ public class Median extends AbstractReferencePlugin {
 
     private class MedianParams {
         public ImagePlus imp;
-        public AbstractList<Integer> ts;
+        public Collection<Integer> ts;
     }
     public class MedianParameter extends HoldingParameter<MedianParams> {
         public MedianParameter()

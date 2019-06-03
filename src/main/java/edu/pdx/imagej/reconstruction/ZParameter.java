@@ -20,6 +20,7 @@
 package edu.pdx.imagej.reconstruction;
 
 import java.util.AbstractList;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -38,7 +39,7 @@ import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
 import edu.pdx.imagej.reconstruction.units.UnitService;
 
 @Plugin(type = DParameter.class)
-public class ZParameter extends HoldingParameter<AbstractList<DistanceUnitValue>> {
+public class ZParameter extends HoldingParameter<List<DistanceUnitValue>> {
     public ZParameter() {super("Zs");}
     @Override
     public void initialize()
@@ -62,7 +63,7 @@ public class ZParameter extends HoldingParameter<AbstractList<DistanceUnitValue>
         set_visibilities();
     }
     @Override
-    public AbstractList<DistanceUnitValue> get_value()
+    public List<DistanceUnitValue> get_value()
     {
         return current_param().get_value();
     }
@@ -74,7 +75,7 @@ public class ZParameter extends HoldingParameter<AbstractList<DistanceUnitValue>
         M_param_range.set_new_visibility(false);
         current_param().set_new_visibility(true);
     }
-    private DParameter<AbstractList<DistanceUnitValue>> current_param()
+    private DParameter<List<DistanceUnitValue>> current_param()
     {
         switch (Choices.valueOf(M_choice.get_value())) {
             case Single: return M_param_single;
@@ -98,7 +99,7 @@ public class ZParameter extends HoldingParameter<AbstractList<DistanceUnitValue>
 
 
 
-    public class SingleZ extends HoldingParameter<AbstractList<DistanceUnitValue>> {
+    public class SingleZ extends HoldingParameter<List<DistanceUnitValue>> {
         public SingleZ() {super("SingleZ");}
         @Override
         public void initialize()
@@ -112,7 +113,7 @@ public class ZParameter extends HoldingParameter<AbstractList<DistanceUnitValue>
             process_errors();
         }
         @Override
-        public AbstractList<DistanceUnitValue> get_value()
+        public List<DistanceUnitValue> get_value()
         {
             return new AbstractList<DistanceUnitValue>() {
                 @Override
@@ -133,7 +134,7 @@ public class ZParameter extends HoldingParameter<AbstractList<DistanceUnitValue>
 
 
 
-    public class ListZ extends AbstractDParameter<AbstractList<DistanceUnitValue>> {
+    public class ListZ extends AbstractDParameter<List<DistanceUnitValue>> {
         public ListZ() {super("ListZ");}
         @Override
         public void initialize()
@@ -163,7 +164,7 @@ public class ZParameter extends HoldingParameter<AbstractList<DistanceUnitValue>
             process_errors();
         }
         @Override
-        public AbstractList<DistanceUnitValue> get_value() {return M_zs;}
+        public List<DistanceUnitValue> get_value() {return M_zs;}
 
         private void process_errors()
         {
@@ -185,7 +186,7 @@ public class ZParameter extends HoldingParameter<AbstractList<DistanceUnitValue>
 
 
 
-    public class RangeZ extends HoldingParameter<AbstractList<DistanceUnitValue>> {
+    public class RangeZ extends HoldingParameter<List<DistanceUnitValue>> {
         public RangeZ() {super("RangeZ");}
         @Override
         public void initialize()
@@ -208,7 +209,7 @@ public class ZParameter extends HoldingParameter<AbstractList<DistanceUnitValue>
             process_errors();
         }
         @Override
-        public AbstractList<DistanceUnitValue> get_value()
+        public List<DistanceUnitValue> get_value()
         {
             return new AbstractList<DistanceUnitValue>() {
                 @Override

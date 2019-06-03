@@ -19,14 +19,13 @@
 
 package edu.pdx.imagej.reconstruction.reference;
 
-import java.util.AbstractList;
+import java.util.Collection;
 import java.util.Arrays;
 
 import ij.ImagePlus;
 
 class MedianUtil {
-    static double[][] calculate_median(ImagePlus imp,
-                                       AbstractList<Integer> times)
+    static double[][] calculate_median(ImagePlus imp, Collection<Integer> times)
     {
         final int width = imp.getWidth();
         final int height = imp.getHeight();
@@ -35,10 +34,11 @@ class MedianUtil {
         double[] values = new double[size];
         int middle = size / 2;
         boolean even = size % 2 == 0;
-        for (int i = 0; i < size; ++i) {
-            slices[i] = imp.getImageStack()
-                           .getProcessor(times.get(i))
-                           .getFloatArray();
+        {
+            int i = 0;
+            for (int t : times) {
+                slices[i++] = imp.getImageStack().getProcessor(t).getFloatArray();
+            }
         }
         double[][] result = new double[width][height];
         for (int y = 0; y < height; ++y) {

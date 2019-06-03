@@ -20,6 +20,7 @@
 package edu.pdx.imagej.reconstruction;
 
 import java.util.AbstractList;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,7 +41,7 @@ import edu.pdx.imagej.dynamic_parameters.IntParameter;
 import ij.IJ;
 
 @Plugin(type = DParameter.class)
-public class TParameter extends HoldingParameter<AbstractList<Integer>> {
+public class TParameter extends HoldingParameter<List<Integer>> {
     public enum PossibleTypes {
         All, AllMulti, SomeMulti;
         Choices get_default_choice()
@@ -127,7 +128,7 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
         }
     }
     @Override
-    public AbstractList<Integer> get_value() {return current_param().get_value();}
+    public List<Integer> get_value() {return current_param().get_value();}
 
     private ChoiceParameter current_choices()
     {
@@ -138,7 +139,7 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
         }
         return null;
     }
-    private DParameter<AbstractList<Integer>> current_param()
+    private DParameter<List<Integer>> current_param()
     {
         if (M_max_t > 1) {
             switch (Choices.value_of(current_choices().get_value())) {
@@ -190,7 +191,7 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
 
 
 
-    public class SingleT extends HoldingParameter<AbstractList<Integer>> {
+    public class SingleT extends HoldingParameter<List<Integer>> {
         public SingleT() {super("SingleT");}
         @Override
         public void initialize()
@@ -227,7 +228,7 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
             process_errors();
         }
         @Override
-        public AbstractList<Integer> get_value()
+        public List<Integer> get_value()
         {
             return new AbstractList<Integer>() {
                 @Override
@@ -249,14 +250,14 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
 
 
 
-    public class CurrentT extends AbstractDParameter<AbstractList<Integer>> {
+    public class CurrentT extends AbstractDParameter<List<Integer>> {
         public CurrentT() {super("CurrentT");}
         @Override public void add_to_dialog(DPDialog dialog) {}
         @Override public void read_from_dialog() {}
         @Override public void save_to_prefs(Class<?> c, String name) {}
         @Override public void read_from_prefs(Class<?> c, String name) {}
         @Override
-        public AbstractList<Integer> get_value()
+        public List<Integer> get_value()
         {
             return new AbstractList<Integer>() {
                 @Override
@@ -271,14 +272,14 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
 
 
 
-    public class AllT extends AbstractDParameter<AbstractList<Integer>> {
+    public class AllT extends AbstractDParameter<List<Integer>> {
         public AllT() {super("AllT");}
         @Override public void add_to_dialog(DPDialog dialog) {}
         @Override public void read_from_dialog() {}
         @Override public void save_to_prefs(Class<?> c, String name) {}
         @Override public void read_from_prefs(Class<?> c, String name) {}
         @Override
-        public AbstractList<Integer> get_value()
+        public List<Integer> get_value()
         {
             return new AbstractList<Integer>() {
                 @Override
@@ -293,7 +294,7 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
 
 
 
-    public class ListT extends AbstractDParameter<AbstractList<Integer>> {
+    public class ListT extends AbstractDParameter<List<Integer>> {
         public ListT() {super("ListT");}
         @Override
         public void initialize()
@@ -323,7 +324,7 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
             process_errors();
         }
         @Override
-        public AbstractList<Integer> get_value() {return M_ts;}
+        public List<Integer> get_value() {return M_ts;}
 
         private void process_errors()
         {
@@ -351,7 +352,7 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
 
 
 
-    public class RangeT extends HoldingParameter<AbstractList<Integer>> {
+    public class RangeT extends HoldingParameter<List<Integer>> {
         public RangeT() {super("RangeT");}
         @Override
         public void initialize()
@@ -393,7 +394,7 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
             process_errors();
         }
         @Override
-        public AbstractList<Integer> get_value()
+        public List<Integer> get_value()
         {
             return new AbstractList<Integer>() {
                 @Override
@@ -431,7 +432,7 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
 
 
 
-    public class ContinuousT extends AbstractDParameter<AbstractList<Integer>> {
+    public class ContinuousT extends AbstractDParameter<List<Integer>> {
         public ContinuousT() {super("ContinuousT");}
         @Override
         public void initialize()
@@ -461,7 +462,7 @@ public class TParameter extends HoldingParameter<AbstractList<Integer>> {
             process_errors();
         }
         @Override
-        public AbstractList<Integer> get_value()
+        public List<Integer> get_value()
         {
             int multiplier = M_t1 < M_t2 ? 1 : -1;
             return new AbstractList<Integer>() {

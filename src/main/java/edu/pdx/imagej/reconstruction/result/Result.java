@@ -21,7 +21,7 @@ package edu.pdx.imagej.reconstruction.result;
 
 import java.io.File;
 import java.nio.file.Paths;
-import java.util.AbstractList;
+import java.util.List;
 
 import ij.IJ;
 import ij.ImagePlus;
@@ -72,12 +72,12 @@ public class Result extends AbstractReconstructionPlugin
         M_cal.setUnit(width.unit().toString());
     }
     @Override
-    public void process_ts_param(AbstractList<Integer> ts)
+    public void process_ts_param(List<Integer> ts)
     {
         M_t_size = ts.size();
     }
     @Override
-    public void process_zs_param(AbstractList<DistanceUnitValue> zs)
+    public void process_zs_param(List<DistanceUnitValue> zs)
     {
         M_z_size = zs.size();
         if (M_options.save_to_file) {

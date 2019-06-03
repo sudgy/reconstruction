@@ -19,7 +19,7 @@
 
 package edu.pdx.imagej.reconstruction.status;
 
-import java.util.AbstractList;
+import java.util.List;
 
 import ij.ImagePlus;
 
@@ -39,9 +39,9 @@ public class Status extends AbstractReconstructionPlugin
                     implements MainReconstructionPlugin {
     @Override public void process_hologram_param(ImagePlus hologram)
         {M_hologram = hologram;}
-    @Override public void process_ts_param(AbstractList<Integer> ts)
+    @Override public void process_ts_param(List<Integer> ts)
         {M_t_size = ts.size();}
-    @Override public void process_zs_param(AbstractList<DistanceUnitValue> zs)
+    @Override public void process_zs_param(List<DistanceUnitValue> zs)
         {M_z_size = zs.size();}
     @Override public void process_beginning()
         {M_total_size = M_t_size * M_z_size;}

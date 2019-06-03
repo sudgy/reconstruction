@@ -19,7 +19,7 @@
 
 package edu.pdx.imagej.reconstruction.plugin;
 
-import java.util.AbstractList;
+import java.util.List;
 import java.util.LinkedHashMap;
 
 import ij.ImagePlus;
@@ -72,14 +72,14 @@ public interface HoldingPlugin<T extends ReconstructionPlugin>
         }
     }
     @Override
-    default void process_ts_param(AbstractList<Integer> ts)
+    default void process_ts_param(List<Integer> ts)
     {
         for (T plugin : get_plugins()) {
             plugin.process_ts_param(ts);
         }
     }
     @Override
-    default void process_zs_param(AbstractList<DistanceUnitValue> zs)
+    default void process_zs_param(List<DistanceUnitValue> zs)
     {
         for (T plugin : get_plugins()) {
             plugin.process_zs_param(zs);
