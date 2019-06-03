@@ -78,7 +78,12 @@ public class ReferenceParameter
         else {
             M_phase       .set_new_visibility(true);
             M_amplitude   .set_new_visibility(true);
-            M_use_same_roi.set_new_visibility(true);
+            if (M_param.get_value().dont_use_same_roi()) {
+                M_use_same_roi.set_new_visibility(false);
+            }
+            else {
+                M_use_same_roi.set_new_visibility(true);
+            }
         }
     }
 

@@ -67,7 +67,8 @@ public class Reference extends HoldingSinglePlugin<ReferencePlugin>
             = get_plugin().get_reference_holo(
                             new ConstReconstructionField(field), t);
         if (reference_field == null) return;
-        if (M_param.use_same_roi()) {
+        if (M_param.use_same_roi()
+                && !M_param.get_value().dont_use_same_roi()) {
             M_filter.filter_field(reference_field);
         }
         else {

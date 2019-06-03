@@ -26,6 +26,7 @@ import edu.pdx.imagej.reconstruction.plugin.SubReconstructionPlugin;
 public interface ReferencePlugin extends SubReconstructionPlugin {
     ReconstructionField get_reference_holo(ConstReconstructionField field,
                                            int t);
+    default boolean dont_use_same_roi() {return false;}
     @Override
     default void process_filtered_field(ReconstructionField field, int t)
     {
