@@ -51,7 +51,7 @@ public class Single extends AbstractReferencePlugin {
     public ReconstructionField get_reference_holo(
         ConstReconstructionField field, int t)
     {
-        if (result == null) {
+        if (M_result == null) {
             float[][] float_array = M_param.get_value()
                                            .getProcessor()
                                            .getFloatArray();
@@ -63,9 +63,9 @@ public class Single extends AbstractReferencePlugin {
                     real[x][y] = float_array[x][y];
                 }
             }
-            result = new ReconstructionFieldImpl(real, imag);
+            M_result = new ReconstructionFieldImpl(real, imag);
         }
-        return result;
+        return M_result;
     }
     @Override
     public SingleParameter param()
@@ -73,8 +73,8 @@ public class Single extends AbstractReferencePlugin {
         return M_param;
     }
 
-    private SingleParameter M_param = new SingleParameter();
-    private ReconstructionField result;
+    private SingleParameter M_param;
+    private ReconstructionField M_result;
 
     public class SingleParameter extends ImageParameter
                                  implements HologramPluginParameter {
