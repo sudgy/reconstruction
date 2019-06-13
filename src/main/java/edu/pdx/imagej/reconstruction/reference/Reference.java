@@ -56,6 +56,7 @@ public class Reference extends HoldingSinglePlugin<ReferencePlugin>
     public void read_plugins(
         LinkedHashMap<Class<?>, ReconstructionPlugin> plugins)
     {
+        super.read_plugins(plugins);
         for (ReconstructionPlugin plugin : plugins.values()) {
             if (plugin instanceof Filter) M_filter = (Filter)plugin;
         }
