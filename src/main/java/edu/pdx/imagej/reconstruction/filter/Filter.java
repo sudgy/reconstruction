@@ -38,7 +38,7 @@ import edu.pdx.imagej.reconstruction.plugin.MainReconstructionPlugin;
 import edu.pdx.imagej.reconstruction.ReconstructionField;
 import edu.pdx.imagej.reconstruction.ConstReconstructionField;
 
-@Plugin(type = ReconstructionPlugin.class, priority = Priority.LAST)
+@Plugin(type = ReconstructionPlugin.class, priority = Priority.EXTREMELY_LOW)
 public class Filter extends AbstractReconstructionPlugin
                     implements MainReconstructionPlugin {
     public void set_filter(Roi roi)
