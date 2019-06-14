@@ -38,13 +38,17 @@ import edu.pdx.imagej.dynamic_parameters.ChoiceParameter;
 import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
 import edu.pdx.imagej.reconstruction.units.UnitService;
 
+/** A DParameter that acquires a list of z values.  "z values" is pretty much
+ * just {@link DistanceUnitValue}s.
+ */
 @Plugin(type = DParameter.class)
 public class ZParameter extends HoldingParameter<List<DistanceUnitValue>> {
     public ZParameter() {super("Zs");}
     @Override
     public void initialize()
     {
-        M_choice = add_parameter(ChoiceParameter.class, "Z_plane selection", S_choices, "Single");
+        M_choice = add_parameter(ChoiceParameter.class, "Z_plane selection",
+                                 S_choices, "Single");
         M_param_single = add_parameter(SingleZ.class, this);
         M_param_list = add_parameter(ListZ.class, this);
         M_param_range = add_parameter(RangeZ.class, this);
@@ -88,7 +92,11 @@ public class ZParameter extends HoldingParameter<List<DistanceUnitValue>> {
     private enum Choices {
         Single, List, Range
     }
-    private static String[] S_choices = {Choices.Single.name(), Choices.List.name(), Choices.Range.name()};
+    private static String[] S_choices = {
+        Choices.Single.name(),
+        Choices.List.name(),
+        Choices.Range.name()
+    };
 
     private ChoiceParameter M_choice;
 
@@ -99,12 +107,14 @@ public class ZParameter extends HoldingParameter<List<DistanceUnitValue>> {
 
 
 
+    /** Get a single z value. */
     public class SingleZ extends HoldingParameter<List<DistanceUnitValue>> {
         public SingleZ() {super("SingleZ");}
         @Override
         public void initialize()
         {
-            M_z = add_parameter(DoubleParameter.class, 0.0, "Z_value", P_units.z().toString());
+            M_z = add_parameter(DoubleParameter.class, 0.0, "Z_value",
+                                P_units.z().toString());
         }
         @Override
         public void read_from_dialog()
@@ -134,6 +144,7 @@ public class ZParameter extends HoldingParameter<List<DistanceUnitValue>> {
 
 
 
+    /** Get z values using a comma-separated list. */
     public class ListZ extends AbstractDParameter<List<DistanceUnitValue>> {
         public ListZ() {super("ListZ");}
         @Override
@@ -144,7 +155,8 @@ public class ZParameter extends HoldingParameter<List<DistanceUnitValue>> {
         @Override
         public void add_to_dialog(DPDialog dialog)
         {
-            M_supplier = dialog.add_text_box("Z values (in a comma separated list)", M_current_string);
+            M_supplier = dialog.add_text_box(
+                "Z values (in a comma separated list)", M_current_string);
         }
         @Override
         public void read_from_dialog()
@@ -168,12 +180,17 @@ public class ZParameter extends HoldingParameter<List<DistanceUnitValue>> {
 
         private void process_errors()
         {
-            List<String> zs_as_string = Arrays.asList(M_current_string.split("\\s*,\\s*"));
+            List<String> zs_as_string
+                = Arrays.asList(M_current_string.split("\\s*,\\s*"));
             M_zs = new ArrayList<DistanceUnitValue>(zs_as_string.size());
             for (String s : zs_as_string) {
-                try {M_zs.add(new DistanceUnitValue(Double.parseDouble(s), P_units.z()));}
+                try {
+                    M_zs.add(new DistanceUnitValue(Double.parseDouble(s),
+                             P_units.z()));
+                }
                 catch (NumberFormatException e) {
-                    set_error("Unable to parse Z list.  \"" + s + "\" is not a number.");
+                    set_error("Unable to parse Z list.  \"" + s
+                              + "\" is not a number.");
                     return;
                 }
             }
@@ -186,15 +203,19 @@ public class ZParameter extends HoldingParameter<List<DistanceUnitValue>> {
 
 
 
+    /** Get z values using an evenly-spaced range. */
     public class RangeZ extends HoldingParameter<List<DistanceUnitValue>> {
         public RangeZ() {super("RangeZ");}
         @Override
         public void initialize()
         {
             String units = P_units.z().toString();
-            M_begin = add_parameter(DoubleParameter.class, 0.0, "Z_value_begin", units);
-            M_end = add_parameter(DoubleParameter.class, 0.0, "Z_value_end", units);
-            M_step = add_parameter(DoubleParameter.class, 1.0, "Z_value_step", units);
+            M_begin = add_parameter(DoubleParameter.class, 0.0, "Z_value_begin",
+                                    units);
+            M_end = add_parameter(DoubleParameter.class, 0.0, "Z_value_end",
+                                  units);
+            M_step = add_parameter(DoubleParameter.class, 1.0, "Z_value_step",
+                                   units);
         }
         @Override
         public void read_from_dialog()
@@ -214,10 +235,12 @@ public class ZParameter extends HoldingParameter<List<DistanceUnitValue>> {
             return new AbstractList<DistanceUnitValue>() {
                 @Override
                 public DistanceUnitValue get(int index)
-                {return new DistanceUnitValue(M_begin.get_value() + M_step.get_value() * index, P_units.z());}
+                {return new DistanceUnitValue(M_begin.get_value()
+                    + M_step.get_value() * index, P_units.z());}
                 @Override
                 public int size()
-                {return (int)((M_end.get_value() - M_begin.get_value()) / M_step.get_value()) + 1;}
+                {return (int)((M_end.get_value() - M_begin.get_value())
+                              / M_step.get_value()) + 1;}
             };
         }
 
@@ -233,8 +256,10 @@ public class ZParameter extends HoldingParameter<List<DistanceUnitValue>> {
                 set_error("Z value step cannot be zero.");
                 return;
             }
-            if ((M_end.get_value() < M_begin.get_value()) == (M_step.get_value() > 0)) {
-                set_error("The sign of Z value step must be the same as the sign of Z value end minus Z value begin.");
+            if ((M_end.get_value() < M_begin.get_value())
+                    == (M_step.get_value() > 0)) {
+                set_error("The sign of Z value step must be the same as the "
+                    + "sign of Z value end minus Z value begin.");
                 return;
             }
             set_error(null);
