@@ -22,7 +22,8 @@ package edu.pdx.imagej.reconstruction;
 /** ReconstrucionField represents both a normal complex field and the FFT of it
  * at once.  Because the FFT is a fairly expensive operation, this class will
  * keep track of what it has already computed, and will only calculate the FFT
- * or the IFFT when absolutely needed.
+ * or the IFFT when absolutely needed.  The original field will henceforth be
+ * called the "normal field".
  */
 public interface ReconstructionField {
     /** Get the normal field associated with this ReconstructionField.

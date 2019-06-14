@@ -21,7 +21,16 @@ package edu.pdx.imagej.reconstruction;
 
 import org.jtransforms.fft.DoubleFFT_2D;
 
+/** This is the default implementation of {@link ReconstructionField}.
+ */
 public class ReconstructionFieldImpl implements ReconstructionField {
+    /** Constructor with a real and imaginary part for the normal field.  This
+     * will make the normal field from the real and imaginary values, and not
+     * initialize the Fourier transform yet.
+     *
+     * @param real The real values used for the field.
+     * @param imag The imaginary values used for the field.
+     */
     public ReconstructionFieldImpl(double[][] real, double[][] imag)
     {
         int width = real.length;
@@ -36,11 +45,12 @@ public class ReconstructionFieldImpl implements ReconstructionField {
         }
         M_field = new ReconstructionComplexField(field, this);
     }
-    public void field_changed(ReconstructionComplexField field)
+    void field_changed(ReconstructionComplexField field)
     {
         if (field == M_field) M_fourier = null;
         if (field == M_fourier) M_field = null;
     }
+    /** {@inheritDoc} */
     @Override
     public ReconstructionComplexField field()
     {
@@ -52,6 +62,7 @@ public class ReconstructionFieldImpl implements ReconstructionField {
         }
         return M_field;
     }
+    /** {@inheritDoc} */
     @Override
     public ReconstructionComplexField fourier()
     {
@@ -63,9 +74,12 @@ public class ReconstructionFieldImpl implements ReconstructionField {
         }
         return M_fourier;
     }
+    /** {@inheritDoc} */
     @Override public boolean has_field()   {return M_field   != null;}
+    /** {@inheritDoc} */
     @Override public boolean has_fourier() {return M_fourier != null;}
 
+    /** {@inheritDoc} */
     @Override
     public ReconstructionFieldImpl copy()
     {
