@@ -41,6 +41,11 @@ import edu.pdx.imagej.reconstruction.units.UnitService;
 import edu.pdx.imagej.reconstruction.plugin.ReconstructionPlugin;
 import edu.pdx.imagej.reconstruction.plugin.AllPluginsParameter;
 
+/** A command that performs reconstruction, propagation, and more.  This command
+ * takes all enabled plugins and does the entire reconstruction pipeline using
+ * those plugins.  It is currently the only way to do so, but I will make better
+ * ways to do this at some point in the future.
+ */
 @Plugin(type = Command.class, menuPath = "Plugins > DHM > Reconstruction")
 public class ReconstructionCommand implements Command, Initializable {
     @Parameter private ImageParameter      P_hologram;
@@ -54,6 +59,7 @@ public class ReconstructionCommand implements Command, Initializable {
     @Parameter private StatusService P_status;
     @Parameter private UnitService P_units;
 
+    /** Initializes the parameters */
     @Override
     public void initialize()
     {
@@ -72,6 +78,7 @@ public class ReconstructionCommand implements Command, Initializable {
         P_width.set_bounds(Double.MIN_VALUE, Double.MAX_VALUE);
         P_height.set_bounds(Double.MIN_VALUE, Double.MAX_VALUE);
     }
+    /** Run the command, doing the entire reconstruction pipeline. */
     @Override
     public void run()
     {
