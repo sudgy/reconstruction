@@ -19,10 +19,45 @@
 
 package edu.pdx.imagej.reconstruction;
 
+/** ReconstrucionField represents both a normal complex field and the FFT of it
+ * at once.  Because the FFT is a fairly expensive operation, this class will
+ * keep track of what it has already computed, and will only calculate the FFT
+ * or the IFFT when absolutely needed.
+ */
 public interface ReconstructionField {
+    /** Get the normal field associated with this ReconstructionField.
+     *
+     * @return The complex field associated with this ReconstructionField.
+     */
     ComplexField field();
+    /** Get the Fourier transform of the field associated with this
+     * ReconstructionField.
+     *
+     * @return The Fourier transform of this field.
+     */
     ComplexField fourier();
+    /** See if the normal field has been computed.  If an algorithm could work
+     * well with both the normal field and the fourier transform, this can be
+     * used to check which is available to save on computation time to calculate
+     * the FFT/IFFT if it is not needed.
+     *
+     * @return Whether or not the normal field has been computed.
+     * @see has_fourier
+     */
     boolean has_field();
+    /** See if the Fourier transform has been computed.  If an algorithm could
+     * work well with both the normal field and the fourier transform, this can
+     * be used to check which is available to save on computation time to
+     * calculate the FFT/IFFT if it is not needed.
+     *
+     * @return Whether or not the Fourier transform has been computed.
+     * @see has_field
+     */
     boolean has_fourier();
+    /** Copy this ReconstructionField.  It will copy any fields (normal or
+     * Fourier) that already exist.
+     *
+     * @return A copy of this ReconstructionField.
+     */
     ReconstructionField copy();
 }
