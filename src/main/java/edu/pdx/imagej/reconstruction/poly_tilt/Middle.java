@@ -35,8 +35,10 @@ public class Middle extends AbstractPolyTiltPlugin {
         int[] dimensions = hologram.getDimensions();
         int width = dimensions[0];
         int height = dimensions[1];
-        M_h_line = new Line(width / 8, height / 2, width * 7 / 8, height / 2);
-        M_v_line = new Line(width / 2, height / 8, width / 2, height * 7 / 8);
+        int max_x = Math.max(width * 7 / 8 - 1, width / 8);
+        int max_y = Math.max(height * 7 / 8 - 1, height / 8);
+        M_h_line = new Line(width / 8, height / 2, max_x, height / 2);
+        M_v_line = new Line(width / 2, height / 8, width / 2, max_y);
     }
     @Override
     public Iterable<Point> get_h_line() {return M_h_line;}
