@@ -40,10 +40,31 @@ import edu.pdx.imagej.dynamic_parameters.IntParameter;
 
 import ij.IJ;
 
+/** This is a DParameter that acquires a list of integers representing some time
+ * slices in an image.  It is currently used for getting the time slices to
+ * reconstruct and for choosing what slices to use for the median when finding
+ * the reference hologram.
+ * <p>
+ * There are currently three ways to use this parameter, which are the three
+ * possible values of the {@link PossibleTypes} enum.  See the description of
+ * that enum for details.
+ */
 @Plugin(type = DParameter.class)
 public class TParameter extends HoldingParameter<List<Integer>> {
+    /** This is the possible ways to get time values.  It is passed to the
+     * constructor of TParameter.
+     */
     public enum PossibleTypes {
-        All, AllMulti, SomeMulti;
+        /** All: Use all ways of getting time slices. */
+        All,
+        /** AllMulti: Use all ways of getting time slices other than ones that
+         * require just one slice.
+         */
+        AllMulti,
+        /** SomeMulti: Like AllMulti, but also remove the option to use all
+         * times.
+         */
+        SomeMulti;
         Choices get_default_choice()
         {
             switch (this) {
@@ -63,7 +84,16 @@ public class TParameter extends HoldingParameter<List<Integer>> {
             return null;
         }
     }
-    public TParameter(ImageParameter holo_p, PossibleTypes possible, String label)
+    /** Constructor.
+     *
+     * @param holo_p The image that you are choosing your time values from.
+     *               Time values outside the number of time slices this image
+     *               has will be rejected.
+     * @param possible Which methods of choosing time values will be used.
+     * @param label The label used on the dialog.
+     */
+    public TParameter(ImageParameter holo_p, PossibleTypes possible,
+                      String label)
     {
         super(label + "Ts");
         M_holo_p = holo_p;
@@ -75,17 +105,28 @@ public class TParameter extends HoldingParameter<List<Integer>> {
         ImagePlus i = M_holo_p.get_value();
         if (i == null) return;
         M_max_t = i.getImageStackSize();
-        M_choice_all = add_parameter(ChoiceParameter.class, "t_slice_selection", S_choices, Choices.Current.toString());
-        M_choice_all_multi = add_parameter(ChoiceParameter.class, "t_slice_selection_", S_all_multi_choices, Choices.All.toString());
-        M_choice_some_multi = add_parameter(ChoiceParameter.class, "t_slice_selection__", S_some_multi_choices, Choices.Range.toString());
+        M_choice_all = add_parameter(ChoiceParameter.class,
+                                     "t_slice_selection",
+                                     S_choices,
+                                     Choices.Current.toString());
+        M_choice_all_multi = add_parameter(ChoiceParameter.class,
+                                           "t_slice_selection_",
+                                           S_all_multi_choices,
+                                           Choices.All.toString());
+        M_choice_some_multi = add_parameter(ChoiceParameter.class,
+                                            "t_slice_selection__",
+                                            S_some_multi_choices,
+                                            Choices.Range.toString());
         M_choice_all.set_new_visibility(false);
         M_choice_all_multi.set_new_visibility(false);
         M_choice_some_multi.set_new_visibility(false);
         if (M_max_t > 1) {
             switch (M_possible) {
                 case All: M_choice_all.set_new_visibility(true); break;
-                case AllMulti: M_choice_all_multi.set_new_visibility(true); break;
-                case SomeMulti: M_choice_some_multi.set_new_visibility(true); break;
+                case AllMulti:
+                    M_choice_all_multi.set_new_visibility(true); break;
+                case SomeMulti:
+                    M_choice_some_multi.set_new_visibility(true); break;
             }
         }
 
@@ -123,7 +164,8 @@ public class TParameter extends HoldingParameter<List<Integer>> {
                 case Single: M_param_single.set_new_visibility(true); break;
                 case List: M_param_list.set_new_visibility(true); break;
                 case Range: M_param_range.set_new_visibility(true); break;
-                case Continuous: M_param_continuous.set_new_visibility(true); break;
+                case Continuous:
+                    M_param_continuous.set_new_visibility(true); break;
             }
         }
     }
@@ -169,9 +211,25 @@ public class TParameter extends HoldingParameter<List<Integer>> {
             else return Choices.valueOf(s);
         }
     }
-    private static String[] S_choices = {Choices.Single.toString(), Choices.Current.toString(), Choices.All.toString(), Choices.List.toString(), Choices.Range.toString(), Choices.Continuous.toString()};
-    private static String[] S_all_multi_choices = {Choices.All.toString(), Choices.List.toString(), Choices.Range.toString(), Choices.Continuous.toString()};
-    private static String[] S_some_multi_choices = {Choices.List.toString(), Choices.Range.toString(), Choices.Continuous.toString()};
+    private static String[] S_choices = {
+        Choices.Single.toString(),
+        Choices.Current.toString(),
+        Choices.All.toString(),
+        Choices.List.toString(),
+        Choices.Range.toString(),
+        Choices.Continuous.toString()
+    };
+    private static String[] S_all_multi_choices = {
+        Choices.All.toString(),
+        Choices.List.toString(),
+        Choices.Range.toString(),
+        Choices.Continuous.toString()
+    };
+    private static String[] S_some_multi_choices = {
+        Choices.List.toString(),
+        Choices.Range.toString(),
+        Choices.Continuous.toString()
+    };
 
     private ChoiceParameter M_choice_all;
     private ChoiceParameter M_choice_all_multi;
@@ -191,6 +249,7 @@ public class TParameter extends HoldingParameter<List<Integer>> {
 
 
 
+    /** Time parameter getting a single time value */
     public class SingleT extends HoldingParameter<List<Integer>> {
         public SingleT() {super("SingleT");}
         @Override
@@ -250,6 +309,7 @@ public class TParameter extends HoldingParameter<List<Integer>> {
 
 
 
+    /** Time parameter returning the current time slice */
     public class CurrentT extends AbstractDParameter<List<Integer>> {
         public CurrentT() {super("CurrentT");}
         @Override public void add_to_dialog(DPDialog dialog) {}
@@ -272,6 +332,7 @@ public class TParameter extends HoldingParameter<List<Integer>> {
 
 
 
+    /** Time parameter returning all time slices */
     public class AllT extends AbstractDParameter<List<Integer>> {
         public AllT() {super("AllT");}
         @Override public void add_to_dialog(DPDialog dialog) {}
@@ -294,6 +355,7 @@ public class TParameter extends HoldingParameter<List<Integer>> {
 
 
 
+    /** Time parameter using a comma-separated list of values */
     public class ListT extends AbstractDParameter<List<Integer>> {
         public ListT() {super("ListT");}
         @Override
@@ -304,7 +366,8 @@ public class TParameter extends HoldingParameter<List<Integer>> {
         @Override
         public void add_to_dialog(DPDialog dialog)
         {
-            M_supplier = dialog.add_text_box("t values (in a comma separated list)", M_current_string);
+            M_supplier = dialog.add_text_box(
+                "t values (in a comma separated list)", M_current_string);
         }
         @Override
         public void read_from_dialog()
@@ -328,18 +391,21 @@ public class TParameter extends HoldingParameter<List<Integer>> {
 
         private void process_errors()
         {
-            List<String> ts_as_string = Arrays.asList(M_current_string.split("\\s*,\\s*"));
+            List<String> ts_as_string
+                = Arrays.asList(M_current_string.split("\\s*,\\s*"));
             M_ts = new ArrayList<Integer>(ts_as_string.size());
             for (String s : ts_as_string) {
                 try {M_ts.add(Integer.parseInt(s));}
                 catch (NumberFormatException e) {
-                    set_error("Unable to parse t list.  \"" + s + "\" is not an integer.");
+                    set_error("Unable to parse t list.  \"" + s
+                              + "\" is not an integer.");
                     return;
                 }
             }
             for (int t : M_ts) {
                 if (t < 1 || t > M_max_t) {
-                    set_error("t value \"" + t + "\" is not in the range [1.." + M_max_t + "].");
+                    set_error("t value \"" + t + "\" is not in the range [1.."
+                              + M_max_t + "].");
                     return;
                 }
             }
@@ -352,6 +418,7 @@ public class TParameter extends HoldingParameter<List<Integer>> {
 
 
 
+    /** Time parameter using an equally-spaced range */
     public class RangeT extends HoldingParameter<List<Integer>> {
         public RangeT() {super("RangeT");}
         @Override
@@ -402,7 +469,8 @@ public class TParameter extends HoldingParameter<List<Integer>> {
                 {return M_begin.get_value() + M_step.get_value() * index;}
                 @Override
                 public int size()
-                {return ((M_end.get_value() - M_begin.get_value()) / M_step.get_value()) + 1;}
+                {return ((M_end.get_value() - M_begin.get_value())
+                         / M_step.get_value()) + 1;}
             };
         }
 
@@ -418,8 +486,10 @@ public class TParameter extends HoldingParameter<List<Integer>> {
                 set_error("t value step cannot be zero.");
                 return;
             }
-            if ((M_end.get_value() < M_begin.get_value()) == (M_step.get_value() > 0)) {
-                set_error("The sign of t value step must be the same as the sign of t value end minus t value begin.");
+            if ((M_end.get_value() < M_begin.get_value())
+                    == (M_step.get_value() > 0)) {
+                set_error("The sign of t value step must be the same as the "
+                          + "sign of t value end minus t value begin.");
                 return;
             }
             set_error(null);
@@ -432,6 +502,7 @@ public class TParameter extends HoldingParameter<List<Integer>> {
 
 
 
+    /** Time parameter using a continuous (separated by one) range */
     public class ContinuousT extends AbstractDParameter<List<Integer>> {
         public ContinuousT() {super("ContinuousT");}
         @Override
@@ -442,7 +513,8 @@ public class TParameter extends HoldingParameter<List<Integer>> {
         @Override
         public void add_to_dialog(DPDialog dialog)
         {
-            M_supplier = dialog.add_text_box("t values (in the format \"begin-end\")", M_current_string);
+            M_supplier = dialog.add_text_box(
+                "t values (in the format \"begin-end\")", M_current_string);
         }
         @Override
         public void read_from_dialog()
@@ -477,27 +549,32 @@ public class TParameter extends HoldingParameter<List<Integer>> {
 
         private void process_errors()
         {
-            List<String> ts_as_string = Arrays.asList(M_current_string.split("\\s*-\\s*"));
+            List<String> ts_as_string
+                = Arrays.asList(M_current_string.split("\\s*-\\s*"));
             if (ts_as_string.size() != 2) {
                 set_error("Unable to parse t range.");
                 return;
             }
             try {M_t1 = Integer.parseInt(ts_as_string.get(0));}
             catch (NumberFormatException e) {
-                set_error("Unable to parse t range.  \"" + ts_as_string.get(0) + "\" is not an integer.");
+                set_error("Unable to parse t range.  \"" + ts_as_string.get(0)
+                    + "\" is not an integer.");
                 return;
             }
             try {M_t2 = Integer.parseInt(ts_as_string.get(1));}
             catch (NumberFormatException e) {
-                set_error("Unable to parse t range.  \"" + ts_as_string.get(1) + "\" is not an integer.");
+                set_error("Unable to parse t range.  \"" + ts_as_string.get(1)
+                    + "\" is not an integer.");
                 return;
             }
             if (M_t1 < 1 || M_t1 > M_max_t) {
-                set_error("t value \"" + M_t1 + "\" is not in the range [1.." + M_max_t + "].");
+                set_error("t value \"" + M_t1 + "\" is not in the range [1.."
+                    + M_max_t + "].");
                 return;
             }
             if (M_t2 < 1 || M_t2 > M_max_t) {
-                set_error("t value \"" + M_t2 + "\" is not in the range [1.." + M_max_t + "].");
+                set_error("t value \"" + M_t2 + "\" is not in the range [1.."
+                    + M_max_t + "].");
                 return;
             }
             set_error(null);
