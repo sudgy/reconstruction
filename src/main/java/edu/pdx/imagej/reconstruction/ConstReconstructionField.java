@@ -19,7 +19,19 @@
 
 package edu.pdx.imagej.reconstruction;
 
+/** This is a read-only wrapper around {@link ReconstructionField}.  All of
+ * these methods directly call the ones in <code>ReconstructionField</code>, so
+ * look there for descriptions.  Note that this class can actually still affect
+ * the state of the <code>ReconstructionField</code> that it is containing,
+ * through the computations involved in the {@link field field()} and {@link
+ * fourier fourier()} methods.  However, this class will not affect any actual
+ * values in those fields.
+ */
 public final class ConstReconstructionField {
+    /** Create a read-only view of <code>field</code>.
+     *
+     * @param field The ReconstructionField to wrap
+     */
     public ConstReconstructionField(ReconstructionField field)
         {M_field = field;}
 

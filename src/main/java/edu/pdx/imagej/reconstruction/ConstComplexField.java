@@ -19,7 +19,15 @@
 
 package edu.pdx.imagej.reconstruction;
 
+/** This is a read-only wrapper around {@link ComplexField}.  All of these
+ * methods directly call the ones in <code>ComplexField</code>, so look there
+ * for descriptions.
+ */
 public final class ConstComplexField {
+    /** Create a read-only view of <code>field</code>.
+     *
+     * @param field The ComplexField to wrap
+     */
     public ConstComplexField(ComplexField field) {M_field = field;}
 
     public ComplexField copy() {return M_field.copy();}
