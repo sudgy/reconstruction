@@ -21,5 +21,10 @@ package edu.pdx.imagej.reconstruction.plugin;
 
 import org.scijava.plugin.AbstractRichPlugin;
 
+/** Abstract base class to use for {@link HoldingPlugin}.  It is basically the
+ * {@link AbstractReconstructionPlugin} for <code>HoldingPlugin</code>.
+ *
+ * @param <T> The type of plugins you are holding
+ */
 public abstract class AbstractHoldingPlugin<T extends ReconstructionPlugin>
     extends AbstractRichPlugin implements HoldingPlugin<T> {}

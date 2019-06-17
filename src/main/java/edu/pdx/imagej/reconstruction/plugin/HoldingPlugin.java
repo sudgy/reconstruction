@@ -31,6 +31,15 @@ import edu.pdx.imagej.reconstruction.ConstReconstructionField;
 import edu.pdx.imagej.reconstruction.ReconstructionField;
 import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
 
+/** A {@link ReconstructionPlugin} that holds other ReconstructionPlugins.  To
+ * use this, you must override {@link get_plugins} and {@link sort_plugins}.  It
+ * automatically calls all of the ReconstructionPlugin's methods on all of the
+ * plugins contained within this one, so if you override any of these methods,
+ * you <strong>must</strong> call <code>super.[method]</code> if you want that
+ * method to be called for the plugins you are containing.
+ *
+ * @param <T> The type of plugins you are holding
+ */
 public interface HoldingPlugin<T extends ReconstructionPlugin>
     extends ReconstructionPlugin
 {
@@ -137,6 +146,7 @@ public interface HoldingPlugin<T extends ReconstructionPlugin>
         for (T plugin : get_plugins()) {
             plugin.set_beginning_priority();
         }
+        sort_plugins();
     }
     @Override
     default void set_original_hologram_priority()
@@ -144,6 +154,7 @@ public interface HoldingPlugin<T extends ReconstructionPlugin>
         for (T plugin : get_plugins()) {
             plugin.set_original_hologram_priority();
         }
+        sort_plugins();
     }
     @Override
     default void set_hologram_priority()
@@ -151,6 +162,7 @@ public interface HoldingPlugin<T extends ReconstructionPlugin>
         for (T plugin : get_plugins()) {
             plugin.set_hologram_priority();
         }
+        sort_plugins();
     }
     @Override
     default void set_filtered_field_priority()
@@ -158,6 +170,7 @@ public interface HoldingPlugin<T extends ReconstructionPlugin>
         for (T plugin : get_plugins()) {
             plugin.set_filtered_field_priority();
         }
+        sort_plugins();
     }
     @Override
     default void set_propagated_field_priority()
@@ -165,6 +178,7 @@ public interface HoldingPlugin<T extends ReconstructionPlugin>
         for (T plugin : get_plugins()) {
             plugin.set_propagated_field_priority();
         }
+        sort_plugins();
     }
     @Override
     default void set_ending_priority()
@@ -172,6 +186,7 @@ public interface HoldingPlugin<T extends ReconstructionPlugin>
         for (T plugin : get_plugins()) {
             plugin.set_ending_priority();
         }
+        sort_plugins();
     }
     @Override
     default boolean has_error()
@@ -182,6 +197,15 @@ public interface HoldingPlugin<T extends ReconstructionPlugin>
         return false;
     }
 
+    /** Get all of the plugins contained in this one.  Whenever doing some
+     * processing, the plugins will process <em>in order</em>, so make sure that
+     * if you care about this order that you return something that is ordered.
+     *
+     * @return The plugins that are held by this plugin.
+     */
     Iterable<T> get_plugins();
+    /** Sort the plugins for the iteration order in {@link get_plugins}.  This
+     * will be called after priorities might have changed.
+     */
     void sort_plugins();
 }
