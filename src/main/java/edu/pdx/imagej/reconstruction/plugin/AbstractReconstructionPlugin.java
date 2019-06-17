@@ -21,5 +21,10 @@ package edu.pdx.imagej.reconstruction.plugin;
 
 import org.scijava.plugin.AbstractRichPlugin;
 
+/** Abstract base class to use for {@link ReconstructionPlugin}s.  It is
+ * suggested to extend this class rather than {@link ReconstructionPlugin}
+ * because this class extends {@link AbstractRichPlugin} which makes making a
+ * plugin much easier.
+ */
 public abstract class AbstractReconstructionPlugin
     extends AbstractRichPlugin implements ReconstructionPlugin {}
