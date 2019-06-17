@@ -25,13 +25,29 @@ import edu.pdx.imagej.dynamic_parameters.PluginParameter;
 import edu.pdx.imagej.dynamic_parameters.ImageParameter;
 import edu.pdx.imagej.dynamic_parameters.DParameter;
 
+/** A parameter that selects a {@link ReconstructionPlugin}.  It is basically
+ * dynamic parameter's <code>PluginParameter</code> for
+ * <code>ReconstructionPlugin</code>s.
+ *
+ * @param <T> The plugin type that you are selecting.
+ */
 @Plugin(type = DParameter.class)
 public class ReconstructionPluginParameter<T extends ReconstructionPlugin>
              extends PluginParameter<T> implements HologramPluginParameter {
+    /** Normal constructor, the same as <code>PluginParameter</code>'s.
+     *
+     * @param label The label to use on the dialog for this parameter
+     * @param cls The class for this plugin type
+     */
     public ReconstructionPluginParameter(String label, Class<T> cls)
     {
         super(label, cls);
     }
+    /** {@inheritDoc}
+     * <p>
+     * This looks through all of the plugin's parameters and calls <code>
+     * set_hologram</code> on all of them.
+     */
     @Override
     public void set_hologram(ImageParameter hologram)
     {
