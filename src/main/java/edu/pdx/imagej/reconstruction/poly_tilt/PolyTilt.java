@@ -155,7 +155,7 @@ public class PolyTilt extends HoldingSinglePlugin<PolyTiltPlugin>
 
     private Filter M_filter;
     private PolyTiltParameter M_param;
-    private double[][] M_phase;
+    double[][] M_phase; // Package private for testing
     private double[][] M_poly_field;
-    private int M_degree;
+    int M_degree; // Package private for testing
 }
