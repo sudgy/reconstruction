@@ -19,30 +19,72 @@
 
 package edu.pdx.imagej.reconstruction.units;
 
+/** A numerical value associated with a unit.  The only way to access the
+ * numerical value is to say what unit you want the value to be in.  This
+ * ensures that units will never be forgotten.
+ */
 public class DistanceUnitValue {
+    /** Construct a <code>DistanceUnitValue</code> using a numerical value and
+     * its units.
+     *
+     * @param value The numerical value to use.
+     * @param unit The units for the numerical value.
+     */
     public DistanceUnitValue(double value, DistanceUnits unit)
     {
         M_value = value;
         M_unit = unit;
     }
+    /** Get the value in the same units as when it was constructed.  <strong>You
+     * should not use this when actually doing calculations!</strong>  Instead
+     * you should use one of the <code>as_*</code> methods.  This should only be
+     * used when displaying the value to the user in the units he remembers
+     * putting them in.
+     *
+     * @return The numerical value used to construct this value.
+     */
     public double value() {return M_value;}
+    /** Get the unit used to construct this with.
+     *
+     * @return The {@link DistanceUnits} used to construct this value.
+     */
     public DistanceUnits unit() {return M_unit;}
+    /** Get the numerical value of this value in nanometers.
+     *
+     * @return The numerical value in nanometers.
+     */
     public double as_nano()
     {
         return DistanceUnits.convert(M_value, M_unit, DistanceUnits.Nano);
     }
+    /** Get the numerical value of this value in micrometers.
+     *
+     * @return The numerical value in micrometers.
+     */
     public double as_micro()
     {
         return DistanceUnits.convert(M_value, M_unit, DistanceUnits.Micro);
     }
+    /** Get the numerical value of this value in millimeters.
+     *
+     * @return The numerical value in millimeters.
+     */
     public double as_milli()
     {
         return DistanceUnits.convert(M_value, M_unit, DistanceUnits.Milli);
     }
+    /** Get the numerical value of this value in centimeters.
+     *
+     * @return The numerical value in centimeters.
+     */
     public double as_centi()
     {
         return DistanceUnits.convert(M_value, M_unit, DistanceUnits.Centi);
     }
+    /** Get the numerical value of this value in meters.
+     *
+     * @return The numerical value in meters.
+     */
     public double as_meter()
     {
         return DistanceUnits.convert(M_value, M_unit, DistanceUnits.Meter);

@@ -25,20 +25,25 @@ import org.scijava.prefs.PrefService;
 import org.scijava.service.Service;
 import org.scijava.service.AbstractService;
 
+/** The default implementation of {@link UnitService}.
+ */
 @Plugin(type = Service.class)
 public class DefaultUnitService extends AbstractService implements UnitService {
+    /** {@inheritDoc} */
     @Override
     public DistanceUnits wavelength()
     {
         return DistanceUnits.value_of(P_prefs.get(UnitService.class,
                                                   "wavelength", "Nanometers"));
     }
+    /** {@inheritDoc} */
     @Override
     public DistanceUnits image()
     {
         return DistanceUnits.value_of(P_prefs.get(UnitService.class, "image",
                                                   "Micrometers"));
     }
+    /** {@inheritDoc} */
     @Override
     public DistanceUnits z()
     {
@@ -46,16 +51,19 @@ public class DefaultUnitService extends AbstractService implements UnitService {
                                                   "Micrometers"));
     }
 
+    /** {@inheritDoc} */
     @Override
     public void set_wavelength(String val)
     {
         P_prefs.put(UnitService.class, "wavelength", val);
     }
+    /** {@inheritDoc} */
     @Override
     public void set_image(String val)
     {
         P_prefs.put(UnitService.class, "image", val);
     }
+    /** {@inheritDoc} */
     @Override
     public void set_z(String val)
     {

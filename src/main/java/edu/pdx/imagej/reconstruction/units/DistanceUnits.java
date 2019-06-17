@@ -19,9 +19,18 @@
 
 package edu.pdx.imagej.reconstruction.units;
 
+/** An enumeration representing different length units.
+ */
 public enum DistanceUnits {
     Nano, Micro, Milli, Centi, Meter;
 
+    /** Convert a double value from one unit to another.
+     *
+     * @param value The numerical value of the input.
+     * @param from The units for the input.
+     * @param to The units for the output.
+     * @return The numerical value of the output.
+     */
     public static double convert(double value, DistanceUnits from,
                                  DistanceUnits to)
     {
@@ -43,6 +52,15 @@ public enum DistanceUnits {
         return value * mult;
     }
 
+    /** Convert a string to a DistanceUnits.  Note that this is not intended to
+     * replace <code>valueOf</code>, as this reads string like "Nanometers" when
+     * <code>valueOf</code> just reads strings like "Nano".
+     *
+     * @param s The string to read from.  It needs to be something like
+     *          "Millimeters", and in the case of <code>Meter</code>, it is just
+     *          "Meters".
+     * @return The unit that corresponds with the string.
+     */
     public static DistanceUnits value_of(String s)
     {
         if (s == null) return null;
@@ -51,10 +69,16 @@ public enum DistanceUnits {
             case "Micrometers": return Micro;
             case "Millimeters": return Milli;
             case "Centimeters": return Centi;
-            case "Meter": return Meter;
+            case "Meters": return Meter;
         }
         return null;
     }
+    /** Convert this to a string, using abbreviations.  Because it uses
+     * abbreviations, <code>value_of(unit.toString())</code> will return <code>
+     * null</code>, not the unit again.
+     *
+     * @return The abbreviation for this unit.
+     */
     @Override
     public String toString()
     {

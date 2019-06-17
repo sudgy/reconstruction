@@ -24,6 +24,7 @@ import org.scijava.command.Command;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
+/** This is going to change soon so I'm not writing documentation. */
 @Plugin(type = Command.class, menuPath = "Plugins>DHM>Reconstruction Options")
 public class UnitCommand implements Command {
     @Override
@@ -39,14 +40,14 @@ public class UnitCommand implements Command {
     @Parameter(visibility = ItemVisibility.MESSAGE) private String P_ = "Units";
     @Parameter(label = "Wavelength",
                choices = {"Nanometers", "Micrometers", "Millimeters",
-                          "Centimeters", "Meter"})
+                          "Centimeters", "Meters"})
     private String P_wavelength = "Nanometers";
     @Parameter(label = "Image Dimensions",
                choices = {"Nanometers", "Micrometers", "Millimeters",
-               "Centimeters", "Meter"})
+               "Centimeters", "Meters"})
     private String P_image = "Micrometers";
     @Parameter(label = "Z",
                choices = {"Nanometers", "Micrometers", "Millimeters",
-               "Centimeters", "Meter"})
+               "Centimeters", "Meters"})
     private String P_z = "Micrometers";
 }

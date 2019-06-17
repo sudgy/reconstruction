@@ -21,12 +21,32 @@ package edu.pdx.imagej.reconstruction.units;
 
 import net.imagej.ImageJService;
 
+/** A service to remember what units are used for what inputs.
+ */
 public interface UnitService extends ImageJService {
+    /** Get the units used for wavelength.
+     * @return The units used for wavelength.
+     */
     DistanceUnits wavelength();
+    /** Get the units used for image dimensions.
+     * @return The units used for image dimensions.
+     */
     DistanceUnits image();
+    /** Get the units used for z.
+     * @return The units used for z.
+     */
     DistanceUnits z();
 
+    /** Set the units used for wavelength.
+     * @param val The unit to set it to.
+     */
     void set_wavelength(String val);
+    /** Set the units used for image dimensions.
+     * @param val The unit to set it to.
+     */
     void set_image(String val);
+    /** Set the units used for z.
+     * @param val The unit to set it to.
+     */
     void set_z(String val);
 }
