@@ -38,14 +38,31 @@ import edu.pdx.imagej.reconstruction.plugin.MainReconstructionPlugin;
 import edu.pdx.imagej.reconstruction.ReconstructionField;
 import edu.pdx.imagej.reconstruction.ConstReconstructionField;
 
+/** A {@link edu.pdx.imagej.reconstruction.plugin.ReconstructionPlugin
+ * ReconstructionPlugin} that performs filtering of holograms.  Not only does it
+ * get the filter from the user and then applies it to every image, but you can
+ * also use that same filter on any image you like using {@link filter_field}.
+ * Its priority is first, so as soon as {@link process_original_hologram} has
+ * started, you are good to use the filter.
+ */
 @Plugin(type = ReconstructionPlugin.class, priority = Priority.FIRST)
 public class Filter extends AbstractReconstructionPlugin
                     implements MainReconstructionPlugin {
+    /** Manually set the filter.  Use this if you don't want the filter to be
+     * selected through the gui.
+     *
+     * @param roi The roi to set the filter to be.
+     */
     public void set_filter(Roi roi)
     {
         M_roi = roi;
         M_filtered = true;
     }
+    /** Get the filter from the user through the gui, if a filter hasn't been
+     * set already.
+     *
+     * @param field The field to acquire the filter from
+     */
     @Override
     public void process_original_hologram(ConstReconstructionField field)
     {
@@ -54,6 +71,12 @@ public class Filter extends AbstractReconstructionPlugin
             M_filtered = true;
         }
     }
+    /** Get the filter from a field.
+     *
+     * @param field The field to acquire the filter from
+     * @param message The message to display to the user describing what's going
+     *                on.
+     */
     public void get_filter(ConstReconstructionField field, String message)
     {
         double[][] fourier = field.fourier().get_amp();
@@ -77,12 +100,21 @@ public class Filter extends AbstractReconstructionPlugin
         M_roi = imp.getRoi();
         imp.hide();
     }
+    /** Filter a field (just calls {@link filter_field filter_field}.
+     *
+     * @param field The field to filter.
+     * @param t Unused.
+     */
     @Override
     public void process_filtered_field(ReconstructionField field, int t)
     {
         filter_field(field);
     }
-    // This is separate so that other plugins can filter by the same roi
+    /** Filter a field.  This is separate from {@link process_filtered_field
+     * process_filtered_field} so that other plugins can filter by the same roi.
+     *
+     * @param field The field to filter.
+     */
     public void filter_field(ReconstructionField field)
     {
         if (M_roi == null) return; // If the user didn't select any roi
@@ -99,6 +131,10 @@ public class Filter extends AbstractReconstructionPlugin
         }
         field.fourier().set_field(filtered);
     }
+    /** Returns whether or not the user quit when getting the filter.
+     *
+     * @return Whether or not the user quit.
+     */
     @Override public boolean has_error() {return M_error;}
 
     private Roi M_roi;
