@@ -38,19 +38,42 @@ import edu.pdx.imagej.reconstruction.plugin.HoldingSinglePlugin;
 import edu.pdx.imagej.reconstruction.plugin.MainReconstructionPlugin;
 import edu.pdx.imagej.reconstruction.filter.Filter;
 
+/** A {@link edu.pdx.imagej.reconstruction.plugin.ReconstructionPlugin
+ * ReconstructionPlugin} that performs tilt correction on holograms through a
+ * polynomial-fit method.  It picks a horizontal and a vertical line that should
+ * be flat, and then uses a polynomial fit to cancel out the phase to try to
+ * force it to be flat.
+ * <p>
+ * The flat line determination is customizable by making a {@link
+ * PolyTiltPlugin}.  See that page for more info.
+ * <p>
+ * This class does include many methods for determining polynomials and
+ * evaluating them, but they only work once process_original_hologram has
+ * started.  At that point the sub plugins can call these methods and use them.
+ * They are not really intended to be used for other purposes.
+ */
 @Plugin(type = ReconstructionPlugin.class)
 public class PolyTilt extends HoldingSinglePlugin<PolyTiltPlugin>
                       implements MainReconstructionPlugin
 {
+    /** Constructor intended for live use of this plugin.
+     */
     public PolyTilt()
     {
         super("Line Selection Type", PolyTiltPlugin.class);
     }
+    /** Constructor intended for programmtic use of this plugin.
+     *
+     * @param plugin The {@link PolyTiltPlugin} to use to determine the flat
+     *               lines.
+     */
     public PolyTilt(PolyTiltPlugin plugin)
     {
         super(plugin);
     }
 
+    /** Get the parameter for this plugin.
+     */
     @Override
     public PolyTiltParameter param()
     {
@@ -59,6 +82,8 @@ public class PolyTilt extends HoldingSinglePlugin<PolyTiltPlugin>
         }
         return M_param;
     }
+    /** Get the filter from the list of plugins.
+     */
     @Override
     public void read_plugins(
         LinkedHashMap<Class<?>, ReconstructionPlugin> plugins)
@@ -68,6 +93,10 @@ public class PolyTilt extends HoldingSinglePlugin<PolyTiltPlugin>
             if (plugin instanceof Filter) M_filter = (Filter)plugin;
         }
     }
+    /** Get the polynomial fit.
+     *
+     * @param field The field to apply the polynomial fit to.
+     */
     @Override
     public void process_original_hologram(ConstReconstructionField field)
     {
@@ -96,6 +125,12 @@ public class PolyTilt extends HoldingSinglePlugin<PolyTiltPlugin>
             }
         }
     }
+    /** Apply the polynomial fit.  You may use this yourself on an arbitrary
+     * field if you wish.
+     *
+     * @param field The field to apply the polynomial fit to.
+     * @param t Unused.
+     */
     @Override
     public void process_filtered_field(ReconstructionField field, int t)
     {
@@ -103,10 +138,31 @@ public class PolyTilt extends HoldingSinglePlugin<PolyTiltPlugin>
         field.field().multiply_in_place(M_poly_field);
     }
 
+    /** Get the polynomial fit along a certain set of points.  It will use the
+     * phase value and degree that were set previously.
+     *
+     * @param line The points to fit along
+     * @return An array of doubles representing the coefficients of a
+     *         polynomial.  The first element is the linear term, the second
+     *         element is the quadratic term, etc.  There is no constant term.
+     *         If you need a constant term, use {@link
+     *         fit_along_including_constant}.
+     */
     public double[] fit_along(Iterable<Point> line)
     {
         return remove_constant(fit_along_including_constant(line));
     }
+    /** Get the polynomial fit along a certain set of points, including the
+     * constant term.  It will use the phase value and degree that were set
+     * previously.
+     *
+     * @param line The points to fit along
+     * @return An array of doubles representing the coefficients of a
+     *         polynomial.  The first element is the constant term, the second
+     *         element is the linear term, etc.
+     *
+     * @see fit_along
+     */
     public double[] fit_along_including_constant(Iterable<Point> line)
     {
         WeightedObservedPoints points = new WeightedObservedPoints();
@@ -137,6 +193,14 @@ public class PolyTilt extends HoldingSinglePlugin<PolyTiltPlugin>
             = PolynomialCurveFitter.create(M_degree);
         return fit.fit(points_list);
     }
+    /** Evaluate a polynomial.
+     *
+     * @param poly An array representing the polynomial to evaluate.  The first
+     *             term is the constant term, the second term is the linear
+     *             term, etc.
+     * @param x The input to the polynomial to evaluate.
+     * @return The value of the polynomial at x.
+     */
     public static double poly_eval(double[] poly, double x)
     {
         double result = 0;
@@ -145,6 +209,11 @@ public class PolyTilt extends HoldingSinglePlugin<PolyTiltPlugin>
         }
         return result;
     }
+    /** Get the phase used to evaluate the polynomial.  Even though this is a
+     * reference to the original data, you should not change it.
+     *
+     * @return A two-dimensional array of phase values.
+     */
     public double[][] get_phase() {return M_phase;}
 
     private static double[] remove_constant(double[] poly)
