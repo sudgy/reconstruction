@@ -29,18 +29,29 @@ import edu.pdx.imagej.dynamic_parameters.HoldingParameter;
 import edu.pdx.imagej.dynamic_parameters.ImageParameter;
 import edu.pdx.imagej.dynamic_parameters.DParameter;
 
+/** A Parameter that has all main reconstruction parameters.  You should
+ * probably never need to use this, unless you are reimplementing the
+ * reconstruction command for some reason.
+ */
 @Plugin(type = DParameter.class)
 public class AllPluginsParameter extends HoldingParameter<
         LinkedHashMap<Class<?>, ReconstructionPlugin>
     > {
     @Parameter private ReconstructionPluginService P_plugin_service;
 
+    /** Normal constructor.
+     *
+     * @param hologram The parameter being used to select the hologram.
+     */
     public AllPluginsParameter(ImageParameter hologram)
     {
         super("PluginParameters");
         M_hologram = hologram;
     }
 
+    /** Adds all parameters, and calls {@link
+     * HologramPluginParameter#set_hologram set_hologram} on all that need it.
+     */
     @Override
     public void initialize()
     {
@@ -54,6 +65,10 @@ public class AllPluginsParameter extends HoldingParameter<
         }
     }
 
+    /** Get all of the plugins.
+     *
+     * @return All of the plugins, as a map from their class to their value.
+     */
     @Override
     public LinkedHashMap<Class<?>, ReconstructionPlugin> get_value()
     {
