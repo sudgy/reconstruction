@@ -29,10 +29,21 @@ import org.scijava.plugin.PluginInfo;
 import org.scijava.service.Service;
 import net.imagej.ImageJService;
 
+/** A service for {@link ReconstructionPlugin}s.  You probably don't need to use
+ * it, because it is used mostly internally.
+ */
 @Plugin(type = Service.class)
 public class ReconstructionPluginService
              extends    AbstractPTService<ReconstructionPlugin>
              implements ImageJService {
+    /** Get all {@link MainReconstructionPlugin}s.  If this method finds any
+     * {@link ReconstructionPlugin} that is not a {@link
+     * MainReconstructionPlugin} or {@link SubReconstructionPlugin}, it will
+     * throw an exception.
+     *
+     * @return All <code>MainReconstructionPlugin</code>s, as a map from their
+     *         class to their value.
+     */
     public LinkedHashMap<Class<?>, ReconstructionPlugin> get_plugins()
     {
         LinkedHashMap<Class<?>, ReconstructionPlugin> result =
