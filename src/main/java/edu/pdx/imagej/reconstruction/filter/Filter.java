@@ -99,6 +99,11 @@ public class Filter extends AbstractReconstructionPlugin
         }
         field.fourier().set_field(filtered);
     }
+    @Override
+    public void set_hologram_priority()
+    {
+        setPriority(Priority.LAST);
+    }
     @Override public boolean has_error() {return M_error;}
 
     private Roi M_roi;
