@@ -25,13 +25,28 @@ import edu.pdx.imagej.dynamic_parameters.HoldingParameter;
 import edu.pdx.imagej.dynamic_parameters.ImageParameter;
 import edu.pdx.imagej.dynamic_parameters.DParameter;
 
+/** An extension to dynamic parameter's <code>HoldingParameter</code> that is a
+ * {@link HologramPluginParameter}.  It passes along <code>set_hologram</code>
+ * to all of its sub parameters.
+ *
+ * @param <T> The type that this parameter gets.
+ */
 @Plugin(type = DParameter.class)
 public abstract class ReconstructionHoldingParameter<T>
              extends HoldingParameter<T> implements HologramPluginParameter {
+    /** Normal constructor, the same as <code>HoldingParameter</code>.
+     *
+     * @param label The label to use on the dialog for this parameter
+     */
     public ReconstructionHoldingParameter(String label)
     {
         super(label);
     }
+    /** {@inheritDoc}
+     * <p>
+     * This looks through all of the parameters and calls <code>set_hologram
+     * </code> on all of them.
+     */
     @Override
     public void set_hologram(ImageParameter hologram)
     {
