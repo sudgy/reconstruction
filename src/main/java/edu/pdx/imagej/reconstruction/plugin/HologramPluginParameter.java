@@ -21,6 +21,15 @@ package edu.pdx.imagej.reconstruction.plugin;
 
 import edu.pdx.imagej.dynamic_parameters.ImageParameter;
 
+/** A parameter that can see what hologram is being selected.  This isn't
+ * actually a DParameter, but if any parameter inherits this interface, it will
+ * be given a reference to the ImageParameter that is being used to select the
+ * hologram.
+ */
 public interface HologramPluginParameter {
+    /** Set the hologram parameter.
+     *
+     * @param hologram The hologram parameter.
+     */
     public void set_hologram(ImageParameter hologram);
 }
