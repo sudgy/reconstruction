@@ -61,11 +61,11 @@ public class Auto extends AbstractPolyTiltPlugin {
     }
     private void calculate_h()
     {
-        final int width = M_poly_tilt.get_phase().length;
-        final int height = M_poly_tilt.get_phase()[0].length;
-        final int num_lines = 10;
-        final int start = width / 8;
-        final int end = start * 7;
+        final int width = M_poly_tilt.width();
+        final int height = M_poly_tilt.height();
+        final int start = (width >= 8) ? (width / 8) : 1;
+        final int end = width - start - 1;
+        final int num_lines = Math.max(1, Math.min(10, height - 2));
         final int vert_space = height / (num_lines + 1);
         Line[] lines = new Line[num_lines];
         for (int y = 0; y < num_lines; ++y) {
@@ -76,11 +76,11 @@ public class Auto extends AbstractPolyTiltPlugin {
     }
     private void calculate_v()
     {
-        final int width = M_poly_tilt.get_phase().length;
-        final int height = M_poly_tilt.get_phase()[0].length;
-        final int num_lines = 10;
-        final int start = height / 8;
-        final int end = start * 7;
+        final int width = M_poly_tilt.width();
+        final int height = M_poly_tilt.height();
+        final int start = (height >= 8) ? (height / 8) : 1;
+        final int end = height - start - 1;
+        final int num_lines = Math.max(1, Math.min(10, height - 2));
         final int hor_space = width / (num_lines + 1);
         Line[] lines = new Line[num_lines];
         for (int x = 0; x < num_lines; ++x) {
@@ -98,7 +98,7 @@ public class Auto extends AbstractPolyTiltPlugin {
             int x = 0;
             for (Point p : lines[i]) {
                 double poly_val = M_poly_tilt.poly_eval(fits[i], x);
-                double val = poly_val - M_poly_tilt.get_phase()[p.x][p.y];
+                double val = poly_val - M_poly_tilt.get_last_phase()[x];
                 squares[i] += val*val;
                 ++x;
             }

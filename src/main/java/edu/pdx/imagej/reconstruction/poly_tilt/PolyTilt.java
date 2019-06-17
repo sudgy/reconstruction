@@ -171,6 +171,7 @@ public class PolyTilt extends HoldingSinglePlugin<PolyTiltPlugin>
         double last_value = 0;
         final double C_phase = 2*Math.PI;
         final double C_half_phase = C_phase / 2;
+        M_last_phase = new double[Math.max(M_phase.length, M_phase[0].length)];
         for (Point p : line) {
             int px = p.x;
             int py = p.y;
@@ -186,6 +187,7 @@ public class PolyTilt extends HoldingSinglePlugin<PolyTiltPlugin>
             last_value = value;
             value += current_phase;
             points.add(x, value);
+            M_last_phase[x] = value;
             ++x;
         }
         List<WeightedObservedPoint> points_list = points.toList();
@@ -209,12 +211,21 @@ public class PolyTilt extends HoldingSinglePlugin<PolyTiltPlugin>
         }
         return result;
     }
-    /** Get the phase used to evaluate the polynomial.  Even though this is a
-     * reference to the original data, you should not change it.
+    /** Get the unwrapped phase values calculated for the last performed fit.
+     * Yeah, this is a little funny to have, but {@link Auto} needs it.
      *
-     * @return A two-dimensional array of phase values.
+     * @return The unwrapped phase values that were calculated the last time
+     *         {@link fit_along_including_constant} was called.
      */
-    public double[][] get_phase() {return M_phase;}
+    public double[] get_last_phase() {return M_last_phase;}
+    /** Get the width of the phase image
+     * @return The width of the phase image, in pixels.
+     */
+    public int width() {return M_phase.length;}
+    /** Get the height of the phase image
+     * @return The height of the phase image, in pixels.
+     */
+    public int height() {return M_phase[0].length;}
 
     private static double[] remove_constant(double[] poly)
     {
@@ -224,6 +235,7 @@ public class PolyTilt extends HoldingSinglePlugin<PolyTiltPlugin>
     private Filter M_filter;
     private PolyTiltParameter M_param;
     double[][] M_phase; // Package private for testing
+    private double[] M_last_phase;
     private double[][] M_poly_field;
     int M_degree; // Package private for testing
 }
