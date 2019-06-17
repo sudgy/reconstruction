@@ -68,24 +68,30 @@ public class Manual extends AbstractPolyTiltPlugin {
     private Line M_v_line;
     private ManualParameter M_param;
 
-    public class ManualParameter extends HoldingParameter<Line[]>
-                                 implements HologramPluginParameter
+    public static class ManualParameter extends HoldingParameter<Line[]>
+                                        implements HologramPluginParameter
     {
         ManualParameter() {super("ManualCenterParams");}
         @Override
         public void set_hologram(ImageParameter hologram)
         {
             M_holo = hologram;
+            set_dimensions1();
             if (M_h_val == null) {
-                set_dimensions1();
-                M_h_val = add_parameter(IntParameter.class, M_height / 2, "Pixel_value_for_horizontal_line");
-                M_h_start = add_parameter(IntParameter.class, 0, "Horizontal_line_start");
-                M_h_end = add_parameter(IntParameter.class, M_width, "Horizontal_line_end");
-                M_v_val = add_parameter(IntParameter.class, M_width / 2,  "Pixel_value_for_vertical_line");
-                M_v_start = add_parameter(IntParameter.class, 0, "Vertical_line_start");
-                M_v_end = add_parameter(IntParameter.class, M_height, "Vertical_line_end");
-                set_dimensions2();
+                M_h_val = add_parameter(IntParameter.class, M_height / 2,
+                                        "Pixel_value_for_horizontal_line");
+                M_h_start = add_parameter(IntParameter.class, 0,
+                                          "Horizontal_line_start");
+                M_h_end = add_parameter(IntParameter.class, M_width - 1,
+                                        "Horizontal_line_end");
+                M_v_val = add_parameter(IntParameter.class, M_width / 2,
+                                        "Pixel_value_for_vertical_line");
+                M_v_start = add_parameter(IntParameter.class, 0,
+                                          "Vertical_line_start");
+                M_v_end = add_parameter(IntParameter.class, M_height - 1,
+                                        "Vertical_line_end");
             }
+            set_dimensions2();
         }
         @Override
         public void read_from_dialog()
@@ -135,12 +141,12 @@ public class Manual extends AbstractPolyTiltPlugin {
         }
         private void set_dimensions2()
         {
-            M_h_val.set_bounds(0, M_height);
-            M_h_start.set_bounds(0, M_width);
-            M_h_end.set_bounds(0, M_width);
-            M_v_val.set_bounds(0, M_width);
-            M_v_start.set_bounds(0, M_height);
-            M_v_end.set_bounds(0, M_height);
+            M_h_val  .set_bounds(0, M_height - 1);
+            M_h_start.set_bounds(0, M_width  - 1);
+            M_h_end  .set_bounds(0, M_width  - 1);
+            M_v_val  .set_bounds(0, M_width  - 1);
+            M_v_start.set_bounds(0, M_height - 1);
+            M_v_end  .set_bounds(0, M_height - 1);
         }
         private IntParameter M_h_val;
         private IntParameter M_h_start;
