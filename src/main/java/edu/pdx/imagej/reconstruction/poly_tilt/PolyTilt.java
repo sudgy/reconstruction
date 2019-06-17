@@ -38,8 +38,7 @@ import edu.pdx.imagej.reconstruction.plugin.HoldingSinglePlugin;
 import edu.pdx.imagej.reconstruction.plugin.MainReconstructionPlugin;
 import edu.pdx.imagej.reconstruction.filter.Filter;
 
-@Plugin(type = ReconstructionPlugin.class,
-        priority = Priority.EXTREMELY_LOW * 1.1)
+@Plugin(type = ReconstructionPlugin.class)
 public class PolyTilt extends HoldingSinglePlugin<PolyTiltPlugin>
                       implements MainReconstructionPlugin
 {

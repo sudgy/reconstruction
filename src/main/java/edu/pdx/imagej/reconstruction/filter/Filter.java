@@ -38,7 +38,7 @@ import edu.pdx.imagej.reconstruction.plugin.MainReconstructionPlugin;
 import edu.pdx.imagej.reconstruction.ReconstructionField;
 import edu.pdx.imagej.reconstruction.ConstReconstructionField;
 
-@Plugin(type = ReconstructionPlugin.class, priority = Priority.EXTREMELY_LOW)
+@Plugin(type = ReconstructionPlugin.class, priority = Priority.FIRST)
 public class Filter extends AbstractReconstructionPlugin
                     implements MainReconstructionPlugin {
     public void set_filter(Roi roi)
@@ -78,7 +78,7 @@ public class Filter extends AbstractReconstructionPlugin
         imp.hide();
     }
     @Override
-    public void process_hologram(ReconstructionField field, int t)
+    public void process_filtered_field(ReconstructionField field, int t)
     {
         filter_field(field);
     }
@@ -98,11 +98,6 @@ public class Filter extends AbstractReconstructionPlugin
             filtered[p.x + xp][(p.y + yp) * 2 + 1] = fourier[p.x][p.y * 2 + 1];
         }
         field.fourier().set_field(filtered);
-    }
-    @Override
-    public void set_hologram_priority()
-    {
-        setPriority(Priority.LAST);
     }
     @Override public boolean has_error() {return M_error;}
 
