@@ -19,4 +19,11 @@
 
 package edu.pdx.imagej.reconstruction.plugin;
 
+/** Tag to say that this plugin is a sub reconstruction plugin.  A sub
+ * reconstruction plugin is one that is not considered by the command in any way
+ * directly.  It will only do things because another plugin tells it to.
+ *
+ * @see ReconstructionPlugin
+ * @see MainReconstructionPlugin
+ */
 public interface SubReconstructionPlugin extends ReconstructionPlugin {}

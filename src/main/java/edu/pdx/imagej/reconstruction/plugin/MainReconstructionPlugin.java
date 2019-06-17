@@ -19,4 +19,11 @@
 
 package edu.pdx.imagej.reconstruction.plugin;
 
+/** Tag to say that this plugin is a main reconstruction plugin.  A main
+ * reconstruction plugin is one that will be automatically added to the options
+ * and will be directly used by the command itself.
+ *
+ * @see ReconstructionPlugin
+ * @see SubReconstructionPlugin
+ */
 public interface MainReconstructionPlugin extends ReconstructionPlugin {}
