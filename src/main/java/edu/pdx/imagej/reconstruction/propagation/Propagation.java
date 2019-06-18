@@ -35,13 +35,30 @@ import edu.pdx.imagej.reconstruction.plugin.MainReconstructionPlugin;
 import edu.pdx.imagej.reconstruction.ReconstructionField;
 import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
 
+/** A {@link edu.pdx.imagej.reconstruction.plugin.ReconstructionPlugin
+ * ReconstructionPlugin} that performs numerical propagation.  The actual
+ * algorithm used is customizable through {@link PropagationPlugin}.  It might
+ * be confusing that <code>Propagation</code> is just a random plugin when the
+ * propagation methods assume propagation happens between steps, but this plugin
+ * has first priority and so is the first to have {@link
+ * edu.pdx.imagej.reconstruction.plugin.ReconstrucitonPlugin#
+ * process_propagated_field ReconstructionPlugin#process_propagated_field}
+ * called, and it does the propagation then.  So, please don't have a priority
+ * before first, because then it won't actually be propagated yet.
+ */
 @Plugin(type = ReconstructionPlugin.class, priority = Priority.FIRST)
 public class Propagation extends HoldingSinglePlugin<PropagationPlugin>
                          implements MainReconstructionPlugin {
+    /** Constructor intended for live use of the plugin.
+     */
     public Propagation()
     {
         super("Propagation Algorithm", PropagationPlugin.class);
     }
+    /** Constructor intended for programmatic use of the plugin.
+     *
+     * @param plugin The propagation algorithm to use.
+     */
     public Propagation(PropagationPlugin plugin)
     {
         super(plugin);
