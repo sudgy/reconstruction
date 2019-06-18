@@ -32,6 +32,8 @@ import edu.pdx.imagej.dynamic_parameters.ImageParameter;
 import edu.pdx.imagej.dynamic_parameters.IntParameter;
 import edu.pdx.imagej.reconstruction.plugin.HologramPluginParameter;
 
+/** A {@link PolyTiltPlugin} that uses user input to determine the lines.
+ */
 @Plugin(type = PolyTiltPlugin.class, name = "Manual",
         priority = Priority.HIGH * 0.999)
 public class Manual extends AbstractPolyTiltPlugin {
@@ -39,6 +41,7 @@ public class Manual extends AbstractPolyTiltPlugin {
     {
         M_param = new ManualParameter();
     }
+    /** {@inheritDoc} */
     @Override
     public Iterable<Point> get_h_line()
     {
@@ -49,6 +52,7 @@ public class Manual extends AbstractPolyTiltPlugin {
         }
         return M_h_line;
     }
+    /** {@inheritDoc} */
     @Override
     public Iterable<Point> get_v_line()
     {
@@ -59,6 +63,7 @@ public class Manual extends AbstractPolyTiltPlugin {
         }
         return M_v_line;
     }
+    /** {@inheritDoc} */
     @Override public ManualParameter param()
     {
         return M_param;
@@ -68,10 +73,17 @@ public class Manual extends AbstractPolyTiltPlugin {
     private Line M_v_line;
     private ManualParameter M_param;
 
+    /** The parameter that gets the lines.
+     */
     public static class ManualParameter extends HoldingParameter<Line[]>
                                         implements HologramPluginParameter
     {
-        ManualParameter() {super("ManualCenterParams");}
+        public ManualParameter() {super("ManualCenterParams");}
+        /** {@inheritDoc}
+         * <p>
+         * If this is the first time the hologram was set, this initializes the
+         * parameters.
+         */
         @Override
         public void set_hologram(ImageParameter hologram)
         {
