@@ -30,9 +30,18 @@ import org.scijava.plugin.Plugin;
 
 import edu.pdx.imagej.reconstruction.plugin.ReconstructionPlugin;
 
+/** A {@link PolyTiltPlugin} that determines the lines automatically through a
+ * least-squares method.  It picks several lines, finds the polynomial fit for
+ * all of them, then figures out which of those lines has the least sum of the
+ * squares of the differences between the polynomial and the original phase, and
+ * picks that line.
+ */
 @Plugin(type = PolyTiltPlugin.class, name = "Auto",
         priority = Priority.VERY_HIGH)
 public class Auto extends AbstractPolyTiltPlugin {
+    /** Get the {@link PolyTilt} plugin, so that we can use its polynomial
+     * fitting for our purposes.
+     */
     @Override
     public void read_plugins(List<ReconstructionPlugin> plugins)
     {
@@ -40,12 +49,14 @@ public class Auto extends AbstractPolyTiltPlugin {
             if (plugin instanceof PolyTilt) M_poly_tilt = (PolyTilt)plugin;
         }
     }
+    /** {@inheritDoc} */
     @Override
     public Iterable<Point> get_h_line()
     {
         if (M_h_line == null) calculate_lines();
         return M_h_line;
     }
+    /** {@inheritDoc} */
     @Override
     public Iterable<Point> get_v_line()
     {
