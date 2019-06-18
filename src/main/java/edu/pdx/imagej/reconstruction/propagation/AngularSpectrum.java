@@ -32,6 +32,9 @@ import edu.pdx.imagej.reconstruction.ConstReconstructionField;
 import edu.pdx.imagej.reconstruction.ReconstructionField;
 import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
 
+/** A {@link PropagationPlugin} that uses the angular spectrum algorithm to
+ * propagate.
+ */
 @Plugin(type = PropagationPlugin.class,
         name = "Angular Spectrum",
         priority = Priority.VERY_HIGH)
@@ -54,6 +57,9 @@ public class AngularSpectrum extends AbstractPropagationPlugin {
         M_width = width.as_micro();
         M_height = height.as_micro();
     }
+    /** Calculate the "core" of the propagation, which is basically everything
+     * within the square root of the equation.
+     */
     @Override
     public void process_beginning()
     {
@@ -92,9 +98,18 @@ public class AngularSpectrum extends AbstractPropagationPlugin {
             }
         }
     }
+    /** Perform the propagation.  It uses <code>field</code> and <code>last_z
+     * </code> to propagate, and caches the kernel for this z value if enough
+     * memory is available.
+     *
+     * @param original_field {@inheritDoc}
+     * @param z {@inheritDoc}
+     * @param field {@inheritDoc}
+     * @param last_z {@inheritDoc}
+     */
     @Override
     public void propagate(ConstReconstructionField original_field,
-                          DistanceUnitValue z_to,
+                          DistanceUnitValue z,
                           ReconstructionField field,
                           DistanceUnitValue last_z)
     {
