@@ -27,8 +27,15 @@ import ij.gui.Line;
 import org.scijava.Priority;
 import org.scijava.plugin.Plugin;
 
+/** A {@link PolyTiltPlugin} that uses lines in the middle of the image.  It
+ * cuts off the outer eigths of the image.
+ */
 @Plugin(type = PolyTiltPlugin.class, name = "Middle", priority = Priority.HIGH)
 public class Middle extends AbstractPolyTiltPlugin {
+    /** Create the lines using the hologram's size.
+     *
+     * @param hologram The original hologram.
+     */
     @Override
     public void process_hologram_param(ImagePlus hologram)
     {
@@ -40,8 +47,10 @@ public class Middle extends AbstractPolyTiltPlugin {
         M_h_line = new Line(width / 8, height / 2, max_x, height / 2);
         M_v_line = new Line(width / 2, height / 8, width / 2, max_y);
     }
+    /** {@inheritDoc} */
     @Override
     public Iterable<Point> get_h_line() {return M_h_line;}
+    /** {@inheritDoc} */
     @Override
     public Iterable<Point> get_v_line() {return M_v_line;}
     private Line M_h_line;
