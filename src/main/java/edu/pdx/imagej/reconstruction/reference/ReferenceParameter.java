@@ -27,14 +27,29 @@ import edu.pdx.imagej.dynamic_parameters.BoolParameter;
 import edu.pdx.imagej.dynamic_parameters.ImageParameter;
 import edu.pdx.imagej.reconstruction.plugin.ReconstructionHoldingParameter;
 
+/** Parameter that gets options for {@link Reference}.  It is just used by that
+ * class.  This extends {@link
+ * edu.pdx.imagej.reconstruction.plugin.ReconstructionHoldingParameter
+ * ReconstructionHoldingParameter}, although it holds more than just the plugin.
+ * Thus, {@link get_value} isn't really necessary other than to make the class
+ * concrete.
+ */
 @Plugin(type = DParameter.class)
 public class ReferenceParameter
              extends ReconstructionHoldingParameter<ReferencePlugin> {
+    /** Create a parameter that will use the {@link ReferencePlugin} <code>param
+     * </code> gets.
+     *
+     * @param param A dynamic parameter whose plugin will be the one used in
+     *              {@link Reference}.
+     */
     public ReferenceParameter(DParameter<ReferencePlugin> param)
     {
         super("ReferenceHoloBase");
         M_param = param;
     }
+    /** Initializes all of the sub parameters.
+     */
     @Override
     public void initialize()
     {
@@ -49,6 +64,10 @@ public class ReferenceParameter
                                        "Use same ROI for reference hologram?",
                                        true);
     }
+    /** Get the {@link ReferencePlugin} held by this parameter.
+     *
+     * @return The {@link ReferencePlugin} that was selected.
+     */
     @Override
     public ReferencePlugin get_value() {return M_param.get_value();}
     @Override
@@ -64,8 +83,21 @@ public class ReferenceParameter
         set_visibilities();
     }
 
+    /** Whether or not to use the reference hologram to cancel phase noise.
+     * @return Whether or not to use the reference hologram to cancel phase
+     *         noise.
+     */
     public boolean phase()        {return M_phase       .get_value();}
+    /** Whether or not to use the reference hologram to cancel amplitude noise.
+     * @return Whether or not to use the reference hologram to cancel amplitude
+     *         noise.
+     */
     public boolean amplitude()    {return M_amplitude   .get_value();}
+    /** Whether or not the reference hologram should be filtered with the same
+     * filter as everything else.
+     * @return Whether or not the reference hologram should be filtered with the
+     *         same filter as everything else.
+     */
     public boolean use_same_roi() {return M_use_same_roi.get_value();}
 
     private void set_visibilities()
