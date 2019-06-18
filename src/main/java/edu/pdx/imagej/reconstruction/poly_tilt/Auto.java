@@ -20,7 +20,7 @@
 package edu.pdx.imagej.reconstruction.poly_tilt;
 
 import java.awt.Point;
-import java.util.LinkedHashMap;
+import java.util.List;
 
 import ij.ImagePlus;
 import ij.gui.Line;
@@ -34,10 +34,9 @@ import edu.pdx.imagej.reconstruction.plugin.ReconstructionPlugin;
         priority = Priority.VERY_HIGH)
 public class Auto extends AbstractPolyTiltPlugin {
     @Override
-    public void read_plugins(
-        LinkedHashMap<Class<?>, ReconstructionPlugin> plugins)
+    public void read_plugins(List<ReconstructionPlugin> plugins)
     {
-        for (ReconstructionPlugin plugin : plugins.values()) {
+        for (ReconstructionPlugin plugin : plugins) {
             if (plugin instanceof PolyTilt) M_poly_tilt = (PolyTilt)plugin;
         }
     }

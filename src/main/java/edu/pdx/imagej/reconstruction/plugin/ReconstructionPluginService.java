@@ -19,8 +19,8 @@
 
 package edu.pdx.imagej.reconstruction.plugin;
 
-import java.util.LinkedHashMap;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.scijava.InstantiableException;
 import org.scijava.plugin.AbstractPTService;
@@ -41,13 +41,11 @@ public class ReconstructionPluginService
      * MainReconstructionPlugin} or {@link SubReconstructionPlugin}, it will
      * throw an exception.
      *
-     * @return All <code>MainReconstructionPlugin</code>s, as a map from their
-     *         class to their value.
+     * @return An instance of all <code>MainReconstructionPlugin</code>s.
      */
-    public LinkedHashMap<Class<?>, ReconstructionPlugin> get_plugins()
+    public List<ReconstructionPlugin> get_plugins()
     {
-        LinkedHashMap<Class<?>, ReconstructionPlugin> result =
-            new LinkedHashMap<>();
+        ArrayList<ReconstructionPlugin> result = new ArrayList<>();
         for (PluginInfo<ReconstructionPlugin> info : getPlugins()) {
             Class<?> cls;
             try {
@@ -59,7 +57,7 @@ public class ReconstructionPluginService
             if (MainReconstructionPlugin.class.isAssignableFrom(cls)) {
                 ReconstructionPlugin plugin
                     = pluginService().createInstance(info);
-                result.put(plugin.getClass(), plugin);
+                result.add(plugin);
             }
             else if (!SubReconstructionPlugin.class.isAssignableFrom(cls)) {
                 throw new RuntimeException(cls.getName() + " must inherit from "

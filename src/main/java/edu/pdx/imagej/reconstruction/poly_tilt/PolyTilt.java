@@ -21,7 +21,6 @@ package edu.pdx.imagej.reconstruction.poly_tilt;
 
 import java.awt.Point;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.commons.math3.fitting.PolynomialCurveFitter;
@@ -62,7 +61,7 @@ public class PolyTilt extends HoldingSinglePlugin<PolyTiltPlugin>
     {
         super("Line Selection Type", PolyTiltPlugin.class);
     }
-    /** Constructor intended for programmtic use of this plugin.
+    /** Constructor intended for programmatic use of this plugin.
      *
      * @param plugin The {@link PolyTiltPlugin} to use to determine the flat
      *               lines.
@@ -85,11 +84,10 @@ public class PolyTilt extends HoldingSinglePlugin<PolyTiltPlugin>
     /** Get the filter from the list of plugins.
      */
     @Override
-    public void read_plugins(
-        LinkedHashMap<Class<?>, ReconstructionPlugin> plugins)
+    public void read_plugins(List<ReconstructionPlugin> plugins)
     {
         super.read_plugins(plugins);
-        for (ReconstructionPlugin plugin : plugins.values()) {
+        for (ReconstructionPlugin plugin : plugins) {
             if (plugin instanceof Filter) M_filter = (Filter)plugin;
         }
     }

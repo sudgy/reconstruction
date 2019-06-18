@@ -19,7 +19,6 @@
 
 package edu.pdx.imagej.reconstruction;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -89,10 +88,8 @@ public class ReconstructionCommand implements Command, Initializable {
             = new DistanceUnitValue(P_width.get_value(), P_units.image());
         DistanceUnitValue height
             = new DistanceUnitValue(P_height.get_value(), P_units.image());
-        LinkedHashMap<Class<?>, ReconstructionPlugin> plugins_map
+        List<ReconstructionPlugin> plugins
             = P_plugins.get_value();
-        ArrayList<ReconstructionPlugin> plugins
-            = new ArrayList<>(plugins_map.values());
 
         // Beginning
         for (ReconstructionPlugin plugin : plugins) {
@@ -100,7 +97,7 @@ public class ReconstructionCommand implements Command, Initializable {
         }
         Collections.sort(plugins);
         for (ReconstructionPlugin plugin : plugins) {
-            plugin.read_plugins(plugins_map);
+            plugin.read_plugins(plugins);
             plugin.process_before_param();
             plugin.process_hologram_param(P_hologram.get_value());
             plugin.process_wavelength_param(wavelength);

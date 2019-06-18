@@ -19,7 +19,7 @@
 
 package edu.pdx.imagej.reconstruction.reference;
 
-import java.util.LinkedHashMap;
+import java.util.List;
 
 import ij.gui.Roi;
 
@@ -53,11 +53,10 @@ public class Reference extends HoldingSinglePlugin<ReferencePlugin>
         return M_param;
     }
     @Override
-    public void read_plugins(
-        LinkedHashMap<Class<?>, ReconstructionPlugin> plugins)
+    public void read_plugins(List<ReconstructionPlugin> plugins)
     {
         super.read_plugins(plugins);
-        for (ReconstructionPlugin plugin : plugins.values()) {
+        for (ReconstructionPlugin plugin : plugins) {
             if (plugin instanceof Filter) M_filter = (Filter)plugin;
         }
     }

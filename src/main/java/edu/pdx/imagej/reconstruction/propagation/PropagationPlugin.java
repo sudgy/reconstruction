@@ -19,8 +19,6 @@
 
 package edu.pdx.imagej.reconstruction.propagation;
 
-import java.util.LinkedHashMap;
-
 import ij.ImagePlus;
 
 import org.scijava.Prioritized;

@@ -19,7 +19,6 @@
 
 package edu.pdx.imagej.reconstruction.plugin;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import ij.ImagePlus;
@@ -59,8 +58,7 @@ import edu.pdx.imagej.reconstruction.ReconstructionField;
  * <ol>
  *      <li> {@link set_beginning_priority} </li>
  *      <li> {@link read_plugins
- *           read_plugins(LinkedHashMap&lt;Class&lt;?&gt;,
- *                        ReconstructionPlugin&gt;,)} </li>
+ *           read_plugins(List&lt;ReconstructionPlugin&gt;,)} </li>
  *      <li> {@link process_before_param} </li>
  *      <li> {@link process_hologram_param
  *           process_hologram_param(ImagePlus)} </li>
@@ -107,11 +105,9 @@ public interface ReconstructionPlugin extends ImageJPlugin, ParameterPlugin {
      * this to get the {@link edu.pdx.imagej.reconstruction.filter.Filter
      * Filter}.
      *
-     * @param plugins A map of classes to their ReconstructionPlugin.  Only
-     *                enabled plugins are included.
+     * @param plugins All enabled plugins.
      */
-    default void read_plugins(
-        LinkedHashMap<Class<?>, ReconstructionPlugin> plugins) {}
+    default void read_plugins(List<ReconstructionPlugin> plugins) {}
 
     /** Perform any setup before acquiring the basic parameters.
      */

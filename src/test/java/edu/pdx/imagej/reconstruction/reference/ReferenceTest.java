@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
 
 import ij.gui.PointRoi;
 
@@ -55,9 +55,8 @@ public class ReferenceTest {
         Filter other_filter = new Filter();
         other_filter.set_filter(new PointRoi(new int[]{1, 1, 2, 2},
                                              new int[]{1, 2, 1, 2}, 4));
-        LinkedHashMap<Class<?>, ReconstructionPlugin> plugins
-            = new LinkedHashMap<>();
-        plugins.put(Filter.class, normal_filter);
+        ArrayList<ReconstructionPlugin> plugins = new ArrayList<>();
+        plugins.add(normal_filter);
         test.read_plugins(plugins);
         test.set_not_same_filter(other_filter);
 

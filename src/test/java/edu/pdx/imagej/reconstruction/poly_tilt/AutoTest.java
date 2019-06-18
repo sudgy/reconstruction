@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 import java.awt.Point;
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
 
 import edu.pdx.imagej.reconstruction.plugin.ReconstructionPlugin;
 
@@ -132,13 +132,11 @@ public class AutoTest {
         assertEquals(5, i);
     }
     private static PolyTilt S_pt = new PolyTilt();
-    private static LinkedHashMap<Class<?>, ReconstructionPlugin> S_plugins
-        = get_plugins();
-    private static LinkedHashMap<Class<?>, ReconstructionPlugin> get_plugins()
+    private static ArrayList<ReconstructionPlugin> S_plugins = get_plugins();
+    private static ArrayList<ReconstructionPlugin> get_plugins()
     {
-        LinkedHashMap<Class<?>, ReconstructionPlugin> plugins
-            = new LinkedHashMap<>();
-        plugins.put(PolyTilt.class, S_pt);
+        ArrayList<ReconstructionPlugin> plugins = new ArrayList<>();
+        plugins.add(S_pt);
         return plugins;
     }
 }

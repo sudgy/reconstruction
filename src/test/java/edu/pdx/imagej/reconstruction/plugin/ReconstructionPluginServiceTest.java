@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.scijava.Context;
@@ -40,11 +39,11 @@ public class ReconstructionPluginServiceTest {
         TestReconstructionPluginService test
             = new TestReconstructionPluginService(TestA.class, TestB.class);
         context.inject(test);
-        LinkedHashMap<Class<?>, ReconstructionPlugin> plugins
+        List<ReconstructionPlugin> plugins
             = test.get_plugins();
         assertEquals(plugins.size(), 1, "ReconstructionPluginService should "
             + "only get MainReconstructionPlugins.");
-        assertTrue(plugins.get(TestA.class) instanceof TestA,
+        assertTrue(plugins.get(0) instanceof TestA,
             "ReconstructionPluginService should get a particular plugin type.");
     }
     @Test public void test_bad_plugin()

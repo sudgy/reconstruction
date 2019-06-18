@@ -20,7 +20,6 @@
 package edu.pdx.imagej.reconstruction.propagation;
 
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 
 import ij.ImagePlus;
 

@@ -20,7 +20,6 @@
 package edu.pdx.imagej.reconstruction.plugin;
 
 import java.util.List;
-import java.util.LinkedHashMap;
 
 import ij.ImagePlus;
 
@@ -44,8 +43,7 @@ public interface HoldingPlugin<T extends ReconstructionPlugin>
     extends ReconstructionPlugin
 {
     @Override
-    default void read_plugins(
-        LinkedHashMap<Class<?>, ReconstructionPlugin> plugins)
+    default void read_plugins(List<ReconstructionPlugin> plugins)
     {
         for (T plugin : get_plugins()) {
             plugin.read_plugins(plugins);

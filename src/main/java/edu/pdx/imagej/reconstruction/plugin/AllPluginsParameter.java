@@ -19,8 +19,9 @@
 
 package edu.pdx.imagej.reconstruction.plugin;
 
-import java.util.LinkedHashMap;
 import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.scijava.plugin.Plugin;
 import org.scijava.plugin.Parameter;
@@ -35,7 +36,7 @@ import edu.pdx.imagej.dynamic_parameters.DParameter;
  */
 @Plugin(type = DParameter.class)
 public class AllPluginsParameter extends HoldingParameter<
-        LinkedHashMap<Class<?>, ReconstructionPlugin>
+        List<ReconstructionPlugin>
     > {
     @Parameter private ReconstructionPluginService P_plugin_service;
 
@@ -56,7 +57,7 @@ public class AllPluginsParameter extends HoldingParameter<
     public void initialize()
     {
         M_plugins = P_plugin_service.get_plugins();
-        for (ReconstructionPlugin plugin : M_plugins.values()) {
+        for (ReconstructionPlugin plugin : M_plugins) {
             DParameter param = plugin.param();
             if (param != null) add_premade_parameter(param);
             if (param instanceof HologramPluginParameter) {
@@ -67,14 +68,14 @@ public class AllPluginsParameter extends HoldingParameter<
 
     /** Get all of the plugins.
      *
-     * @return All of the plugins, as a map from their class to their value.
+     * @return All of the plugins.
      */
     @Override
-    public LinkedHashMap<Class<?>, ReconstructionPlugin> get_value()
+    public List<ReconstructionPlugin> get_value()
     {
         return M_plugins;
     }
 
-    LinkedHashMap<Class<?>, ReconstructionPlugin> M_plugins;
+    List<ReconstructionPlugin> M_plugins;
     ImageParameter M_hologram;
 }
