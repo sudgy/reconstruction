@@ -110,22 +110,28 @@ public class ManualTest {
     @Test public void test_changing_bounds()
     {
         Manual.ManualParameter test = new Manual.ManualParameter();
-        ImageParameter image4 = new ImageParameter("", M_imgs4);
-        ImageParameter image8 = new ImageParameter("", M_imgs8);
-        test.set_hologram(image4);
+        ImageParameter image = new ImageParameter("", M_imgs);
+        test.set_hologram(image);
         TestDialog dialog = new TestDialog();
+        image.add_to_dialog(dialog);
         test.add_to_dialog(dialog);
 
         dialog.get_integer(0).value = 4;
         test.read_from_dialog();
         assertTrue(test.get_error() != null);
-        test.set_hologram(image8);
+
+        dialog.get_string_index(0).value = 1;
+        image.read_from_dialog();
+        test.read_from_dialog();
         assertTrue(test.get_error() == null);
-        test.set_hologram(image4);
+
+        dialog.get_string_index(0).value = 0;
+        image.read_from_dialog();
+        test.read_from_dialog();
         assertTrue(test.get_error() != null);
     }
     private ImagePlus M_img4 = new ImagePlus("", new FloatProcessor(4, 4));
     private ImagePlus M_img8 = new ImagePlus("", new FloatProcessor(8, 8));
     private ImagePlus[] M_imgs4 = {M_img4};
-    private ImagePlus[] M_imgs8 = {M_img8};
+    private ImagePlus[] M_imgs = {M_img4, M_img8};
 }
