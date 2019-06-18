@@ -32,18 +32,34 @@ import edu.pdx.imagej.reconstruction.plugin.HoldingSinglePlugin;
 import edu.pdx.imagej.reconstruction.plugin.MainReconstructionPlugin;
 import edu.pdx.imagej.reconstruction.filter.Filter;
 
+/** A {@link edu.pdx.imagej.reconstruction.plugin.ReconstructionPlugin
+ * ReconstructionPlugin} that removes noise through the use of a reference
+ * hologram.  Upon getting the reference hologram, it can remove phase noise
+ * by conjugating the reference hologram, and it can remove amplitude noise by
+ * dividing by the magnitude of the reference hologram, although there still
+ * seems to be a few issues with that.  The method of getting the reference
+ * hologram is customizable by making a {@link ReferencePlugin}.
+ */
 @Plugin(type = ReconstructionPlugin.class)
 public class Reference extends HoldingSinglePlugin<ReferencePlugin>
                        implements MainReconstructionPlugin {
+    /** Constructor intended for live use of the plugin.
+     */
     public Reference()
     {
         super("Reference Hologram", ReferencePlugin.class);
     }
+    /** Constructor intended for programmatic use of the plugin.
+     *
+     * @param plugin The method of getting the reference hologram to use.
+     */
     public Reference(ReferencePlugin plugin)
     {
         super(plugin);
     }
 
+    /** Get the parameter for this plugin.
+     */
     @Override
     public ReferenceParameter param()
     {
@@ -52,6 +68,9 @@ public class Reference extends HoldingSinglePlugin<ReferencePlugin>
         }
         return M_param;
     }
+    /** Get the filter being used to be able to apply it to the reference
+     * hologram.
+     */
     @Override
     public void read_plugins(List<ReconstructionPlugin> plugins)
     {
@@ -60,6 +79,8 @@ public class Reference extends HoldingSinglePlugin<ReferencePlugin>
             if (plugin instanceof Filter) M_filter = (Filter)plugin;
         }
     }
+    /** Apply the reference hologram.
+     */
     @Override
     public void process_filtered_field(ReconstructionField field, int t)
     {
@@ -86,6 +107,10 @@ public class Reference extends HoldingSinglePlugin<ReferencePlugin>
                                M_param.phase(), M_param.amplitude());
         field.field().multiply_in_place(reference_field.field());
     }
+    /** Set the filter to be used, when use same roi is false.
+     *
+     * @param filter The filter to use.
+     */
     public void set_not_same_filter(Filter filter)
     {
         M_not_same_filter = filter;
