@@ -113,7 +113,7 @@ public class AngularSpectrum extends AbstractPropagationPlugin {
                           ReconstructionField field,
                           DistanceUnitValue last_z)
     {
-        double dz = z_to.as_micro() - last_z.as_micro();
+        double dz = z.as_micro() - last_z.as_micro();
         int key = (int)Math.round(dz * 1000);
         double[][] kernel = M_kernels.get(key);
         if (kernel == null) {
