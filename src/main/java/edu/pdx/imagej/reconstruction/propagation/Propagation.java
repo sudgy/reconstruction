@@ -41,10 +41,10 @@ import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
  * be confusing that <code>Propagation</code> is just a random plugin when the
  * propagation methods assume propagation happens between steps, but this plugin
  * has first priority and so is the first to have {@link
- * edu.pdx.imagej.reconstruction.plugin.ReconstrucitonPlugin#
- * process_propagated_field ReconstructionPlugin#process_propagated_field}
- * called, and it does the propagation then.  So, please don't have a priority
- * before first, because then it won't actually be propagated yet.
+ * edu.pdx.imagej.reconstruction.plugin.ReconstructionPlugin#process_propagated_field
+ * ReconstructionPlugin#process_propagated_field} called, and it does the
+ * propagation then.  So, please don't have a priority before first, because
+ * then it won't actually be propagated yet.
  */
 @Plugin(type = ReconstructionPlugin.class, priority = Priority.FIRST)
 public class Propagation extends HoldingSinglePlugin<PropagationPlugin>
@@ -63,6 +63,12 @@ public class Propagation extends HoldingSinglePlugin<PropagationPlugin>
     {
         super(plugin);
     }
+    /** Propagate the field to the distance z.
+     *
+     * @param field The field to propagate.
+     * @param t The time slice used to get this field.
+     * @param z The z value to propagate to.
+     */
     @Override public void process_propagated_field(ReconstructionField field,
                                                    int t, DistanceUnitValue z)
     {
