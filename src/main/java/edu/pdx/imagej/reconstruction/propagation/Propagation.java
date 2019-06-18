@@ -79,7 +79,7 @@ public class Propagation extends HoldingSinglePlugin<PropagationPlugin>
             }
             get_plugin().process_starting_field(M_original_field);
         }
-        get_plugin().propagate(M_original_field, field, M_last_z, z);
+        get_plugin().propagate(M_original_field, z, field, M_last_z);
         M_last_z = z;
     }
 

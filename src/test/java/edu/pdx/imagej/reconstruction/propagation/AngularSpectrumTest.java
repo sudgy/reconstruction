@@ -43,7 +43,7 @@ public class AngularSpectrumTest {
         process_beginning(test, M_even_hologram, M_wavelength,
                                M_width, M_height);
         ReconstructionFieldImpl field = make_even_field();
-        test.propagate(null, field, M_z0, M_z100);
+        test.propagate(null, M_z100, field, M_z0);
         double[][] result = field.field().get_field();
         for (int x = 0; x < 4; ++x) {
             for (int y = 0; y < 4; ++y) {
@@ -64,7 +64,7 @@ public class AngularSpectrumTest {
                                new DistanceUnitValue(500, DistanceUnits.Nano),
                                new DistanceUnitValue(300, DistanceUnits.Micro),
                                new DistanceUnitValue(310, DistanceUnits.Micro));
-        test.propagate(null, field, M_z0, M_z100);
+        test.propagate(null, M_z100, field, M_z0);
         double[][] result1 = field.field().get_field();
 
         field = make_even_field();
@@ -74,8 +74,8 @@ public class AngularSpectrumTest {
                                new DistanceUnitValue(0.3, DistanceUnits.Milli),
                                new DistanceUnitValue(0.031, DistanceUnits.Centi)
                               );
-        test.propagate(null, field, M_z0,
-                       new DistanceUnitValue(0.0001, DistanceUnits.Meter));
+        test.propagate(null, new DistanceUnitValue(0.0001, DistanceUnits.Meter),
+                       field, M_z0);
         double[][] result2 = field.field().get_field();
 
         for (int x = 0; x < 4; ++x) {
@@ -95,8 +95,8 @@ public class AngularSpectrumTest {
         AngularSpectrum test = new AngularSpectrum();
         process_beginning(test, M_even_hologram, M_wavelength,
                                M_width, M_height);
-        test.propagate(null, field, M_z0, M_z100);
-        test.propagate(null, field, M_z100, M_z0);
+        test.propagate(null, M_z100, field, M_z0);
+        test.propagate(null, M_z0, field, M_z100);
         double[][] result = field.field().get_field();
         for (int x = 0; x < 4; ++x) {
             for (int y = 0; y < 4; ++y) {
@@ -115,8 +115,8 @@ public class AngularSpectrumTest {
         AngularSpectrum test = new AngularSpectrum();
         process_beginning(test, M_odd_hologram, M_wavelength,
                           M_width, M_height);
-        test.propagate(null, field, M_z0, M_z100);
-        test.propagate(null, field, M_z100, M_z0);
+        test.propagate(null, M_z100, field, M_z0);
+        test.propagate(null, M_z0, field, M_z100);
         double[][] result = field.field().get_field();
         for (int x = 0; x < 4; ++x) {
             for (int y = 0; y < 4; ++y) {
@@ -136,11 +136,11 @@ public class AngularSpectrumTest {
         AngularSpectrum test = new AngularSpectrum();
         process_beginning(test, M_even_hologram, M_wavelength,
                                M_width, M_height);
-        test.propagate(null, field, M_z0, M_z100);
-        test.propagate(null, field, M_z100, M_z200);
+        test.propagate(null, M_z100, field, M_z0);
+        test.propagate(null, M_z200, field, M_z100);
         double[][] result1 = field.field().get_field();
         field = make_even_field();
-        test.propagate(null, field, M_z0, M_z200);
+        test.propagate(null, M_z200, field, M_z0);
         double[][] result2 = field.field().get_field();
         for (int x = 0; x < 4; ++x) {
             for (int y = 0; y < 4; ++y) {
@@ -160,11 +160,11 @@ public class AngularSpectrumTest {
         AngularSpectrum test = new AngularSpectrum();
         process_beginning(test, M_odd_hologram, M_wavelength,
                           M_width, M_height);
-        test.propagate(null, field, M_z0, M_z100);
-        test.propagate(null, field, M_z100, M_z200);
+        test.propagate(null, M_z100, field, M_z0);
+        test.propagate(null, M_z200, field, M_z100);
         double[][] result1 = field.field().get_field();
         field = make_odd_field();
-        test.propagate(null, field, M_z0, M_z200);
+        test.propagate(null, M_z200, field, M_z0);
         double[][] result2 = field.field().get_field();
         for (int x = 0; x < 4; ++x) {
             for (int y = 0; y < 4; ++y) {
@@ -186,11 +186,11 @@ public class AngularSpectrumTest {
                                M_width, M_height);
         DistanceUnitValue z1 = new DistanceUnitValue(1, DistanceUnits.Micro);
         for (int i = 0; i < 100; ++i) {
-            test.propagate(null, field, M_z0, z1);
+            test.propagate(null, z1, field, M_z0);
         }
         double[][] result1 = field.field().get_field();
         field = make_even_field();
-        test.propagate(null, field, M_z0, M_z100);
+        test.propagate(null, M_z100, field, M_z0);
         double[][] result2 = field.field().get_field();
         for (int x = 0; x < 4; ++x) {
             for (int y = 0; y < 4; ++y) {
@@ -210,7 +210,7 @@ public class AngularSpectrumTest {
         AngularSpectrum test = new AngularSpectrum();
         process_beginning(test, M_even_hologram, M_wavelength,
                                M_width, M_height);
-        test.propagate(null, field, M_z0, M_z100);
+        test.propagate(null, M_z100, field, M_z0);
         double[][] amp2 = field.fourier().get_amp();
         for (int x = 0; x < 4; ++x) {
             for (int y = 0; y < 4; ++y) {
@@ -230,9 +230,9 @@ public class AngularSpectrumTest {
         AngularSpectrum test = new AngularSpectrum();
         process_beginning(test, M_odd_hologram, M_wavelength,
                           M_width, M_height);
-        test.propagate(null, field, M_z0, z10);
+        test.propagate(null, z10, field, M_z0);
         double[][] arg2 = field.fourier().get_arg();
-        test.propagate(null, field, z10, z20);
+        test.propagate(null, z20, field, z10);
         double[][] arg3 = field.fourier().get_arg();
         for (int x = 0; x < 5; ++x) {
             for (int y = 0; y < 5; ++y) {
@@ -265,21 +265,21 @@ public class AngularSpectrumTest {
 
         process_beginning(test, M_odd_hologram, wavelength500,
                                M_width, M_height);
-        test.propagate(null, field, M_z0, z10);
+        test.propagate(null, z10, field, M_z0);
         double arg2 = field.fourier().get_arg()[2][2];
 
         field = make_odd_field();
         test = new AngularSpectrum();
         process_beginning(test, M_odd_hologram, wavelength600,
                                M_width, M_height);
-        test.propagate(null, field, M_z0, z10);
+        test.propagate(null, z10, field, M_z0);
         double arg3 = field.fourier().get_arg()[2][2];
 
         field = make_odd_field();
         test = new AngularSpectrum();
         process_beginning(test, M_odd_hologram, wavelength700,
                                M_width, M_height);
-        test.propagate(null, field, M_z0, z10);
+        test.propagate(null, z10, field, M_z0);
         double arg4 = field.fourier().get_arg()[2][2];
 
         double dif1 = arg2 - arg1;
@@ -333,21 +333,21 @@ public class AngularSpectrumTest {
 
         process_beginning(test, M_odd_hologram, wavelength500,
                                M_width, M_height);
-        test.propagate(null, field, M_z0, z5);
+        test.propagate(null, z5, field, M_z0);
         double[][] arg2_array = field.fourier().get_arg();
 
         field = make_odd_field();
         test = new AngularSpectrum();
         process_beginning(test, M_odd_hologram, wavelength1000,
                                M_width, M_height);
-        test.propagate(null, field, M_z0, z10);
+        test.propagate(null, z10, field, M_z0);
         double[][] arg3_array = field.fourier().get_arg();
 
         field = make_odd_field();
         test = new AngularSpectrum();
         process_beginning(test, M_odd_hologram, wavelength2000,
                                M_width, M_height);
-        test.propagate(null, field, M_z0, z20);
+        test.propagate(null, z20, field, M_z0);
         double[][] arg4_array = field.fourier().get_arg();
 
         for (int x = 0; x < 5; ++x) {
@@ -412,11 +412,11 @@ public class AngularSpectrumTest {
             for (int height = 100; height < 500; height += 100) {
                 field = make_odd_field();
                 test = new AngularSpectrum();
-                process_beginning(test, 
+                process_beginning(test,
                     M_odd_hologram, M_wavelength,
                     new DistanceUnitValue(width, DistanceUnits.Micro),
                     new DistanceUnitValue(height, DistanceUnits.Micro));
-                test.propagate(null, field, M_z0, z10);
+                test.propagate(null, z10, field, M_z0);
                 arg_array[i] = field.fourier().get_arg();
                 width_array[i] = width;
                 height_array[i] = height;
@@ -492,7 +492,7 @@ public class AngularSpectrumTest {
         double[][] arg1_array = field.fourier().get_arg();
         AngularSpectrum test = new AngularSpectrum();
         process_beginning(test, M_odd_hologram, M_wavelength, M_width, M_z200);
-        test.propagate(null, field, M_z0, z10);
+        test.propagate(null, z10, field, M_z0);
         double[][] arg2_array = field.fourier().get_arg();
 
         double[][] difs = new double[5][5];
@@ -573,7 +573,7 @@ public class AngularSpectrumTest {
         // makes the square root negative.
         process_beginning(test, M_odd_hologram, M_width,
                                M_wavelength, M_wavelength);
-        test.propagate(null, field, M_z0, M_z100);
+        test.propagate(null, M_z100, field, M_z0);
         double arg2 = field.fourier().get_arg()[0][0];
         assertEquals(arg1, arg2);
     }

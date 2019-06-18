@@ -94,10 +94,11 @@ public class AngularSpectrum extends AbstractPropagationPlugin {
     }
     @Override
     public void propagate(ConstReconstructionField original_field,
-                          ReconstructionField current_field,
-                          DistanceUnitValue z_from, DistanceUnitValue z_to)
+                          DistanceUnitValue z_to,
+                          ReconstructionField field,
+                          DistanceUnitValue last_z)
     {
-        double dz = z_to.as_micro() - z_from.as_micro();
+        double dz = z_to.as_micro() - last_z.as_micro();
         int key = (int)Math.round(dz * 1000);
         double[][] kernel = M_kernels.get(key);
         if (kernel == null) {
@@ -124,7 +125,7 @@ public class AngularSpectrum extends AbstractPropagationPlugin {
                 M_kernels.put(key, kernel);
             }
         }
-        current_field.fourier().multiply_in_place(kernel);
+        field.fourier().multiply_in_place(kernel);
     }
 
     // The angular spectrum equation is generally

@@ -104,8 +104,9 @@ public class PropagationTest {
         @Override
         public void propagate(
             ConstReconstructionField original_field,
-            ReconstructionField current_field,
-            DistanceUnitValue z_from, DistanceUnitValue z_to)
+            DistanceUnitValue z,
+            ReconstructionField field,
+            DistanceUnitValue last_z)
         {
             M_propagated = true;
         }
