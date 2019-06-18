@@ -23,7 +23,16 @@ import java.awt.Point;
 
 import edu.pdx.imagej.reconstruction.plugin.SubReconstructionPlugin;
 
+/** A plugin that is used by {@link PolyTilt} to get flat lines.  You should
+ * extend {@link AbstractPolyTiltPlugin} instead of this interface.
+ */
 public interface PolyTiltPlugin extends SubReconstructionPlugin {
+    /** Get the horizontal line.
+     * @return The horizontal line.
+     */
     Iterable<Point> get_h_line();
+    /** Get the vertical line.
+     * @return The vertical line.
+     */
     Iterable<Point> get_v_line();
 }

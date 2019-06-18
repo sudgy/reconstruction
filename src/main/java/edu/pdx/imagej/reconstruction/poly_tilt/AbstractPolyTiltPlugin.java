@@ -21,6 +21,8 @@ package edu.pdx.imagej.reconstruction.poly_tilt;
 
 import org.scijava.plugin.AbstractRichPlugin;
 
+/** Abstract base class used to make {@link PolyTiltPlugin}s.
+ */
 public abstract class AbstractPolyTiltPlugin
     extends AbstractRichPlugin
     implements PolyTiltPlugin {}
