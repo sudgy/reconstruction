@@ -55,19 +55,19 @@ public class PropagationTest {
         assertEquals(plugin.M_height.as_micro(), 300);
         assertTrue(plugin.M_processed_beginning);
 
-        prop.process_propagated_field(null, null, 0, width, width);
+        prop.process_propagated_field(null, 0, width);
         assertTrue(plugin.M_processed);
         assertTrue(plugin.M_propagated);
         plugin.M_processed = false;
         plugin.M_propagated = false;
 
-        prop.process_propagated_field(null, null, 0, width, width);
+        prop.process_propagated_field(null, 0, width);
         assertTrue(!plugin.M_processed, "First frame processing should not "
             + "happen on later frames.");
         assertTrue(plugin.M_propagated);
         plugin.M_propagated = false;
 
-        prop.process_propagated_field(null, null, 1, width, width);
+        prop.process_propagated_field(null, 1, width);
         assertTrue(plugin.M_processed, "First frame processing should happen "
             + "on a later first frame.");
         assertTrue(plugin.M_propagated);

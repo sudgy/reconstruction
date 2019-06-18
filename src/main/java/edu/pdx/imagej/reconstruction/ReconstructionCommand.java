@@ -151,23 +151,15 @@ public class ReconstructionCommand implements Command, Initializable {
                 plugin.set_propagated_field_priority();
             }
             Collections.sort(plugins);
-            ConstReconstructionField const_field
-                = new ConstReconstructionField(field);
-            ReconstructionField propagating_field = field.copy();
-            DistanceUnitValue z_from
-                = new DistanceUnitValue(0, DistanceUnits.Micro);
             for (DistanceUnitValue z : zs) {
                 if (IJ.escapePressed()) {
                     P_status.showStatus(1, 1, "Command canceled");
                     return;
                 }
                 for (ReconstructionPlugin plugin : plugins) {
-                    plugin.process_propagated_field(const_field,
-                                                    propagating_field,
-                                                    t, z_from, z);
+                    plugin.process_propagated_field(field, t, z);
                     if (plugin.has_error()) return;
                 }
-                z_from = z;
             }
         }
 

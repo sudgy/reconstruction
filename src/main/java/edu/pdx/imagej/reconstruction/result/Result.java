@@ -128,25 +128,23 @@ public class Result extends AbstractReconstructionPlugin
         }
     }
     @Override
-    public void process_propagated_field(
-        ConstReconstructionField original_field,
-        ReconstructionField current_field,
-        int t, DistanceUnitValue z_from, DistanceUnitValue z_to)
+    public void process_propagated_field(ReconstructionField field,
+                                         int t, DistanceUnitValue z)
     {
         if (M_options.amplitude) {
-            process_particular(current_field.field().get_amp(), t, z_to,
+            process_particular(field.field().get_amp(), t, z,
                                M_amplitude, "Amplitude", get_slice_label(t));
         }
         if (M_options.phase) {
-            process_particular(current_field.field().get_arg(), t, z_to,
+            process_particular(field.field().get_arg(), t, z,
                                M_phase, "Phase", get_slice_label(t));
         }
         if (M_options.real) {
-            process_particular(current_field.field().get_real(), t, z_to,
+            process_particular(field.field().get_real(), t, z,
                                M_real, "Real", get_slice_label(t));
         }
         if (M_options.imaginary) {
-            process_particular(current_field.field().get_imag(), t, z_to,
+            process_particular(field.field().get_imag(), t, z,
                                M_imaginary, "Imaginary", get_slice_label(t));
         }
     }

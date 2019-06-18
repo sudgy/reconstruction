@@ -30,13 +30,9 @@ public abstract class AbstractPropagationPlugin
     implements PropagationPlugin
 {
     @Override
-    final public void process_propagated_field(
-        ConstReconstructionField original_field,
-        ReconstructionField current_field,
-        int t, DistanceUnitValue z_from, DistanceUnitValue z_to)
+    final public void process_propagated_field(ReconstructionField field,
+                                               int t, DistanceUnitValue z)
     {
-        PropagationPlugin.super.process_propagated_field(original_field,
-                                                         current_field,
-                                                         t, z_from, z_to);
+        PropagationPlugin.super.process_propagated_field(field, t, z);
     }
 }

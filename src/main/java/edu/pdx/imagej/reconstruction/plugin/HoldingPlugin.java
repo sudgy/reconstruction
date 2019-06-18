@@ -121,14 +121,11 @@ public interface HoldingPlugin<T extends ReconstructionPlugin>
         }
     }
     @Override
-    default void process_propagated_field(
-        ConstReconstructionField original_field,
-        ReconstructionField current_field,
-        int t, DistanceUnitValue z_from, DistanceUnitValue z_to)
+    default void process_propagated_field(ReconstructionField field,
+                                          int t, DistanceUnitValue z)
     {
         for (T plugin : get_plugins()) {
-            plugin.process_propagated_field(original_field, current_field, t,
-                                            z_from, z_to);
+            plugin.process_propagated_field(field, t, z);
         }
     }
     @Override

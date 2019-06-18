@@ -45,15 +45,13 @@ public class Status extends AbstractReconstructionPlugin
         {M_z_size = zs.size();}
     @Override public void process_beginning()
         {M_total_size = M_t_size * M_z_size;}
-    @Override public void process_propagated_field(
-        ConstReconstructionField original_field,
-        ReconstructionField current_field,
-        int t, DistanceUnitValue z_from, DistanceUnitValue z_to)
+    @Override public void process_propagated_field(ReconstructionField field,
+                                                   int t, DistanceUnitValue z)
     {
         String label = M_hologram.getStack().getSliceLabel(t);
         if (label == null) label = M_hologram.getTitle();
         P_status.showStatus(M_current, M_total_size, "Processing " + label
-            + " at z = " + String.format("%.3f", z_to.value()));
+            + " at z = " + String.format("%.3f", z.value()));
         ++M_current;
     }
 

@@ -63,16 +63,21 @@ public class Propagation extends HoldingSinglePlugin<PropagationPlugin>
     {
         super(plugin);
     }
-    @Override public void process_propagated_field(
-        ConstReconstructionField original_field,
-        ReconstructionField current_field,
-        int t, DistanceUnitValue z_from, DistanceUnitValue z_to)
+    @Override public void process_propagated_field(ReconstructionField field,
+                                                   int t, DistanceUnitValue z)
     {
         if (M_ts_processed.add(t)) {
-            get_plugin().process_starting_field(original_field);
+            M_last_z = new DistanceUnitValue();
+            if (field != null) {
+                M_original_field = new ConstReconstructionField(field.copy());
+            }
+            get_plugin().process_starting_field(M_original_field);
         }
-        get_plugin().propagate(original_field, current_field, z_from, z_to);
+        get_plugin().propagate(M_original_field, field, M_last_z, z);
+        M_last_z = z;
     }
 
     private HashSet<Integer> M_ts_processed = new HashSet<>();
+    private ConstReconstructionField M_original_field;
+    private DistanceUnitValue M_last_z;
 }

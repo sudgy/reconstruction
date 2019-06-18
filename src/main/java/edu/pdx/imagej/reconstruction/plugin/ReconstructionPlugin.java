@@ -85,10 +85,8 @@ import edu.pdx.imagej.reconstruction.ReconstructionField;
  *      <li> {@link set_propagated_field_priority} </li>
  *      <li> [Loop through z slices] </li>
  *      <li> {@link process_propagated_field
- *           process_propagated_field(ConstReconstructionField,
- *                                    ReconstructionField,
+ *           process_propagated_field(ReconstructionField,
  *                                    int,
- *                                    DistanceUnitValue,
  *                                    DistanceUnitValue)} </li>
  *      <li> [End loop through z slices] </li>
  *      <li> [End loop through time slices] </li>
@@ -173,26 +171,14 @@ public interface ReconstructionPlugin extends ImageJPlugin, ParameterPlugin {
      * @param t The t slice that was used to get this field.
      */
     default void process_filtered_field(ReconstructionField field, int t) {}
-    /** Perform any calculations wanted on the propagated field.  Note that
-     * {@link edu.pdx.imagej.reconstruction.propagation.Propagation Propagation}
-     * interprets these same parameters a little differently.  If you are making
-     * a propagation plugin, please look at the documentation there for how to
-     * interpret these parameters.
+    /** Perform any calculations wanted on the propagated field.
      *
-     * @param original_field The original filtered field before propagation.  It
-     *                       should be identical to what <code>field</code> was
-     *                       after all plugins had performed {@link
-     *                       process_filtered_field
-     *                       process_filtered_field(Reconstructionfield, int)}.
-     * @param current_field The current, propagated field.
+     * @param field The current, propagated field.
      * @param t The t slice that was used to get this field.
-     * @param z_from Only used during propagation, and should not be used here.
-     * @param z_to The z value that was used to get this field.
+     * @param z The z value that was used to get this field.
      */
-    default void process_propagated_field(
-        ConstReconstructionField original_field,
-        ReconstructionField current_field,
-        int t, DistanceUnitValue z_from, DistanceUnitValue z_to) {}
+    default void process_propagated_field(ReconstructionField field,
+                                          int t, DistanceUnitValue z) {}
     /** Perform any processing wanted after everything is finished.
      */
     default void process_ending() {}

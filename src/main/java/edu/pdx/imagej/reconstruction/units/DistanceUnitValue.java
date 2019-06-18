@@ -24,6 +24,12 @@ package edu.pdx.imagej.reconstruction.units;
  * ensures that units will never be forgotten.
  */
 public class DistanceUnitValue {
+    /** Construct a <code>DistanceUnitValue</code> with a value of zero. */
+    public DistanceUnitValue()
+    {
+        M_value = 0;
+        M_unit = DistanceUnits.Meter;
+    }
     /** Construct a <code>DistanceUnitValue</code> using a numerical value and
      * its units.
      *

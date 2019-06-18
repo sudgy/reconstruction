@@ -67,7 +67,7 @@ public class ResultTest {
             {4, 1}
         };
         ReconstructionField field = new ReconstructionFieldImpl(real, imag);
-        test.process_propagated_field(null, field, 1, null, unit0);
+        test.process_propagated_field(field, 1, unit0);
         test.almost_process_ending();
 
         assertTrue(test.M_phase_imp == null);
@@ -108,13 +108,13 @@ public class ResultTest {
         double[][] real = {{0, 0}, {0, 0}};
         double[][] imag = {{0, 0}, {0, 0}};
         ReconstructionField field = new ReconstructionFieldImpl(real, imag);
-        test.process_propagated_field(null, field, 1, null, unit0);
+        test.process_propagated_field(field, 1, unit0);
         field.field().get_field()[0][0] = 1;
-        test.process_propagated_field(null, field, 1, null, unit1);
+        test.process_propagated_field(field, 1, unit1);
         field.field().get_field()[0][0] = 2;
-        test.process_propagated_field(null, field, 3, null, unit0);
+        test.process_propagated_field(field, 3, unit0);
         field.field().get_field()[0][0] = 3;
-        test.process_propagated_field(null, field, 3, null, unit1);
+        test.process_propagated_field(field, 3, unit1);
         test.almost_process_ending();
 
         ImagePlus imp = test.M_real_imp;
@@ -170,13 +170,13 @@ public class ResultTest {
             double[][] real = {{0, 0}, {0, 0}};
             double[][] imag = {{0, 0}, {0, 0}};
             ReconstructionField field = new ReconstructionFieldImpl(real, imag);
-            test.process_propagated_field(null, field, 1, null, unit0);
+            test.process_propagated_field(field, 1, unit0);
             field.field().get_field()[0][0] = 1;
-            test.process_propagated_field(null, field, 1, null, unit1);
+            test.process_propagated_field(field, 1, unit1);
             field.field().get_field()[0][0] = 2;
-            test.process_propagated_field(null, field, 3, null, unit0);
+            test.process_propagated_field(field, 3, unit0);
             field.field().get_field()[0][0] = 3;
-            test.process_propagated_field(null, field, 3, null, unit1);
+            test.process_propagated_field(field, 3, unit1);
             test.almost_process_ending();
 
             assertTrue(test.M_real_imp == null, "There should be no result in "
