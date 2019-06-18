@@ -87,12 +87,12 @@ public class ReferenceParameter
      * @return Whether or not to use the reference hologram to cancel phase
      *         noise.
      */
-    public boolean phase()        {return M_phase       .get_value();}
+    public boolean phase() {return M_phase.get_value();}
     /** Whether or not to use the reference hologram to cancel amplitude noise.
      * @return Whether or not to use the reference hologram to cancel amplitude
      *         noise.
      */
-    public boolean amplitude()    {return M_amplitude   .get_value();}
+    public boolean amplitude() {return M_amplitude.get_value();}
     /** Whether or not the reference hologram should be filtered with the same
      * filter as everything else.
      * @return Whether or not the reference hologram should be filtered with the

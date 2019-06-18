@@ -103,8 +103,7 @@ public class Reference extends HoldingSinglePlugin<ReferencePlugin>
             M_not_same_filter.filter_field(reference_field);
         }
 
-        GetReference.calculate(reference_field,
-                               M_param.phase(), M_param.amplitude());
+        get_reference(reference_field);
         field.field().multiply_in_place(reference_field.field());
     }
     /** Set the filter to be used, when use same roi is false.
@@ -114,6 +113,43 @@ public class Reference extends HoldingSinglePlugin<ReferencePlugin>
     public void set_not_same_filter(Filter filter)
     {
         M_not_same_filter = filter;
+    }
+
+    void get_reference(ReconstructionField hologram)
+    {
+        double[][] reference = hologram.field().get_field();
+        for (int x = 0; x < hologram.field().width(); ++x) {
+            for (int y = 0; y < hologram.field().height(); ++y) {
+                double real = reference[x][y * 2];
+                double imag = reference[x][y * 2 + 1];
+                double abs;
+                if (M_param.amplitude()) {
+                    // The edges get way too bright for some reason
+                    // The 256 is to let the phase still be good
+                    // I don't know if it actually does anything, though.
+                    if (x == 0 || x == reference.length - 1 ||
+                            y == 0 || y == reference[0].length - 1) {
+                        abs = Double.MAX_VALUE / 256.0;
+                    }
+                    else abs = (real*real + imag*imag);
+                }
+                else abs = Math.sqrt(real*real + imag*imag);
+                if (M_param.phase()) {
+                    reference[x][y * 2] = real / abs;
+                    reference[x][y*2+1] = imag / abs * -1;
+                }
+                else {
+                    if (M_param.amplitude()) {
+                        reference[x][y * 2] = 1 / Math.sqrt(abs);
+                        reference[x][y*2+1] = 0;
+                    }
+                    else {
+                        reference[x][y * 2] = 1;
+                        reference[x][y*2+1] = 0;
+                    }
+                }
+            }
+        }
     }
 
     private Filter M_filter;

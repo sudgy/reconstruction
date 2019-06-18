@@ -29,12 +29,14 @@ public class GetReferenceTest {
     @Test public void test_nothing()
     {
         ReconstructionFieldImpl field = make_field();
-        GetReference.calculate(field, false, false);
+        Reference test = new Reference();
+        test.M_param = new TestRef(false, false);
+        test.get_reference(field);
         for (int x = 0; x < 4; ++x) {
             for (int y = 0; y < 4; ++y) {
                 String coord = "(" + x + ", " + y + ")";
-                assertEquals(field.field().get_real(x, y), 1, "at " + coord);
-                assertEquals(field.field().get_imag(x, y), 0, "at " + coord);
+                assertEquals(1, field.field().get_real(x, y), "at " + coord);
+                assertEquals(0, field.field().get_imag(x, y), "at " + coord);
             }
         }
     }
@@ -42,7 +44,9 @@ public class GetReferenceTest {
     {
         ReconstructionFieldImpl field = make_field();
         ReconstructionFieldImpl reference = field.copy();
-        GetReference.calculate(reference, true, false);
+        Reference test = new Reference();
+        test.M_param = new TestRef(true, false);
+        test.get_reference(reference);
         for (int x = 0; x < 4; ++x) {
             for (int y = 0; y < 4; ++y) {
                 double field_arg = field.field().get_arg()[x][y];
@@ -58,7 +62,9 @@ public class GetReferenceTest {
     {
         ReconstructionFieldImpl field = make_field();
         ReconstructionFieldImpl reference = field.copy();
-        GetReference.calculate(reference, false, true);
+        Reference test = new Reference();
+        test.M_param = new TestRef(false, true);
+        test.get_reference(reference);
         for (int x = 0; x < 4; ++x) {
             for (int y = 0; y < 4; ++y) {
                 double field_amp = field.field().get_amp()[x][y];
@@ -78,7 +84,9 @@ public class GetReferenceTest {
     {
         ReconstructionFieldImpl field = make_field();
         ReconstructionFieldImpl reference = field.copy();
-        GetReference.calculate(reference, true, true);
+        Reference test = new Reference();
+        test.M_param = new TestRef(true, true);
+        test.get_reference(reference);
         field.field().multiply_in_place(reference.field());
         for (int x = 0; x < 4; ++x) {
             for (int y = 0; y < 4; ++y) {
@@ -108,5 +116,18 @@ public class GetReferenceTest {
     private static ReconstructionFieldImpl make_field()
     {
         return new ReconstructionFieldImpl(M_real, M_imag);
+    }
+
+    private static class TestRef extends ReferenceParameter {
+        public TestRef(boolean phase, boolean amplitude)
+        {
+            super(null);
+            M_phase = phase;
+            M_amplitude = amplitude;
+        }
+        @Override public boolean amplitude() {return M_amplitude;}
+        @Override public boolean phase() {return M_phase;}
+        private boolean M_amplitude;
+        private boolean M_phase;
     }
 }
