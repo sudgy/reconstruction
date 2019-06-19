@@ -501,85 +501,59 @@ public class TParameter extends HoldingParameter<List<Integer>> {
 
 
     /** Time parameter using a continuous (separated by one) range */
-    public class ContinuousT extends AbstractDParameter<List<Integer>> {
+    public class ContinuousT extends HoldingParameter<List<Integer>> {
         public ContinuousT() {super("ContinuousT");}
         @Override
         public void initialize()
         {
-            set_error("t range is empty.");
+            M_begin = add_parameter(IntParameter.class, 1, "t_value_begin");
+            M_end = add_parameter(IntParameter.class, 1, "t_value_end");
+            M_begin.set_bounds(1, M_max_t);
+            M_end.set_bounds(1, M_max_t);
         }
         @Override
         public void add_to_dialog(DPDialog dialog)
         {
-            M_supplier = dialog.add_text_box(
-                "t values (in the format \"begin-end\")", M_current_string);
+            super.add_to_dialog(dialog);
+            if (M_current_max_t != M_max_t) {
+                M_current_max_t = M_max_t;
+                M_begin.set_bounds(1, M_max_t);
+                M_end.set_bounds(1, M_max_t);
+            }
         }
         @Override
         public void read_from_dialog()
         {
-            M_current_string = M_supplier.get();
-            process_errors();
-        }
-        @Override
-        public void save_to_prefs(Class<?> c, String name)
-        {
-            prefs().put(c, name + ".value", M_current_string);
+            super.read_from_dialog();
+            if (M_current_max_t != M_max_t) {
+                M_current_max_t = M_max_t;
+                M_begin.set_bounds(1, M_max_t);
+                M_end.set_bounds(1, M_max_t);
+            }
         }
         @Override
         public void read_from_prefs(Class<?> c, String name)
         {
-            M_current_string = prefs().get(c, name + ".value", "");
-            process_errors();
+            super.read_from_prefs(c, name);
+            M_begin.set_bounds(1, M_max_t);
+            M_end.set_bounds(1, M_max_t);
         }
         @Override
         public List<Integer> get_value()
         {
-            int multiplier = M_t1 < M_t2 ? 1 : -1;
+            int multiplier = M_begin.get_value() < M_end.get_value() ? 1 : -1;
             return new AbstractList<Integer>() {
                 @Override
                 public Integer get(int index)
-                {return M_t1 + index * multiplier;}
+                {return M_begin.get_value() + index * multiplier;}
                 @Override
                 public int size()
-                {return (M_t2 - M_t1) * multiplier + 1;}
+                {return Math.abs(M_end.get_value() - M_begin.get_value()) + 1;}
             };
         }
 
-        private void process_errors()
-        {
-            List<String> ts_as_string
-                = Arrays.asList(M_current_string.split("\\s*-\\s*"));
-            if (ts_as_string.size() != 2) {
-                set_error("Unable to parse t range.");
-                return;
-            }
-            try {M_t1 = Integer.parseInt(ts_as_string.get(0));}
-            catch (NumberFormatException e) {
-                set_error("Unable to parse t range.  \"" + ts_as_string.get(0)
-                    + "\" is not an integer.");
-                return;
-            }
-            try {M_t2 = Integer.parseInt(ts_as_string.get(1));}
-            catch (NumberFormatException e) {
-                set_error("Unable to parse t range.  \"" + ts_as_string.get(1)
-                    + "\" is not an integer.");
-                return;
-            }
-            if (M_t1 < 1 || M_t1 > M_max_t) {
-                set_error("t value \"" + M_t1 + "\" is not in the range [1.."
-                    + M_max_t + "].");
-                return;
-            }
-            if (M_t2 < 1 || M_t2 > M_max_t) {
-                set_error("t value \"" + M_t2 + "\" is not in the range [1.."
-                    + M_max_t + "].");
-                return;
-            }
-            set_error(null);
-        }
-        private int M_t1;
-        private int M_t2;
-        private String M_current_string;
-        private Supplier<String> M_supplier;
+        private IntParameter M_begin;
+        private IntParameter M_end;
+        private int M_current_max_t;
     }
 }
