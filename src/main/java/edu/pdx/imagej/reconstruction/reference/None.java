@@ -25,10 +25,19 @@ import org.scijava.plugin.Plugin;
 import edu.pdx.imagej.reconstruction.ConstReconstructionField;
 import edu.pdx.imagej.reconstruction.ReconstructionField;
 
+/** A {@link ReferencePlugin} that does nothing.
+ */
 @Plugin(type = ReferencePlugin.class,
         name = "None",
         priority = Priority.FIRST)
 public class None extends AbstractReferencePlugin {
+    /** Returns <code>null</code>.  <code>null</code> is used by {@link
+     * Reference} to say that no reference hologram should be applied.
+     *
+     * @param field Unused.
+     * @param t Unused.
+     * @return <code>null</code>.
+     */
     @Override
     public ReconstructionField get_reference_holo(
         ConstReconstructionField field, int t)

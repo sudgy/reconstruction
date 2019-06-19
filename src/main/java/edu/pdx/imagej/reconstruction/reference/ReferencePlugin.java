@@ -40,7 +40,9 @@ public interface ReferencePlugin extends SubReconstructionPlugin {
     /** Get the reference hologram.  If you need more parameters than these two,
      * find some other way to access them.  Many of the default plugins use
      * {@link edu.pdx.imagej.reconstruction.plugin.ReconstructionPlugin
-     * ReconstructionPlugin}'s methods to get other things they need.
+     * ReconstructionPlugin}'s methods to get other things they need.  If this
+     * returns <code>null</code>, {@link Reference} interprets that as the
+     * plugin not wanting to apply a reference hologram.
      *
      * @param field The filtered field.  You may not need it.
      * @param t The time slice used to get the field.  You may not need it.
