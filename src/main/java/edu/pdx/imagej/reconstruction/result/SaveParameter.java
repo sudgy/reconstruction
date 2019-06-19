@@ -34,7 +34,7 @@ import edu.pdx.imagej.dynamic_parameters.AbstractDParameter;
 import edu.pdx.imagej.dynamic_parameters.HoldingParameter;
 import edu.pdx.imagej.dynamic_parameters.BoolParameter;
 
-public class SaveParameter extends HoldingParameter<Boolean> {
+class SaveParameter extends HoldingParameter<Boolean> {
     public SaveParameter() {super("SaveToFile");}
     @Override
     public void initialize()

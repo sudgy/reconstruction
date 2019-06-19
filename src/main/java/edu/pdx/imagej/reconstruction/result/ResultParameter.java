@@ -21,7 +21,7 @@ package edu.pdx.imagej.reconstruction.result;
 
 import edu.pdx.imagej.dynamic_parameters.*;
 
-public class ResultParameter extends HoldingParameter<ResultOptions> {
+class ResultParameter extends HoldingParameter<ResultOptions> {
     public ResultParameter() {super("Result");}
     @Override
     public void initialize()
