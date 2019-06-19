@@ -85,7 +85,7 @@ public class Single extends AbstractReferencePlugin {
     private SingleParameter M_param;
     private ReconstructionField M_result;
 
-    private static class SingleParameter extends ImageParameter
+    static class SingleParameter extends ImageParameter
                                  implements HologramPluginParameter {
         public SingleParameter() {super("Reference Hologram Image");}
         public SingleParameter(Collection<ImagePlus> images)

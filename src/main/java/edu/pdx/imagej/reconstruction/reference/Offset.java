@@ -91,7 +91,7 @@ public class Offset extends AbstractReferencePlugin {
         public int offset;
     }
 
-    private static class OffsetParameter
+    static class OffsetParameter
                    extends HoldingParameter<OffsetParams> {
         public OffsetParameter()
         {

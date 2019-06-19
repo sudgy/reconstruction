@@ -73,7 +73,7 @@ public class Manual extends AbstractPolyTiltPlugin {
     private Line M_v_line;
     private ManualParameter M_param;
 
-    private static class ManualParameter extends HoldingParameter<Line[]>
+    static class ManualParameter extends HoldingParameter<Line[]>
                                          implements HologramPluginParameter
     {
         public ManualParameter() {super("ManualCenterParams");}
