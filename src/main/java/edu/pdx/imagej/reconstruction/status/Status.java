@@ -34,17 +34,30 @@ import edu.pdx.imagej.reconstruction.ConstReconstructionField;
 import edu.pdx.imagej.reconstruction.ReconstructionField;
 import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
 
+/** A {@link edu.pdx.imagej.reconstruction.plugin.ReconstructionPlugin
+ * ReconstructionPlugin} that shows the progress of the command.
+ */
 @Plugin(type = ReconstructionPlugin.class)
 public class Status extends AbstractReconstructionPlugin
                     implements MainReconstructionPlugin {
+    /** Get the hologram, to get the name of the slices.
+     */
     @Override public void process_hologram_param(ImagePlus hologram)
         {M_hologram = hologram;}
+    /** Get the number of time slices we are reconstructing.
+     */
     @Override public void process_ts_param(List<Integer> ts)
         {M_t_size = ts.size();}
+    /** Get the number of z slices we are propagating to.
+     */
     @Override public void process_zs_param(List<DistanceUnitValue> zs)
         {M_z_size = zs.size();}
+    /** Calculate the total number of image that will be created.
+     */
     @Override public void process_beginning()
         {M_total_size = M_t_size * M_z_size;}
+    /** Show the progress of the plugin.
+     */
     @Override public void process_propagated_field(ReconstructionField field,
                                                    int t, DistanceUnitValue z)
     {
