@@ -19,13 +19,26 @@
 
 package edu.pdx.imagej.reconstruction.result;
 
+/** The options to use for {@link Result}.  This is just a bunch of data with no
+ * OOP semantics.
+ */
 public class ResultOptions {
+    /** Whether or not to show the amplitude of the result. */
     public boolean amplitude;
+    /** Whether or not to show the phase of the result. */
     public boolean phase;
+    /** Whether or not to show the real part of the result. */
     public boolean real;
+    /** Whether or not to show the imaginary part of the result. */
     public boolean imaginary;
+    /** Enumeration specifying what type of image to output. */
     public enum Type {Type8Bit, Type16Bit, Type32Bit};
+    /** The type of image to output. */
     public Type type;
+    /** Whether you should save the result to a file, or display it to the user.
+     */
     public boolean save_to_file;
+    /** What directory to save to, if {@link save_to_file} is <code>true</code>.
+     */
     public String save_directory;
 }
