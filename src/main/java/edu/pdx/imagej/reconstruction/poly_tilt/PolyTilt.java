@@ -60,15 +60,18 @@ public class PolyTilt extends HoldingSinglePlugin<PolyTiltPlugin>
     public PolyTilt()
     {
         super("Line Selection Type", PolyTiltPlugin.class);
+        M_live = true;
     }
     /** Constructor intended for programmatic use of this plugin.
      *
      * @param plugin The {@link PolyTiltPlugin} to use to determine the flat
      *               lines.
+     * @param degree The degree to use for the polynomial fit.
      */
-    public PolyTilt(PolyTiltPlugin plugin)
+    public PolyTilt(PolyTiltPlugin plugin, int degree)
     {
         super(plugin);
+        M_degree = degree;
     }
 
     /** Get the parameter for this plugin.
@@ -99,13 +102,21 @@ public class PolyTilt extends HoldingSinglePlugin<PolyTiltPlugin>
     public void process_original_hologram(ConstReconstructionField field)
     {
         super.process_original_hologram(field);
-        if (!M_param.do_poly_tilt()) return;
         ReconstructionField filtered_field = field.copy();
-        M_filter.filter_field(filtered_field);
+        if (M_filter != null) M_filter.filter_field(filtered_field);
         M_phase = filtered_field.field().get_arg();
-        M_degree = M_param.degree();
-        double[] h_poly = fit_along(M_param.h_line());
-        double[] v_poly = fit_along(M_param.v_line());
+        double[] h_poly;
+        double[] v_poly;
+        if (M_live) {
+            if (!M_param.do_poly_tilt()) return;
+            M_degree = M_param.degree();
+            h_poly = fit_along(M_param.h_line());
+            v_poly = fit_along(M_param.v_line());
+        }
+        else {
+            h_poly = fit_along(get_plugin().get_h_line());
+            v_poly = fit_along(get_plugin().get_v_line());
+        }
 
         final int width = M_phase.length;
         final int height = M_phase[0].length;
@@ -114,8 +125,8 @@ public class PolyTilt extends HoldingSinglePlugin<PolyTiltPlugin>
             for (int y = 0; y < height; ++y) {
                 double val = 0;
                 for (int i = 0; i < h_poly.length; ++i) {
-                    val += Math.pow(h_poly[i] * x, i + 1);
-                    val += Math.pow(v_poly[i] * y, i + 1);
+                    val += h_poly[i] * Math.pow(x, i + 1);
+                    val += v_poly[i] * Math.pow(y, i + 1);
                 }
                 val *= -1;
                 M_poly_field[x][2*y  ] = (float)Math.cos(val);
@@ -132,7 +143,7 @@ public class PolyTilt extends HoldingSinglePlugin<PolyTiltPlugin>
     @Override
     public void process_filtered_field(ReconstructionField field, int t)
     {
-        if (!M_param.do_poly_tilt()) return;
+        if (M_live && !M_param.do_poly_tilt()) return;
         field.field().multiply_in_place(M_poly_field);
     }
 
@@ -236,4 +247,5 @@ public class PolyTilt extends HoldingSinglePlugin<PolyTiltPlugin>
     private double[] M_last_phase;
     private double[][] M_poly_field;
     int M_degree; // Package private for testing
+    boolean M_live = false;
 }
