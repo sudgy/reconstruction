@@ -69,7 +69,7 @@ public class PolyTiltTest {
         assertEquals(0.5, 1e-6, poly[0]);
         assertEquals(0.1, 1e-6, poly[1]);
     }
-    @Test public void test_with_param()
+    @Test public void test_live()
     {
         Context context = new Context(PluginService.class);
         PolyTilt test = new PolyTilt();
@@ -100,6 +100,11 @@ public class PolyTiltTest {
         dialog.get_integer(6).value = 2;
         test.param().read_from_dialog();
         test_common(test);
+    }
+    @Test public void test_programmatic()
+    {
+        test_common(new PolyTilt(new Manual(0, 0, 4, 0, 0, 2), 2));
+
     }
     private void test_common(PolyTilt test)
     {

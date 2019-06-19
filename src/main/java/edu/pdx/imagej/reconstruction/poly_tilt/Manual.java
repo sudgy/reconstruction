@@ -37,9 +37,30 @@ import edu.pdx.imagej.reconstruction.plugin.HologramPluginParameter;
 @Plugin(type = PolyTiltPlugin.class, name = "Manual",
         priority = Priority.HIGH * 0.999)
 public class Manual extends AbstractPolyTiltPlugin {
+    /** Constructor intended for live use of this plugin.  It will get the lines
+     * through a dynamic parameter.
+     */
     public Manual()
     {
         M_param = new ManualParameter();
+    }
+    /** Constructor intended for programmatic use of this plugin.  It gets the
+     * lines through these parameters.
+     *
+     * @param h_val The y pixel value for the horizontal line to be at.
+     * @param h_start The x pixel value for the horizontal line to start at.
+     * @param h_end The x pixel value for the horizontal line to end at.
+     * @param v_val The x pixel value for the vertical line to be at.
+     * @param v_start The y pixel value for the vertical line to start at.
+     * @param v_end The y pixel value for the vertical line to end at.
+     */
+    public Manual(int h_val, int h_start, int h_end,
+                  int v_val, int v_start, int v_end)
+    {
+        Line[] lines = create_lines(h_val, h_start, h_end,
+                                    v_val, v_start, v_end);
+        M_h_line = lines[0];
+        M_v_line = lines[1];
     }
     /** {@inheritDoc} */
     @Override
@@ -72,6 +93,19 @@ public class Manual extends AbstractPolyTiltPlugin {
     private Line M_h_line;
     private Line M_v_line;
     private ManualParameter M_param;
+
+    private static Line[] create_lines(int h_val, int h1, int h2,
+                                       int v_val, int v1, int v2)
+    {
+        int h_start = Math.min(h1, h2);
+        int h_end = Math.max(h1, h2);
+        int v_start = Math.min(v1, v2);
+        int v_end = Math.max(v1, v2);
+        Line[] result = new Line[2];
+        result[0] = new Line(h_start, h_val, h_end, h_val);
+        result[1] = new Line(v_val, v_start, v_val, v_end);
+        return result;
+    }
 
     static class ManualParameter extends HoldingParameter<Line[]>
                                          implements HologramPluginParameter
@@ -131,7 +165,10 @@ public class Manual extends AbstractPolyTiltPlugin {
             Line[] result = new Line[2];
             result[0] = new Line(h_start, h_val, h_end, h_val);
             result[1] = new Line(v_val, v_start, v_val, v_end);
-            return result;
+            return create_lines(
+                M_h_val.get_value(), M_h_start.get_value(), M_h_end.get_value(),
+                M_v_val.get_value(), M_v_start.get_value(), M_v_end.get_value()
+            );
         }
         private void set_dimensions()
         {
