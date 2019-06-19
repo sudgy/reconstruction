@@ -24,10 +24,17 @@ import org.scijava.plugin.AbstractRichPlugin;
 import edu.pdx.imagej.reconstruction.ReconstructionField;
 import edu.pdx.imagej.reconstruction.filter.Filter;
 
+/** Abstract base class to create {@link ReferencePlugin}s.
+ */
 public abstract class AbstractReferencePlugin
     extends AbstractRichPlugin
     implements ReferencePlugin
 {
+    /** {@inheritDoc}
+     * <p>
+     * It is redefined here as final to ensure that people won't be stupid and
+     * try to override it anyway.
+     */
     @Override
     final public void process_filtered_field(ReconstructionField field, int t)
     {
