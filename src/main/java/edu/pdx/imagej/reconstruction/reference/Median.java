@@ -34,10 +34,14 @@ import edu.pdx.imagej.reconstruction.ReconstructionField;
 import edu.pdx.imagej.reconstruction.ReconstructionFieldImpl;
 import edu.pdx.imagej.reconstruction.TParameter;
 
+/** A {@link ReferencePlugin} that uses the median of a bunch of images as the
+ * reference hologram.
+ */
 @Plugin(type = ReferencePlugin.class,
         name = "Median",
         priority = Priority.VERY_HIGH * 0.998)
 public class Median extends AbstractReferencePlugin {
+    /** Get the reference hologram. */
     @Override
     public ReconstructionField get_reference_holo(
         ConstReconstructionField field, int t)
@@ -45,6 +49,13 @@ public class Median extends AbstractReferencePlugin {
         MedianParams params = M_param.get_value();
         return get_reference_holo(params.imp, params.ts);
     }
+    /** Get the reference hologram.  This is what actually gets the reference
+     * hologram, because this is what this class cares about more.
+     *
+     * @param imp The images whose median will be taken.
+     * @param ts The time slices used in calculating the Median.
+     * @return The median of the images.
+     */
     public ReconstructionField get_reference_holo(ImagePlus imp,
                                                   Collection<Integer> ts)
     {
@@ -55,6 +66,7 @@ public class Median extends AbstractReferencePlugin {
         }
         return M_result;
     }
+    /** {@inheritDoc} */
     @Override
     public MedianParameter param()
     {
@@ -68,6 +80,9 @@ public class Median extends AbstractReferencePlugin {
         public ImagePlus imp;
         public Collection<Integer> ts;
     }
+    /** A dynamic parameter that gets the options needed for {@link Median}.  It
+     * is not intended for public use.
+     */
     public class MedianParameter extends HoldingParameter<MedianParams> {
         public MedianParameter()
         {
