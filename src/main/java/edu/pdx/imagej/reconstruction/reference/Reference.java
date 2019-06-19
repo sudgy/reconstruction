@@ -48,14 +48,43 @@ public class Reference extends HoldingSinglePlugin<ReferencePlugin>
     public Reference()
     {
         super("Reference Hologram", ReferencePlugin.class);
+        M_live = true;
     }
-    /** Constructor intended for programmatic use of the plugin.
+    /** Constructor intended for programmatic use of the plugin, with the same
+     * filter as everything else.  If you want to supply your own filter, use
+     * {@link Reference(ReferencePlugin, boolean, boolean,
+     * edu.pdx.imagej.reconstruction.filter.Filter) Reference(ReferencePlugin,
+     * boolean, boolean, Filter)}.
      *
      * @param plugin The method of getting the reference hologram to use.
+     * @param phase Whether or not to try to cancel phase noise.
+     * @param amplitude Whether or not to try to cancel amplitude noise.
      */
-    public Reference(ReferencePlugin plugin)
+    public Reference(ReferencePlugin plugin, boolean phase, boolean amplitude)
     {
         super(plugin);
+        M_phase = phase;
+        M_amplitude = amplitude;
+        M_use_same_roi = true;
+    }
+    /** Constructor intended for programmatic use of the plugin, with a custom
+     * filter.  If you want to use the same filter as everyting else, use {@link
+     * Reference(ReferencePlugin, boolean, boolean) Reference(ReferencePlugin,
+     * boolean, boolean)}.
+     *
+     * @param plugin The method of getting the reference hologram to use.
+     * @param phase Whether or not to try to cancel phase noise.
+     * @param amplitude Whether or not to try to cancel amplitude noise.
+     * @param filter The filter to apply on the reference hologram.
+     */
+    public Reference(ReferencePlugin plugin, boolean phase, boolean amplitude,
+                     Filter filter)
+    {
+        super(plugin);
+        M_phase = phase;
+        M_amplitude = amplitude;
+        M_use_same_roi = false;
+        M_not_same_filter = filter;
     }
 
     /** Get the parameter for this plugin.
@@ -84,12 +113,16 @@ public class Reference extends HoldingSinglePlugin<ReferencePlugin>
     @Override
     public void process_filtered_field(ReconstructionField field, int t)
     {
+        if (M_live) {
+            M_phase = M_param.phase();
+            M_amplitude = M_param.amplitude();
+            M_use_same_roi = M_param.use_same_roi();
+        }
         ReconstructionField reference_field
             = get_plugin().get_reference_holo(
                             new ConstReconstructionField(field), t);
         if (reference_field == null) return;
-        if (M_param.use_same_roi()
-                && !M_param.get_value().dont_use_same_roi()) {
+        if (M_use_same_roi && !get_plugin().dont_use_same_roi()) {
             M_filter.filter_field(reference_field);
         }
         else {
@@ -106,14 +139,6 @@ public class Reference extends HoldingSinglePlugin<ReferencePlugin>
         get_reference(reference_field);
         field.field().multiply_in_place(reference_field.field());
     }
-    /** Set the filter to be used, when use same roi is false.
-     *
-     * @param filter The filter to use.
-     */
-    public void set_not_same_filter(Filter filter)
-    {
-        M_not_same_filter = filter;
-    }
 
     void get_reference(ReconstructionField hologram)
     {
@@ -123,7 +148,7 @@ public class Reference extends HoldingSinglePlugin<ReferencePlugin>
                 double real = reference[x][y * 2];
                 double imag = reference[x][y * 2 + 1];
                 double abs;
-                if (M_param.amplitude()) {
+                if (M_amplitude) {
                     // The edges get way too bright for some reason
                     // The 256 is to let the phase still be good
                     // I don't know if it actually does anything, though.
@@ -134,12 +159,12 @@ public class Reference extends HoldingSinglePlugin<ReferencePlugin>
                     else abs = (real*real + imag*imag);
                 }
                 else abs = Math.sqrt(real*real + imag*imag);
-                if (M_param.phase()) {
+                if (M_phase) {
                     reference[x][y * 2] = real / abs;
                     reference[x][y*2+1] = imag / abs * -1;
                 }
                 else {
-                    if (M_param.amplitude()) {
+                    if (M_amplitude) {
                         reference[x][y * 2] = 1 / Math.sqrt(abs);
                         reference[x][y*2+1] = 0;
                     }
@@ -154,5 +179,9 @@ public class Reference extends HoldingSinglePlugin<ReferencePlugin>
 
     private Filter M_filter;
     private Filter M_not_same_filter;
+    private boolean M_use_same_roi = false;
+    private boolean M_phase = false;
+    private boolean M_amplitude = false;
+    private boolean M_live = false;
     ReferenceParameter M_param; // Package private for testing
 }

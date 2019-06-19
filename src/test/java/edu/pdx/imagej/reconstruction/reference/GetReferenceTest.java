@@ -29,8 +29,7 @@ public class GetReferenceTest {
     @Test public void test_nothing()
     {
         ReconstructionFieldImpl field = make_field();
-        Reference test = new Reference();
-        test.M_param = new TestRef(false, false);
+        Reference test = new Reference(null, false, false);
         test.get_reference(field);
         for (int x = 0; x < 4; ++x) {
             for (int y = 0; y < 4; ++y) {
@@ -44,8 +43,7 @@ public class GetReferenceTest {
     {
         ReconstructionFieldImpl field = make_field();
         ReconstructionFieldImpl reference = field.copy();
-        Reference test = new Reference();
-        test.M_param = new TestRef(true, false);
+        Reference test = new Reference(null, true, false);
         test.get_reference(reference);
         for (int x = 0; x < 4; ++x) {
             for (int y = 0; y < 4; ++y) {
@@ -62,8 +60,7 @@ public class GetReferenceTest {
     {
         ReconstructionFieldImpl field = make_field();
         ReconstructionFieldImpl reference = field.copy();
-        Reference test = new Reference();
-        test.M_param = new TestRef(false, true);
+        Reference test = new Reference(null, false, true);
         test.get_reference(reference);
         for (int x = 0; x < 4; ++x) {
             for (int y = 0; y < 4; ++y) {
@@ -84,8 +81,7 @@ public class GetReferenceTest {
     {
         ReconstructionFieldImpl field = make_field();
         ReconstructionFieldImpl reference = field.copy();
-        Reference test = new Reference();
-        test.M_param = new TestRef(true, true);
+        Reference test = new Reference(null, true, true);
         test.get_reference(reference);
         field.field().multiply_in_place(reference.field());
         for (int x = 0; x < 4; ++x) {
@@ -116,18 +112,5 @@ public class GetReferenceTest {
     private static ReconstructionFieldImpl make_field()
     {
         return new ReconstructionFieldImpl(M_real, M_imag);
-    }
-
-    private static class TestRef extends ReferenceParameter {
-        public TestRef(boolean phase, boolean amplitude)
-        {
-            super(null);
-            M_phase = phase;
-            M_amplitude = amplitude;
-        }
-        @Override public boolean amplitude() {return M_amplitude;}
-        @Override public boolean phase() {return M_phase;}
-        private boolean M_amplitude;
-        private boolean M_phase;
     }
 }

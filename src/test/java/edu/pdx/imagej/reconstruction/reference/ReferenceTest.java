@@ -39,26 +39,15 @@ import edu.pdx.imagej.reconstruction.filter.Filter;
 
 public class ReferenceTest {
     @Test public void test_use_same_roi() {
-        Reference test = new Reference(new TestPlugin());
-        TestDialog dialog = new TestDialog();
-        ReferenceParameter param = new ReferenceParameter(new TestParameter());
-        test.M_param = param;
-        param.initialize();
-        param.add_to_dialog(dialog);
-        dialog.get_boolean(0).value = true; // Set phase to true
-        dialog.get_boolean(1).value = false; // Set amplitude to false
-        dialog.get_boolean(2).value = true; // Set use_same_roi to true
-        param.read_from_dialog();
-
         Filter normal_filter = new Filter();
         normal_filter.set_filter(new PointRoi(0, 0));
         Filter other_filter = new Filter();
         other_filter.set_filter(new PointRoi(new int[]{1, 1, 2, 2},
                                              new int[]{1, 2, 1, 2}, 4));
+        Reference test = new Reference(new TestPlugin(), true, false);
         ArrayList<ReconstructionPlugin> plugins = new ArrayList<>();
         plugins.add(normal_filter);
         test.read_plugins(plugins);
-        test.set_not_same_filter(other_filter);
 
         ReconstructionField normal_field
             = new ReconstructionFieldImpl(real, imag);
@@ -70,8 +59,8 @@ public class ReferenceTest {
         // Setup is finally complete!
 
         test.process_filtered_field(processed_normal_field, 0);
-        dialog.get_boolean(2).value = false; // Set use_same_roi to false
-        param.read_from_dialog();
+        test = new Reference(new TestPlugin(), true, false, other_filter);
+        test.read_plugins(plugins);
         test.process_filtered_field(processed_other_field, 0);
 
         for (int x = 0; x < 3; ++x) {
@@ -93,13 +82,6 @@ public class ReferenceTest {
                 assertEquals(processed_other_arg, 0, 1e-6, coord);
             }
         }
-    }
-    // HoldingParameter has the fewest methods to override :/
-    public static class TestParameter
-                        extends HoldingParameter<ReferencePlugin> {
-        public TestParameter() {super("");}
-        @Override
-        public ReferencePlugin get_value() {return new TestPlugin();}
     }
     public static class TestPlugin extends AbstractReferencePlugin {
         @Override
