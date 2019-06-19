@@ -43,6 +43,11 @@ import edu.pdx.imagej.reconstruction.ConstReconstructionField;
 import edu.pdx.imagej.reconstruction.ReconstructionField;
 import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
 
+/** A {@link edu.pdx.imagej.reconstruction.plugin.ReconstructionPlugin
+ * ReconstructionPlugin} that acquires the result and then finds a way to
+ * communicate this result to the user.  Currently, you can display it in
+ * ImageJ, or you can save it to a file.
+ */
 @Plugin(type = ReconstructionPlugin.class, priority = Priority.LAST)
 public class Result extends AbstractReconstructionPlugin
                     implements MainReconstructionPlugin {
@@ -50,11 +55,16 @@ public class Result extends AbstractReconstructionPlugin
 
     @Override
     public DParameter param() {return M_param;}
+    /** Get the options from the parameter.
+     */
     @Override
     public void process_before_param()
     {
         M_options = M_param.get_value();
     }
+    /** Get required information from the hologram.  The name of the hologram,
+     * as well as its dimensions, are used.
+     */
     @Override
     public void process_hologram_param(ImagePlus hologram)
     {
@@ -62,6 +72,8 @@ public class Result extends AbstractReconstructionPlugin
         M_pixel_width = hologram.getProcessor().getWidth();
         M_pixel_height = hologram.getProcessor().getHeight();
     }
+    /** Get the size of the image to create a <code>Calibration</code> object.
+     */
     @Override
     public void process_dimensions_param(DistanceUnitValue width,
                                          DistanceUnitValue height)
@@ -71,11 +83,16 @@ public class Result extends AbstractReconstructionPlugin
         M_cal.pixelHeight = height.value() / M_pixel_height;
         M_cal.setUnit(width.unit().toString());
     }
+    /** Determine how many time slices there are.
+     */
     @Override
     public void process_ts_param(List<Integer> ts)
     {
         M_t_size = ts.size();
     }
+    /** Determine how many z slices there are, and create directories if {@link
+     * ResultOptions#save_to_file} is <code>true</code>.
+     */
     @Override
     public void process_zs_param(List<DistanceUnitValue> zs)
     {
@@ -109,6 +126,9 @@ public class Result extends AbstractReconstructionPlugin
             }
         }
     }
+    /** Create the result images if {@link ResultOptions#save_to_file} is
+     * <code>false</code>.
+     */
     @Override
     public void process_beginning()
     {
@@ -127,6 +147,8 @@ public class Result extends AbstractReconstructionPlugin
             }
         }
     }
+    /** Get the final result.
+     */
     @Override
     public void process_propagated_field(ReconstructionField field,
                                          int t, DistanceUnitValue z)
@@ -178,6 +200,8 @@ public class Result extends AbstractReconstructionPlugin
             stack.addSlice(label + ", z = " + format_z(z), proc);
         }
     }
+    /** Show the final result.
+     */
     @Override
     public void process_ending()
     {
