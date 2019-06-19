@@ -34,6 +34,9 @@ import edu.pdx.imagej.reconstruction.ConstReconstructionField;
 import edu.pdx.imagej.reconstruction.ReconstructionField;
 import edu.pdx.imagej.reconstruction.ReconstructionFieldImpl;
 
+/** A {@link ReferencePlugin} that uses an offset from the current time slice
+ * as the reference hologram.
+ */
 @Plugin(type = ReferencePlugin.class,
         name = "Single Image With Offset",
         priority = Priority.VERY_HIGH * 0.999)
@@ -42,10 +45,12 @@ public class Offset extends AbstractReferencePlugin {
     {
         M_param = new OffsetParameter();
     }
-    public Offset(Collection<ImagePlus> images)
+    Offset(Collection<ImagePlus> images)
     {
         M_param = new OffsetParameter(images);
     }
+    /** Get the reference hologram.
+     */
     @Override
     public ReconstructionField get_reference_holo(
         ConstReconstructionField field, int t)
