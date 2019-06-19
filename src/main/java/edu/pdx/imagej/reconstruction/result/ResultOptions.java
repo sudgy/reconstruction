@@ -19,6 +19,10 @@
 
 package edu.pdx.imagej.reconstruction.result;
 
+import java.util.function.Consumer;
+
+import ij.ImagePlus;
+
 /** The options to use for {@link Result}.  This is just a bunch of data with no
  * OOP semantics.
  */
@@ -35,10 +39,27 @@ public class ResultOptions {
     public enum Type {Type8Bit, Type16Bit, Type32Bit};
     /** The type of image to output. */
     public Type type;
-    /** Whether you should save the result to a file, or display it to the user.
+    /** Whether you should save the result to a file, or use a user-supplied
+     * function with the result.
      */
     public boolean save_to_file;
     /** What directory to save to, if {@link save_to_file} is <code>true</code>.
      */
     public String save_directory;
+    /** Function to call for the amplitude result if {@link save_to_file} is
+     * <code>false</code>.  It defaults to showing the ImagePlus.
+     */
+    public Consumer<ImagePlus> amplitude_func = (ImagePlus imp) -> imp.show();
+    /** Function to call for the phase result if {@link save_to_file} is
+     * <code>false</code>.  It defaults to showing the ImagePlus.
+     */
+    public Consumer<ImagePlus> phase_func = (ImagePlus imp) -> imp.show();
+    /** Function to call for the real result if {@link save_to_file} is
+     * <code>false</code>.  It defaults to showing the ImagePlus.
+     */
+    public Consumer<ImagePlus> real_func = (ImagePlus imp) -> imp.show();
+    /** Function to call for the imaginary result if {@link save_to_file} is
+     * <code>false</code>.  It defaults to showing the ImagePlus.
+     */
+    public Consumer<ImagePlus> imaginary_func = (ImagePlus imp) -> imp.show();
 }

@@ -45,8 +45,10 @@ import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
 
 /** A {@link edu.pdx.imagej.reconstruction.plugin.ReconstructionPlugin
  * ReconstructionPlugin} that acquires the result and then finds a way to
- * communicate this result to the user.  Currently, you can display it in
- * ImageJ, or you can save it to a file.
+ * communicate this result to the user.  Currently, you can save it to a file,
+ * or you can use a custom function to do what you wish with the result.  The
+ * default operation when not saving to file is to call <code>show()</code> on
+ * each result.
  */
 @Plugin(type = ReconstructionPlugin.class, priority = Priority.LAST)
 public class Result extends AbstractReconstructionPlugin
@@ -207,10 +209,14 @@ public class Result extends AbstractReconstructionPlugin
     {
         almost_process_ending();
         if (!M_options.save_to_file) {
-            if (M_options.amplitude) M_amplitude_imp.show();
-            if (M_options.phase) M_phase_imp.show();
-            if (M_options.real) M_real_imp.show();
-            if (M_options.imaginary) M_imaginary_imp.show();
+            if (M_options.amplitude) {
+                M_options.amplitude_func.accept(M_amplitude_imp);
+            }
+            if (M_options.phase) M_options.phase_func.accept(M_phase_imp);
+            if (M_options.real) M_options.real_func.accept(M_real_imp);
+            if (M_options.imaginary) {
+                M_options.imaginary_func.accept(M_imaginary_imp);
+            }
         }
     }
     void almost_process_ending() // Package private for testing
