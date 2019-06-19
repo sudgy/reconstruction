@@ -36,10 +36,15 @@ import edu.pdx.imagej.reconstruction.ReconstructionField;
 import edu.pdx.imagej.reconstruction.ReconstructionFieldImpl;
 import edu.pdx.imagej.reconstruction.TParameter;
 
+/** A {@link ReferencePlugin} that uses the median of a bunch of images as the
+ * reference hologram, but where the images used change along with the time
+ * slice used in reconstruction.
+ */
 @Plugin(type = ReferencePlugin.class,
         name = "Median with Offset",
         priority = Priority.VERY_HIGH * 0.997)
 public class MedianOffset extends AbstractReferencePlugin {
+    /** Get the reference hologram. */
     @Override
     public ReconstructionField get_reference_holo(
         ConstReconstructionField field, int t)
@@ -47,6 +52,14 @@ public class MedianOffset extends AbstractReferencePlugin {
         MedianOffsetParams params = M_param.get_value();
         return get_reference_holo(t, params.imp, params.ts, params.offset);
     }
+    /** Get the reference hologram.  This is what actually gets the reference
+     * hologram, because this is whtat this class cares about more.
+     *
+     * @param t The time slice of the current field being reconstructed.
+     * @param imp The stack of images to take the median of.
+     * @param ts The time slices used to get the median.
+     * @param offset The offset to use on <code>ts</code>.
+     */
     public ReconstructionField get_reference_holo(int t, ImagePlus imp,
                                                   List<Integer> ts,
                                                   int offset)
@@ -78,12 +91,12 @@ public class MedianOffset extends AbstractReferencePlugin {
 
     private MedianOffsetParameter M_param = new MedianOffsetParameter();
 
-    private class MedianOffsetParams {
+    private static class MedianOffsetParams {
         public ImagePlus imp;
         public List<Integer> ts;
         public int offset;
     }
-    public class MedianOffsetParameter
+    private static class MedianOffsetParameter
                  extends HoldingParameter<MedianOffsetParams> {
         public MedianOffsetParameter()
         {
