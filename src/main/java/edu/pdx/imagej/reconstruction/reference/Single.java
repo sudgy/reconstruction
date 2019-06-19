@@ -35,6 +35,10 @@ import edu.pdx.imagej.reconstruction.ReconstructionField;
 import edu.pdx.imagej.reconstruction.ReconstructionFieldImpl;
 import edu.pdx.imagej.reconstruction.plugin.HologramPluginParameter;
 
+/** A {@link ReferencePlugin} that uses a single image as the reference
+ * hologram.  It will warn you if you are about to use the same image as the one
+ * you are reconstructing.
+ */
 @Plugin(type = ReferencePlugin.class,
         name = "Single Image",
         priority = Priority.VERY_HIGH)
@@ -43,10 +47,15 @@ public class Single extends AbstractReferencePlugin {
     {
         M_param = new SingleParameter();
     }
-    public Single(Collection<ImagePlus> images)
+    Single(Collection<ImagePlus> images)
     {
         M_param = new SingleParameter(images);
     }
+    /** Get the reference hologram.  It just returns the input image.
+     *
+     * @param field Unused.
+     * @param t Unused.
+     */
     @Override
     public ReconstructionField get_reference_holo(
         ConstReconstructionField field, int t)

@@ -25,14 +25,29 @@ import org.scijava.plugin.Plugin;
 import edu.pdx.imagej.reconstruction.ConstReconstructionField;
 import edu.pdx.imagej.reconstruction.ReconstructionField;
 
+/** A {@link ReferencePlugin} that uses the current field as the reference
+ * hologram.  The {@link edu.pdx.imagej.reconstruction.filter.Filter Filter}
+ * needs to be different in this case.
+ */
 @Plugin(type = ReferencePlugin.class,
         name = "Self",
         priority = Priority.VERY_HIGH * 0.9)
 public class Self extends AbstractReferencePlugin {
+    /** Get the reference hologram.  This just copies the field.
+     *
+     * @param field The filtered field.
+     * @param t Unused.
+     */
     @Override
     public ReconstructionField get_reference_holo(
         ConstReconstructionField field, int t)
     {
         return field.copy();
     }
+    /** Returns <code>true</code>.
+     *
+     * @return <code>true</code>.
+     */
+    @Override
+    public boolean dont_use_same_roi() {return true;}
 }
