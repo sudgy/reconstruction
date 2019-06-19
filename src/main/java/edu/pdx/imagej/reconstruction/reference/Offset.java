@@ -81,12 +81,13 @@ public class Offset extends AbstractReferencePlugin {
 
     private OffsetParameter M_param;
 
-    private class OffsetParams {
+    private static class OffsetParams {
         public ImagePlus imp;
         public int offset;
     }
 
-    public class OffsetParameter extends HoldingParameter<OffsetParams> {
+    private static class OffsetParameter
+                   extends HoldingParameter<OffsetParams> {
         public OffsetParameter()
         {
             super("OffsetParameter");

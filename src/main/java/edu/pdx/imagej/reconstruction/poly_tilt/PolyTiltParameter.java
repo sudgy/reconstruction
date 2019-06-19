@@ -28,30 +28,14 @@ import edu.pdx.imagej.dynamic_parameters.BoolParameter;
 import edu.pdx.imagej.dynamic_parameters.IntParameter;
 import edu.pdx.imagej.reconstruction.plugin.ReconstructionHoldingParameter;
 
-/** Parameter that gets options for {@link PolyTilt}.  It is just used by that
- * class.  This extends {@link
- * edu.pdx.imagej.reconstruction.plugin.ReconstructionHoldingParameter
- * ReconstructionHoldingParameter}, although it holds more than just the plugin.
- * Thus, {@link get_value} isn't really necessary other than to make the class
- * concrete.
- */
 @Plugin(type = DParameter.class)
-public class PolyTiltParameter
-             extends ReconstructionHoldingParameter<PolyTiltPlugin>
+class PolyTiltParameter extends ReconstructionHoldingParameter<PolyTiltPlugin>
 {
-    /** Create a parameter that will use the {@link PolyTiltPlugin} <code>param
-     * </code> gets.
-     *
-     * @param param A dynamic parameter whose plugin will be the one used in
-     *              {@link PolyTilt}.
-     */
     public PolyTiltParameter(DParameter<PolyTiltPlugin> param)
     {
         super("PolyTiltBase");
         M_param = param;
     }
-    /** Initializes all of the sub parameters.
-     */
     @Override
     public void initialize()
     {
@@ -61,38 +45,14 @@ public class PolyTiltParameter
         M_degree.set_bounds(1, Integer.MAX_VALUE);
         add_premade_parameter(M_param);
     }
-    /** Get the {@link PolyTiltPlugin} held by this parameter.  It's actually
-     * never used and is only here to make the class complete.
-     *
-     * @return The {@link PolyTiltPlugin} that was selected.
-     * @see h_line
-     * @see v_line
-     */
     @Override
     public PolyTiltPlugin get_value()
     {
         return M_param.get_value();
     }
-    /** Whether or not the user selected to perform polynomial tilt correction.
-     * @return Whether or not the user selected to perform polynomial tilt
-     *         correction.
-     */
     public boolean do_poly_tilt() {return M_do.get_value();}
-    /** The user-selected degree of the polynomial to use during the tilt
-     * correction.
-     *
-     * @return The user-selected degree of the polynomial.
-     */
     public int degree() {return M_degree.get_value();}
-    /** The horizontal line to use for tilt correction.
-     *
-     * @return The horizontal line to use for tilt correction.
-     */
     public Iterable<Point> h_line() {return M_param.get_value().get_h_line();}
-    /** The vertical line to use for tilt correction.
-     *
-     * @return The vertical line to use for tilt correction.
-     */
     public Iterable<Point> v_line() {return M_param.get_value().get_v_line();}
     @Override
     public void read_from_dialog()

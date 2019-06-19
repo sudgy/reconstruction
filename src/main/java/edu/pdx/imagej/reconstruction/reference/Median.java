@@ -76,14 +76,12 @@ public class Median extends AbstractReferencePlugin {
     private ReconstructionField M_result;
     private MedianParameter M_param = new MedianParameter();
 
-    private class MedianParams {
+    private static class MedianParams {
         public ImagePlus imp;
         public Collection<Integer> ts;
     }
-    /** A dynamic parameter that gets the options needed for {@link Median}.  It
-     * is not intended for public use.
-     */
-    public class MedianParameter extends HoldingParameter<MedianParams> {
+    private static class MedianParameter
+                         extends HoldingParameter<MedianParams> {
         public MedianParameter()
         {
             super("MedianParameter");

@@ -73,17 +73,10 @@ public class Manual extends AbstractPolyTiltPlugin {
     private Line M_v_line;
     private ManualParameter M_param;
 
-    /** The parameter that gets the lines for {@link Manual}.
-     */
-    public static class ManualParameter extends HoldingParameter<Line[]>
-                                        implements HologramPluginParameter
+    private static class ManualParameter extends HoldingParameter<Line[]>
+                                         implements HologramPluginParameter
     {
         public ManualParameter() {super("ManualCenterParams");}
-        /** {@inheritDoc}
-         * <p>
-         * If this is the first time the hologram was set, this initializes the
-         * parameters.
-         */
         @Override
         public void set_hologram(ImageParameter hologram)
         {
