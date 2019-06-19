@@ -117,12 +117,6 @@ public class ZParameter extends HoldingParameter<List<DistanceUnitValue>> {
                                 P_units.z().toString());
         }
         @Override
-        public void read_from_dialog()
-        {
-            super.read_from_dialog();
-            process_errors();
-        }
-        @Override
         public List<DistanceUnitValue> get_value()
         {
             return new AbstractList<DistanceUnitValue>() {
@@ -133,11 +127,6 @@ public class ZParameter extends HoldingParameter<List<DistanceUnitValue>> {
                 public int size()
                 {return 1;}
             };
-        }
-
-        private void process_errors()
-        {
-            set_error(M_z.get_error());
         }
         private DoubleParameter M_z;
     }
@@ -239,8 +228,8 @@ public class ZParameter extends HoldingParameter<List<DistanceUnitValue>> {
                     + M_step.get_value() * index, P_units.z());}
                 @Override
                 public int size()
-                {return (int)((M_end.get_value() - M_begin.get_value())
-                              / M_step.get_value()) + 1;}
+                {return Math.abs((int)((M_end.get_value() - M_begin.get_value())
+                              / M_step.get_value())) + 1;}
             };
         }
 
@@ -256,7 +245,8 @@ public class ZParameter extends HoldingParameter<List<DistanceUnitValue>> {
                 set_error("Z value step cannot be zero.");
                 return;
             }
-            if ((M_end.get_value() < M_begin.get_value())
+            if (!(M_begin.get_value().equals(M_end.get_value())) &&
+                (M_end.get_value() < M_begin.get_value())
                     == (M_step.get_value() > 0)) {
                 set_error("The sign of Z value step must be the same as the "
                     + "sign of Z value end minus Z value begin.");
