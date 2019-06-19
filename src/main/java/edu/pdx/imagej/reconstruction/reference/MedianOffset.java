@@ -59,6 +59,8 @@ public class MedianOffset extends AbstractReferencePlugin {
      * @param imp The stack of images to take the median of.
      * @param ts The time slices used to get the median.
      * @param offset The offset to use on <code>ts</code>.
+     * @return The median of the images, starting at the specified offset from
+     *         <code>t</code>.
      */
     public ReconstructionField get_reference_holo(int t, ImagePlus imp,
                                                   List<Integer> ts,
