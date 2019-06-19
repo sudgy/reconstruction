@@ -140,7 +140,7 @@ public class TParameter extends HoldingParameter<List<Integer>> {
     @Override
     public void read_from_dialog()
     {
-        M_max_t = M_holo_p.get_value().getImageStackSize();
+        update_max_t();
         super.read_from_dialog();
         set_visibilities();
     }
@@ -152,7 +152,7 @@ public class TParameter extends HoldingParameter<List<Integer>> {
     }
     private void set_visibilities()
     {
-        M_max_t = M_holo_p.get_value().getImageStackSize();
+        update_max_t();
         M_param_single.set_new_visibility(false);
         M_param_list.set_new_visibility(false);
         M_param_range.set_new_visibility(false);
@@ -171,6 +171,10 @@ public class TParameter extends HoldingParameter<List<Integer>> {
     }
     @Override
     public List<Integer> get_value() {return current_param().get_value();}
+    void update_max_t() // Package private for testing
+    {
+        M_max_t = M_holo_p.get_value().getImageStackSize();
+    }
 
     private ChoiceParameter current_choices()
     {
@@ -267,7 +271,6 @@ public class TParameter extends HoldingParameter<List<Integer>> {
                 M_current_max_t = M_max_t;
                 M_t.set_bounds(1, M_max_t);
             }
-            process_errors();
         }
         @Override
         public void read_from_dialog()
@@ -277,14 +280,12 @@ public class TParameter extends HoldingParameter<List<Integer>> {
                 M_current_max_t = M_max_t;
                 M_t.set_bounds(1, M_max_t);
             }
-            process_errors();
         }
         @Override
         public void read_from_prefs(Class<?> c, String name)
         {
             super.read_from_prefs(c, name);
             M_t.set_bounds(1, M_max_t);
-            process_errors();
         }
         @Override
         public List<Integer> get_value()
@@ -299,10 +300,6 @@ public class TParameter extends HoldingParameter<List<Integer>> {
             };
         }
 
-        private void process_errors()
-        {
-            set_error(M_t.get_error());
-        }
         private IntParameter M_t = new IntParameter(1, "t_value");
         private int M_current_max_t;
     }
@@ -469,7 +466,7 @@ public class TParameter extends HoldingParameter<List<Integer>> {
                 {return M_begin.get_value() + M_step.get_value() * index;}
                 @Override
                 public int size()
-                {return ((M_end.get_value() - M_begin.get_value())
+                {return Math.abs((M_end.get_value() - M_begin.get_value())
                          / M_step.get_value()) + 1;}
             };
         }
@@ -486,7 +483,8 @@ public class TParameter extends HoldingParameter<List<Integer>> {
                 set_error("t value step cannot be zero.");
                 return;
             }
-            if ((M_end.get_value() < M_begin.get_value())
+            if (!(M_begin.get_value().equals(M_end.get_value())) &&
+                (M_end.get_value() < M_begin.get_value())
                     == (M_step.get_value() > 0)) {
                 set_error("The sign of t value step must be the same as the "
                           + "sign of t value end minus t value begin.");
