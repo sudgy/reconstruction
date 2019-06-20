@@ -54,6 +54,17 @@ import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
 public class Result extends AbstractReconstructionPlugin
                     implements MainReconstructionPlugin {
     @Parameter UIService P_ui;
+    /** Constructor intended for live use of the plugin.
+     */
+    public Result() {}
+    /** Constructor intended for programmatic use of the plugin.
+     *
+     * @param options The {@link ResultOptions} to use to process everything.
+     */
+    public Result(ResultOptions options)
+    {
+        M_options = options;
+    }
 
     @Override
     public DParameter param() {return M_param;}
@@ -62,7 +73,7 @@ public class Result extends AbstractReconstructionPlugin
     @Override
     public void process_before_param()
     {
-        M_options = M_param.get_value();
+        if (M_options == null) M_options = M_param.get_value();
     }
     /** Get required information from the hologram.  The name of the hologram,
      * as well as its dimensions, are used.
