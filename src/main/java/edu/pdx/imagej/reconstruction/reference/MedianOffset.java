@@ -44,13 +44,40 @@ import edu.pdx.imagej.reconstruction.TParameter;
         name = "Median with Offset",
         priority = Priority.VERY_HIGH * 0.997)
 public class MedianOffset extends AbstractReferencePlugin {
+    /** Constructor intended for live use of the plugin.
+     */
+    public MedianOffset()
+    {
+        M_param = new MedianOffsetParameter();
+    }
+    // Constructor used for testing
+    MedianOffset(ImagePlus[] images)
+    {
+        M_param = new MedianOffsetParameter(images);
+    }
+    /** Constructor intended for programmatic use of the plugin.
+     *
+     * @param median_img The image stack to get the median from.
+     * @param ts The time slices used in calculating the median.
+     * @param offest The time offset to use on <code>ts</code>.
+     */
+    public MedianOffset(ImagePlus median_img, List<Integer> ts, int offset)
+    {
+        M_median_img = median_img;
+        M_ts = ts;
+        M_offset = offset;
+    }
     /** Get the reference hologram. */
     @Override
     public ReconstructionField get_reference_holo(
         ConstReconstructionField field, int t)
     {
-        MedianOffsetParams params = M_param.get_value();
-        return get_reference_holo(t, params.imp, params.ts, params.offset);
+        if (M_param != null) {
+            M_median_img = M_param.get_value().imp;
+            M_ts = M_param.get_value().ts;
+            M_offset = M_param.get_value().offset;
+        }
+        return get_reference_holo(t, M_median_img, M_ts, M_offset);
     }
     /** Get the reference hologram.  This is what actually gets the reference
      * hologram, because this is whtat this class cares about more.
@@ -92,23 +119,38 @@ public class MedianOffset extends AbstractReferencePlugin {
     }
 
     private MedianOffsetParameter M_param = new MedianOffsetParameter();
+    private ImagePlus M_median_img;
+    private List<Integer> M_ts;
+    private int M_offset;
 
     private static class MedianOffsetParams {
         public ImagePlus imp;
         public List<Integer> ts;
         public int offset;
     }
-    private static class MedianOffsetParameter
+    static class MedianOffsetParameter
                  extends HoldingParameter<MedianOffsetParams> {
         public MedianOffsetParameter()
         {
             super("MedianOffsetParameter");
         }
+        MedianOffsetParameter(ImagePlus[] images)
+        {
+            super("MedianOffsetParameter");
+            M_images = images;
+        }
         @Override
         public void initialize()
         {
-            M_img = add_parameter(ImageParameter.class,
-                                  "Reference Hologram Stack");
+            if (M_images == null) {
+                M_img = add_parameter(ImageParameter.class,
+                                      "Reference Hologram Stack");
+            }
+            else {
+                M_img = add_parameter(ImageParameter.class,
+                                      "Reference Hologram Stack",
+                                      M_images);
+            }
             M_ts = add_parameter(TParameter.class, M_img,
                                  TParameter.PossibleTypes.SomeMulti,
                                  "MedianOffsetRef");
@@ -127,5 +169,6 @@ public class MedianOffset extends AbstractReferencePlugin {
         private ImageParameter M_img;
         private TParameter M_ts;
         private IntParameter M_offset;
+        private ImagePlus[] M_images;
     }
 }
