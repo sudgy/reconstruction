@@ -43,6 +43,8 @@ import edu.pdx.imagej.reconstruction.plugin.HologramPluginParameter;
         name = "Single Image",
         priority = Priority.VERY_HIGH)
 public class Single extends AbstractReferencePlugin {
+    /** Constructor intended for live use of the plugin.
+     */
     public Single()
     {
         M_param = new SingleParameter();
@@ -50,6 +52,14 @@ public class Single extends AbstractReferencePlugin {
     Single(Collection<ImagePlus> images)
     {
         M_param = new SingleParameter(images);
+    }
+    /** Constructor intended for programmatic use of the plugin.
+     *
+     * @param image The image to use as the reference hologram.
+     */
+    public Single(ImagePlus image)
+    {
+        M_image = image;
     }
     /** Get the reference hologram.  It just returns the input image.
      *
@@ -60,10 +70,11 @@ public class Single extends AbstractReferencePlugin {
     public ReconstructionField get_reference_holo(
         ConstReconstructionField field, int t)
     {
+        if (M_param != null) {
+            M_image = M_param.get_value();
+        }
         if (M_result == null) {
-            float[][] float_array = M_param.get_value()
-                                           .getProcessor()
-                                           .getFloatArray();
+            float[][] float_array = M_image.getProcessor().getFloatArray();
             double[][] real = new double[float_array.length]
                                         [float_array[0].length];
             double[][] imag = new double[real.length][real[0].length];
@@ -83,6 +94,7 @@ public class Single extends AbstractReferencePlugin {
     }
 
     private SingleParameter M_param;
+    private ImagePlus M_image;
     private ReconstructionField M_result;
 
     static class SingleParameter extends ImageParameter

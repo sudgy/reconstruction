@@ -72,13 +72,29 @@ public class SingleTest {
         assertTrue(param.get_warning() == null, "There should be no warning "
             + "if the hologram was changed to not be the reference hologram.");
     }
-    @Test public void test_get()
+    @Test public void test_live() // This doesn't even use a TestDialog :/
     {
         FloatProcessor proc
             = new FloatProcessor(new float[][] {{1, 0}, {4, 2}});
         ArrayList<ImagePlus> images = new ArrayList<>();
         images.add(new ImagePlus("", proc));
         Single test = new Single(images);
+        ReconstructionField field = test.get_reference_holo(null, 0);
+        assertEquals(field.field().get_real(0, 0), 1);
+        assertEquals(field.field().get_real(0, 1), 0);
+        assertEquals(field.field().get_real(1, 0), 4);
+        assertEquals(field.field().get_real(1, 1), 2);
+        assertEquals(field.field().get_imag(0, 0), 0);
+        assertEquals(field.field().get_imag(0, 1), 0);
+        assertEquals(field.field().get_imag(1, 0), 0);
+        assertEquals(field.field().get_imag(1, 1), 0);
+    }
+    @Test public void test_programmatic()
+    {
+        FloatProcessor proc
+            = new FloatProcessor(new float[][] {{1, 0}, {4, 2}});
+        ImagePlus imp = new ImagePlus("", proc);
+        Single test = new Single(imp);
         ReconstructionField field = test.get_reference_holo(null, 0);
         assertEquals(field.field().get_real(0, 0), 1);
         assertEquals(field.field().get_real(0, 1), 0);
