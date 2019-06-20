@@ -391,6 +391,10 @@ public class TParameter extends HoldingParameter<List<Integer>> {
 
         private void process_errors()
         {
+            if (M_current_string == null || M_current_string == "") {
+                set_error("t list is empty.");
+                return;
+            }
             List<String> ts_as_string
                 = Arrays.asList(M_current_string.split("\\s*,\\s*"));
             M_ts = new ArrayList<Integer>(ts_as_string.size());

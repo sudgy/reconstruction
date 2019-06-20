@@ -29,6 +29,10 @@ import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.FloatProcessor;
 
+import org.scijava.Context;
+
+import edu.pdx.imagej.dynamic_parameters.TestDialog;
+
 import edu.pdx.imagej.reconstruction.ReconstructionField;
 
 public class MedianTest {
@@ -52,5 +56,32 @@ public class MedianTest {
             });
 
         assertEquals(result.field().get_real(0, 0), 2.5);
+    }
+    @Test public void test_live()
+    {
+        ImageStack stack = new ImageStack(2, 2);
+        stack.addSlice(new FloatProcessor(new float[][] {{0, 0}, {0, 0}}));
+        stack.addSlice(new FloatProcessor(new float[][] {{382, 0}, {0, 0}}));
+        stack.addSlice(new FloatProcessor(new float[][] {{5, 0}, {0, 0}}));
+        stack.addSlice(new FloatProcessor(new float[][] {{99, 0}, {0, 0}}));
+        ImagePlus imp = new ImagePlus("", stack);
+        Median test = new Median(new ImagePlus[]{imp});
+        Context context = new Context(true);
+        context.inject(test.param());
+        test.param().initialize();
+        test.param().refresh_visibility();
+        TestDialog dialog = new TestDialog();
+        test.param().add_to_dialog(dialog);
+        dialog.get_string(0).value = "List";
+        dialog.get_string_index(0).value = 0;
+        test.param().read_from_dialog();
+        dialog = new TestDialog();
+        test.param().add_to_dialog(dialog);
+        dialog.get_string(1).value = "1,3";
+        dialog.get_string_index(0).value = 0;
+        test.param().read_from_dialog();
+
+        ReconstructionField field = test.get_reference_holo(null, 0);
+        assertEquals(field.field().get_real(0, 0), 2.5);
     }
 }

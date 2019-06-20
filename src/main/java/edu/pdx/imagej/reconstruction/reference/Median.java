@@ -41,19 +41,42 @@ import edu.pdx.imagej.reconstruction.TParameter;
         name = "Median",
         priority = Priority.VERY_HIGH * 0.998)
 public class Median extends AbstractReferencePlugin {
+    /** Constructor intended for live use of the plugin.
+     */
+    public Median()
+    {
+        M_param = new MedianParameter();
+    }
+    Median(ImagePlus[] images)
+    {
+        M_param = new MedianParameter(images);
+    }
+    /** Constructor intended for programmatic use of the plugin.
+     *
+     * @param median_img The image stack to get the median from.
+     * @param ts The time slices used in calculating the median.
+     */
+    public Median(ImagePlus median_img, Collection<Integer> ts)
+    {
+        M_median_img = median_img;
+        M_ts = ts;
+    }
     /** Get the reference hologram. */
     @Override
     public ReconstructionField get_reference_holo(
         ConstReconstructionField field, int t)
     {
-        MedianParams params = M_param.get_value();
-        return get_reference_holo(params.imp, params.ts);
+        if (M_param != null) {
+            M_median_img = M_param.get_value().imp;
+            M_ts = M_param.get_value().ts;
+        }
+        return get_reference_holo(M_median_img, M_ts);
     }
     /** Get the reference hologram.  This is what actually gets the reference
      * hologram, because this is what this class cares about more.
      *
      * @param imp The images whose median will be taken.
-     * @param ts The time slices used in calculating the Median.
+     * @param ts The time slices used in calculating the median.
      * @return The median of the images.
      */
     public ReconstructionField get_reference_holo(ImagePlus imp,
@@ -74,23 +97,37 @@ public class Median extends AbstractReferencePlugin {
     }
 
     private ReconstructionField M_result;
-    private MedianParameter M_param = new MedianParameter();
+    private MedianParameter M_param;
+    ImagePlus M_median_img;
+    Collection<Integer> M_ts;
 
     private static class MedianParams {
         public ImagePlus imp;
         public Collection<Integer> ts;
     }
-    private static class MedianParameter
+    static class MedianParameter
                          extends HoldingParameter<MedianParams> {
         public MedianParameter()
         {
             super("MedianParameter");
         }
+        MedianParameter(ImagePlus[] images)
+        {
+            super("MedianParameter");
+            M_images = images;
+        }
         @Override
         public void initialize()
         {
-            M_img = add_parameter(ImageParameter.class,
-                                  "Reference Hologram Stack");
+            if (M_images == null) {
+                M_img = add_parameter(ImageParameter.class,
+                                      "Reference Hologram Stack");
+            }
+            else {
+                M_img = add_parameter(ImageParameter.class,
+                                      "Reference Hologram Stack",
+                                      M_images);
+            }
             M_ts = add_parameter(TParameter.class, M_img,
                                  TParameter.PossibleTypes.AllMulti,
                                  "MedianRef");
@@ -105,5 +142,6 @@ public class Median extends AbstractReferencePlugin {
         }
         private ImageParameter M_img;
         private TParameter M_ts;
+        private ImagePlus[] M_images;
     }
 }
