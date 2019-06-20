@@ -153,6 +153,7 @@ public class TParameter extends HoldingParameter<List<Integer>> {
     private void set_visibilities()
     {
         update_max_t();
+        if (M_holo_p.get_value() == null) return;
         M_param_single.set_new_visibility(false);
         M_param_list.set_new_visibility(false);
         M_param_range.set_new_visibility(false);
@@ -173,7 +174,9 @@ public class TParameter extends HoldingParameter<List<Integer>> {
     public List<Integer> get_value() {return current_param().get_value();}
     void update_max_t() // Package private for testing
     {
-        M_max_t = M_holo_p.get_value().getImageStackSize();
+        ImagePlus img = M_holo_p.get_value();
+        if (img == null) return;
+        M_max_t = img.getImageStackSize();
     }
 
     private ChoiceParameter current_choices()
