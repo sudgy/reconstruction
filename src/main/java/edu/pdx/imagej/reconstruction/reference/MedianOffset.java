@@ -59,7 +59,7 @@ public class MedianOffset extends AbstractReferencePlugin {
      *
      * @param median_img The image stack to get the median from.
      * @param ts The time slices used in calculating the median.
-     * @param offest The time offset to use on <code>ts</code>.
+     * @param offset The time offset to use on <code>ts</code>.
      */
     public MedianOffset(ImagePlus median_img, List<Integer> ts, int offset)
     {
