@@ -178,7 +178,7 @@ public class Reference extends HoldingSinglePlugin<ReferencePlugin>
     }
 
     private Filter M_filter;
-    private Filter M_not_same_filter;
+    Filter M_not_same_filter; // Package private for testing
     private boolean M_use_same_roi = false;
     private boolean M_phase = false;
     private boolean M_amplitude = false;

@@ -25,10 +25,16 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
+import ij.ImagePlus;
 import ij.gui.PointRoi;
+import ij.process.FloatProcessor;
+
+import org.scijava.Context;
+import org.scijava.plugin.PluginService;
 
 import edu.pdx.imagej.dynamic_parameters.TestDialog;
 import edu.pdx.imagej.dynamic_parameters.HoldingParameter;
+import edu.pdx.imagej.dynamic_parameters.ImageParameter;
 
 import edu.pdx.imagej.reconstruction.ConstReconstructionField;
 import edu.pdx.imagej.reconstruction.ReconstructionField;
@@ -80,6 +86,50 @@ public class ReferenceTest {
                 assertEquals(other_amp, processed_other_amp, 1e-6, coord);
                 assertEquals(processed_normal_arg, 0, 1e-6, coord);
                 assertEquals(processed_other_arg, 0, 1e-6, coord);
+            }
+        }
+    }
+    @Test public void test_live()
+    {
+        Context context = new Context(PluginService.class);
+        Reference test = new Reference();
+        context.inject(test.param());
+        TestDialog dialog = new TestDialog();
+        test.param().initialize();
+        test.param().add_to_dialog(dialog);
+        dialog.get_string(0).value = "Self";
+        test.param().read_from_dialog();
+        dialog = new TestDialog();
+        test.param().add_to_dialog(dialog);
+        dialog.get_boolean(0).value = true; // Set phase to true
+        dialog.get_boolean(1).value = false; // Set amplitude to false
+        // Use same roi does nothing
+        test.param().read_from_dialog();
+
+        Filter filter = new Filter();
+        filter.set_filter(new PointRoi(new int[]{1, 1, 2, 2},
+                                       new int[]{1, 2, 1, 2}, 4));
+        ReconstructionField field = new ReconstructionFieldImpl(real, imag);
+        filter.filter_field(field);
+        ReconstructionField orig_field = field.copy();
+        filter = new Filter();
+        filter.set_filter(new PointRoi(new int[]{0, 0, 0, 1, 1, 1, 2, 2, 2},
+                                       new int[]{0, 1, 2, 0, 1, 2, 0, 1, 2},9));
+        test.M_not_same_filter = filter;
+        // Setup is finally complete!
+
+        test.process_filtered_field(field, 0);
+
+        for (int x = 0; x < 3; ++x) {
+            for (int y = 0; y < 3; ++y) {
+                double amp1 = orig_field.field().get_amp()[x][y];
+                double amp2 = field.field().get_amp()[x][y];
+                double arg1 = orig_field.field().get_arg()[x][y];
+                double arg2 = field.field().get_arg()[x][y];
+                String coord = "at (" + x + ", " + y + ")";
+                assertEquals(amp1, amp2, 1e-6, coord);
+                assertTrue(Math.abs(0 - arg1) > 1e-6, coord);
+                assertEquals(0, arg2, 1e-6, coord);
             }
         }
     }
