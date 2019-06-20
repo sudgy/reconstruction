@@ -34,7 +34,7 @@ import edu.pdx.imagej.dynamic_parameters.TestDialog;
 import edu.pdx.imagej.reconstruction.ReconstructionField;
 
 public class OffsetTest {
-    @Test public void test_get()
+    @Test public void test_live()
     {
         ImageStack stack = new ImageStack(2, 2);
         stack.addSlice("", new FloatProcessor(new float[][] {{1, 2}, {3, 4}}));
@@ -49,6 +49,30 @@ public class OffsetTest {
         dialog.get_string_index(0).value = 0; // Select the image
         dialog.get_integer(0).value = -1; // Set the offset
         test.param().read_from_dialog();
+
+        ReconstructionField field = test.get_reference_holo(null, 1);
+        assertEquals(field.field().get_real(0, 0), 1);
+        assertEquals(field.field().get_real(0, 1), 2);
+        assertEquals(field.field().get_real(1, 0), 3);
+        assertEquals(field.field().get_real(1, 1), 4);
+        field = test.get_reference_holo(null, 2);
+        assertEquals(field.field().get_real(0, 0), 1);
+        assertEquals(field.field().get_real(0, 1), 2);
+        assertEquals(field.field().get_real(1, 0), 3);
+        assertEquals(field.field().get_real(1, 1), 4);
+        field = test.get_reference_holo(null, 3);
+        assertEquals(field.field().get_real(0, 0), 5);
+        assertEquals(field.field().get_real(0, 1), 6);
+        assertEquals(field.field().get_real(1, 0), 7);
+        assertEquals(field.field().get_real(1, 1), 8);
+    }
+    @Test public void test_programmatic()
+    {
+        ImageStack stack = new ImageStack(2, 2);
+        stack.addSlice("", new FloatProcessor(new float[][] {{1, 2}, {3, 4}}));
+        stack.addSlice("", new FloatProcessor(new float[][] {{5, 6}, {7, 8}}));
+        ImagePlus imp = new ImagePlus("", stack);
+        Offset test = new Offset(imp, -1);
 
         ReconstructionField field = test.get_reference_holo(null, 1);
         assertEquals(field.field().get_real(0, 0), 1);

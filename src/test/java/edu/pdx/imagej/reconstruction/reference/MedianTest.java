@@ -73,12 +73,12 @@ public class MedianTest {
         TestDialog dialog = new TestDialog();
         test.param().add_to_dialog(dialog);
         dialog.get_string(0).value = "List";
-        dialog.get_string_index(0).value = 0;
+        dialog.get_string_index(0).value = 0; // Select the image
         test.param().read_from_dialog();
         dialog = new TestDialog();
         test.param().add_to_dialog(dialog);
-        dialog.get_string(1).value = "1,3";
-        dialog.get_string_index(0).value = 0;
+        dialog.get_string(1).value = "1,3"; // Select the times to use
+        dialog.get_string_index(0).value = 0; // Crashes if we don't do this
         test.param().read_from_dialog();
 
         ReconstructionField field = test.get_reference_holo(null, 0);

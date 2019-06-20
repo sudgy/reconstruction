@@ -41,13 +41,26 @@ import edu.pdx.imagej.reconstruction.ReconstructionFieldImpl;
         name = "Single Image With Offset",
         priority = Priority.VERY_HIGH * 0.999)
 public class Offset extends AbstractReferencePlugin {
+    /** Constructor intended for live use of the plugin.
+     */
     public Offset()
     {
         M_param = new OffsetParameter();
     }
+    // Constructor used for testing.
     Offset(Collection<ImagePlus> images)
     {
         M_param = new OffsetParameter(images);
+    }
+    /** Constructor intended for programmatic use of the plugin.
+     *
+     * @param imp The image stack to get from.
+     * @param offset The offset to apply to the current time.
+     */
+    public Offset(ImagePlus imp, int offset)
+    {
+        M_imp = imp;
+        M_offset = offset;
     }
     /** Get the reference hologram.
      */
@@ -58,17 +71,16 @@ public class Offset extends AbstractReferencePlugin {
         // This should maybe be cached, but is it worth it?  That would use up a
         // lot of extra memory, and most of them should be a new calculation.
 
-        int offset = OffsetUtil.get_offset(M_param.get_value().offset,
-                                           t, 1,
-                                           M_param.get_value()
-                                                  .imp
-                                                  .getImageStackSize());
+        if (M_param != null) {
+            M_imp = M_param.get_value().imp;
+            M_offset = M_param.get_value().offset;
+        }
+        int offset = OffsetUtil.get_offset(M_offset, t, 1,
+                                           M_imp.getImageStackSize());
         int final_t = t + offset;
-        float[][] float_array = M_param.get_value()
-                                       .imp
-                                       .getStack()
-                                       .getProcessor(final_t)
-                                       .getFloatArray();
+        float[][] float_array = M_imp.getStack()
+                                     .getProcessor(final_t)
+                                     .getFloatArray();
         double[][] real = new double[float_array.length][float_array[0].length];
         double[][] imag = new double[real.length][real[0].length];
         for (int x = 0; x < real.length; ++x) {
@@ -85,6 +97,8 @@ public class Offset extends AbstractReferencePlugin {
     }
 
     private OffsetParameter M_param;
+    private ImagePlus M_imp;
+    private int M_offset;
 
     private static class OffsetParams {
         public ImagePlus imp;

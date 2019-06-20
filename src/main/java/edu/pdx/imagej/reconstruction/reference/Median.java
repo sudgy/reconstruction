@@ -98,8 +98,8 @@ public class Median extends AbstractReferencePlugin {
 
     private ReconstructionField M_result;
     private MedianParameter M_param;
-    ImagePlus M_median_img;
-    Collection<Integer> M_ts;
+    private ImagePlus M_median_img;
+    private Collection<Integer> M_ts;
 
     private static class MedianParams {
         public ImagePlus imp;
