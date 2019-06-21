@@ -32,14 +32,14 @@ import edu.pdx.imagej.reconstruction.ConstReconstructionField;
 import edu.pdx.imagej.reconstruction.ReconstructionField;
 
 /** A plugin that is used for reconstruction.  To extend the functionality of
- * {@link edu.pdx.imagej.reconstruction.ReconstructionCommand
- * ReconstructionCommand}, you must implement this interface.  In addition, you
- * must implement either {@link MainReconstructionPlugin} or {@link
- * SubReconstructionPlugin} to tell the reconstruction command what kind of
- * plugin this is.  You should almost never implement this interface directly,
- * and should instead extend {@link AbstractReconstructionPlugin}, or maybe
- * {@link AbstractHoldingPlugin}, {@link HoldingPlugin}, or {@link
- * HoldingSinglePlugin} if you require sub plugins in your plugin.
+ * {@link edu.pdx.imagej.reconstruction.ReconstructionOp ReconstructionOp}, you
+ * must implement this interface.  In addition, you must implement either {@link
+ * MainReconstructionPlugin} or {@link SubReconstructionPlugin} to tell the
+ * reconstruction command what kind of plugin this is.  You should almost
+ * never implement this interface directly, and should instead extend {@link
+ * AbstractReconstructionPlugin}, or maybe {@link AbstractHoldingPlugin}, {@link
+ * HoldingPlugin}, or {@link HoldingSinglePlugin} if you require sub plugins in
+ * your plugin.
  * <p>
  * The priority of the plugin is used to determine what order to process each
  * enabled plugin at each step.  Because you might want to change the priority
