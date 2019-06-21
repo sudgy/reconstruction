@@ -26,6 +26,8 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.process.ImageProcessor;
 
+import org.scijava.Contextual;
+import org.scijava.Prioritized;
 import org.scijava.app.StatusService;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
@@ -86,6 +88,22 @@ public class ReconstructionOp extends AbstractOp {
     @Override
     public void run()
     {
+        // If the plugins were created by the programmer, they have no context,
+        // and thus no priority.  We need to inject their context if needed.
+        for (ReconstructionPlugin plugin : P_plugins) {
+            if (plugin instanceof Contextual) {
+                if (((Contextual)plugin).getContext() == null) {
+                    ops().context().inject((Contextual)plugin);
+                }
+            }
+            if (plugin instanceof Prioritized) {
+                Plugin annotation = plugin.getClass()
+                                          .getAnnotation(Plugin.class);
+                if (annotation != null) {
+                    ((Prioritized)plugin).setPriority(annotation.priority());
+                }
+            }
+        }
         // Beginning
         for (ReconstructionPlugin plugin : P_plugins) {
             plugin.set_beginning_priority();
