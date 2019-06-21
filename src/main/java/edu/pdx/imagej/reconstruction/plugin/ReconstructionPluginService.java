@@ -46,8 +46,7 @@ public interface ReconstructionPluginService extends ImageJService {
      * @param type The type of plugins to get.
      * @return An instance of all plugins of type <code>type</code>.
      */
-    List<ReconstructionPlugin> get_plugins(Class<? extends ReconstructionPlugin>
-                                           type);
+    <T extends ReconstructionPlugin> List<T> get_plugins(Class<T> type);
     /** Check if a plugin is enabled.
      *
      * @param plugin The plugin to check if it is enabled.

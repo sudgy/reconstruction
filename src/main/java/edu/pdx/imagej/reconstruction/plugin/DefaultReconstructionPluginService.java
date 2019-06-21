@@ -64,11 +64,11 @@ public class DefaultReconstructionPluginService
         }
         return result;
     }
+    @SuppressWarnings("unchecked")  // This is for adding to result, see below
     /** {@inheritDoc} */
-    public List<ReconstructionPlugin> get_plugins(
-        Class<? extends ReconstructionPlugin> type)
+    public <T extends ReconstructionPlugin> List<T> get_plugins(Class<T> type)
     {
-        ArrayList<ReconstructionPlugin> result = new ArrayList<>();
+        ArrayList<T> result = new ArrayList<>();
         for (PluginInfo<ReconstructionPlugin> info : getPlugins()) {
             Class<? extends ReconstructionPlugin> cls;
             try {
@@ -78,7 +78,9 @@ public class DefaultReconstructionPluginService
                 throw new RuntimeException(e);
             }
             if (type.isAssignableFrom(cls)) {
-                result.add(pluginService().createInstance(info));
+                // This is actually safe because we already checked that we can
+                // assign
+                result.add((T)pluginService().createInstance(info));
             }
         }
         return result;
