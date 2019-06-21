@@ -29,13 +29,9 @@ import org.scijava.plugin.PluginInfo;
 import org.scijava.service.Service;
 import net.imagej.ImageJService;
 
-/** A service for {@link ReconstructionPlugin}s.  You probably don't need to use
- * it, because it is used mostly internally.
+/** A service for {@link ReconstructionPlugin}s.
  */
-@Plugin(type = Service.class)
-public class ReconstructionPluginService
-             extends    AbstractPTService<ReconstructionPlugin>
-             implements ImageJService {
+public interface ReconstructionPluginService extends ImageJService {
     /** Get all {@link MainReconstructionPlugin}s.  If this method finds any
      * {@link ReconstructionPlugin} that is not a {@link
      * MainReconstructionPlugin} or {@link SubReconstructionPlugin}, it will
@@ -43,31 +39,5 @@ public class ReconstructionPluginService
      *
      * @return An instance of all <code>MainReconstructionPlugin</code>s.
      */
-    public List<ReconstructionPlugin> get_plugins()
-    {
-        ArrayList<ReconstructionPlugin> result = new ArrayList<>();
-        for (PluginInfo<ReconstructionPlugin> info : getPlugins()) {
-            Class<?> cls;
-            try {
-                cls = info.loadClass();
-            }
-            catch (InstantiableException e) {
-                throw new RuntimeException(e);
-            }
-            if (MainReconstructionPlugin.class.isAssignableFrom(cls)) {
-                ReconstructionPlugin plugin
-                    = pluginService().createInstance(info);
-                result.add(plugin);
-            }
-            else if (!SubReconstructionPlugin.class.isAssignableFrom(cls)) {
-                throw new RuntimeException(cls.getName() + " must inherit from "
-                    + "either MainReconstructionPlugin or "
-                    + "SubReconstructionPlugin.");
-            }
-        }
-        return result;
-    }
-    @Override
-    public Class<ReconstructionPlugin> getPluginType()
-        {return ReconstructionPlugin.class;}
+    List<ReconstructionPlugin> get_plugins();
 }

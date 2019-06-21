@@ -71,7 +71,8 @@ public class ReconstructionPluginServiceTest {
                               implements ReconstructionPlugin {}
 }
 
-class TestReconstructionPluginService extends ReconstructionPluginService {
+class TestReconstructionPluginService extends DefaultReconstructionPluginService
+{
     @SafeVarargs
     public TestReconstructionPluginService(
         Class<? extends ReconstructionPlugin>... classes)
