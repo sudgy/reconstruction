@@ -126,6 +126,8 @@ public class Filter extends AbstractReconstructionPlugin
         int xp = field.fourier().width() / 2 - center_x;
         int yp = field.fourier().height() / 2 - center_y;
         for (Point p : M_roi) {
+            if (p.x < 0 || p.x >= fourier.length) continue;
+            if (p.y < 0 || p.y >= fourier[0].length / 2) continue;
             filtered[p.x + xp][(p.y + yp) * 2] = fourier[p.x][p.y * 2];
             filtered[p.x + xp][(p.y + yp) * 2 + 1] = fourier[p.x][p.y * 2 + 1];
         }
