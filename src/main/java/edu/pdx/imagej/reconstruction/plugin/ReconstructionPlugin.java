@@ -26,6 +26,7 @@ import ij.ImagePlus;
 import org.scijava.Prioritized;
 import net.imagej.ImageJPlugin;
 
+import edu.pdx.imagej.dynamic_parameters.DParameter;
 import edu.pdx.imagej.dynamic_parameters.ParameterPlugin;
 import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
 import edu.pdx.imagej.reconstruction.ConstReconstructionField;
@@ -207,4 +208,35 @@ public interface ReconstructionPlugin extends ImageJPlugin, ParameterPlugin {
      * @return Whether or not there is an error.
      */
     default boolean has_error() {return false;}
+
+    /** All of the dependencies that this plugin has on other plugins.  If you
+     * have a dependency, it will not be disabled unless this plugin is disabled
+     * as well.
+     *
+     * @return A <code>List</code> of all dependencies.
+     */
+    default List<Class<? extends ReconstructionPlugin>> dependencies()
+        {return null;}
+    /** All of the sub plugin <em>types</em> this plugin uses.  You should only
+     * return the top-level types, not any particular sub plugin.  Almost
+     * always, when you override this method, you will just return one thing,
+     * but in case you do something wacky there is room for more here.
+     *
+     * @return A <code>List</code> of the sub plugin types that this plugin
+     *         uses.
+     */
+    default List<Class<? extends ReconstructionPlugin>> sub_plugins()
+        {return null;}
+    /** A dynamic parameter that will be used in the options command.  If this
+     * returns <code>null</code>, this plugin will have no options other than
+     * enabling/disabling.
+     *
+     * @return a <code>DParameter</code> that will get the options needed for
+     *         this plugin, or <code>null</code> if no options are needed for
+     *         this plugin.
+     */
+    default DParameter<?> options_param() {return null;}
+    /** Read the options from the options parameter.
+     */
+    default void read_options() {}
 }
