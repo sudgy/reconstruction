@@ -27,7 +27,8 @@ import org.apache.commons.math3.fitting.PolynomialCurveFitter;
 import org.apache.commons.math3.fitting.WeightedObservedPoints;
 import org.apache.commons.math3.fitting.WeightedObservedPoint;
 
-import org.scijava.Priority;
+import ij.ImagePlus;
+
 import org.scijava.plugin.Plugin;
 
 import edu.pdx.imagej.reconstruction.ConstReconstructionField;
@@ -36,6 +37,7 @@ import edu.pdx.imagej.reconstruction.plugin.ReconstructionPlugin;
 import edu.pdx.imagej.reconstruction.plugin.HoldingSinglePlugin;
 import edu.pdx.imagej.reconstruction.plugin.MainReconstructionPlugin;
 import edu.pdx.imagej.reconstruction.filter.Filter;
+import edu.pdx.imagej.reconstruction.reference.Reference;
 
 /** A {@link edu.pdx.imagej.reconstruction.plugin.ReconstructionPlugin
  * ReconstructionPlugin} that performs tilt correction on holograms through a
@@ -84,6 +86,13 @@ public class PolyTilt extends HoldingSinglePlugin<PolyTiltPlugin>
         }
         return M_param;
     }
+    /** Get the starting slice from the hologram.
+     */
+    @Override
+    public void process_hologram_param(ImagePlus imp)
+    {
+        M_starting_t = imp.getCurrentSlice();
+    }
     /** Get the filter from the list of plugins.
      */
     @Override
@@ -92,6 +101,7 @@ public class PolyTilt extends HoldingSinglePlugin<PolyTiltPlugin>
         super.read_plugins(plugins);
         for (ReconstructionPlugin plugin : plugins) {
             if (plugin instanceof Filter) M_filter = (Filter)plugin;
+            if (plugin instanceof Reference) M_reference = (Reference)plugin;
         }
     }
     /** Get the polynomial fit.
@@ -104,6 +114,9 @@ public class PolyTilt extends HoldingSinglePlugin<PolyTiltPlugin>
         super.process_original_hologram(field);
         ReconstructionField filtered_field = field.copy();
         if (M_filter != null) M_filter.filter_field(filtered_field);
+        if (M_reference != null) {
+            M_reference.process_filtered_field(filtered_field, M_starting_t);
+        }
         M_phase = filtered_field.field().get_arg();
         double[] h_poly;
         double[] v_poly;
@@ -242,10 +255,12 @@ public class PolyTilt extends HoldingSinglePlugin<PolyTiltPlugin>
     }
 
     private Filter M_filter;
+    private Reference M_reference;
     private PolyTiltParameter M_param;
     double[][] M_phase; // Package private for testing
     private double[] M_last_phase;
     private double[][] M_poly_field;
     int M_degree; // Package private for testing
     boolean M_live = false;
+    private int M_starting_t;
 }
