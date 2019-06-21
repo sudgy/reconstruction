@@ -32,14 +32,21 @@ import net.imagej.ImageJService;
 /** A service for {@link ReconstructionPlugin}s.
  */
 public interface ReconstructionPluginService extends ImageJService {
-    /** Get all {@link MainReconstructionPlugin}s.  If this method finds any
-     * {@link ReconstructionPlugin} that is not a {@link
+    /** Get all enabled {@link MainReconstructionPlugin}s.  If this method finds
+     * any {@link ReconstructionPlugin} that is not a {@link
      * MainReconstructionPlugin} or {@link SubReconstructionPlugin}, it will
      * throw an exception.
      *
      * @return An instance of all <code>MainReconstructionPlugin</code>s.
      */
     List<ReconstructionPlugin> get_plugins();
+    /** Get all {@link ReconstructionPlugin}s of a certain type.  Note that this
+     * will get all plugins, even if they are disabled.
+     *
+     * @param type The type of plugins to get.
+     */
+    List<ReconstructionPlugin> get_plugins(Class<? extends ReconstructionPlugin>
+                                           type);
     /** Check if a plugin is enabled.
      *
      * @param plugin The plugin to check if it is enabled.

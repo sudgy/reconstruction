@@ -81,6 +81,25 @@ public class ReconstructionPluginServiceTest {
         assertEquals(1, plugins.size());
         assertTrue(plugins.get(0) instanceof TestA);
     }
+    @Test public void test_get_type()
+    {
+        TestReconstructionPluginService test =
+            new TestReconstructionPluginService(TestB.class, TestD.class);
+        S_context.inject(test);
+        test.disable(TestB.class);
+        List<ReconstructionPlugin> plugins
+            = test.get_plugins(SubReconstructionPlugin.class);
+        assertEquals(2, plugins.size());
+        assertTrue(plugins.get(0) instanceof TestB
+                || plugins.get(0) instanceof TestD);
+        if (plugins.get(0) instanceof TestB) {
+            assertTrue(plugins.get(1) instanceof TestD);
+        }
+        else {
+            assertTrue(plugins.get(1) instanceof TestB);
+        }
+        test.enable(TestB.class);
+    }
     private static Context S_context = new Context(PluginService.class,
                                                    PrefService.class);
 
@@ -94,6 +113,9 @@ public class ReconstructionPluginServiceTest {
     @Plugin(type = TestPlugin.class)
     public static class TestC extends TestPlugin
                               implements ReconstructionPlugin {}
+    @Plugin(type = TestPlugin.class)
+    public static class TestD extends TestPlugin
+                              implements SubReconstructionPlugin {}
 }
 
 class TestReconstructionPluginService extends DefaultReconstructionPluginService

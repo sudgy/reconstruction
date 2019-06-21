@@ -65,6 +65,25 @@ public class DefaultReconstructionPluginService
         return result;
     }
     /** {@inheritDoc} */
+    public List<ReconstructionPlugin> get_plugins(
+        Class<? extends ReconstructionPlugin> type)
+    {
+        ArrayList<ReconstructionPlugin> result = new ArrayList<>();
+        for (PluginInfo<ReconstructionPlugin> info : getPlugins()) {
+            Class<? extends ReconstructionPlugin> cls;
+            try {
+                cls = info.loadClass();
+            }
+            catch (InstantiableException e) {
+                throw new RuntimeException(e);
+            }
+            if (type.isAssignableFrom(cls)) {
+                result.add(pluginService().createInstance(info));
+            }
+        }
+        return result;
+    }
+    /** {@inheritDoc} */
     @Override
     public boolean is_enabled(Class<? extends ReconstructionPlugin> plugin)
     {
