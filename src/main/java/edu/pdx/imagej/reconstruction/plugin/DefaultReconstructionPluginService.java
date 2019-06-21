@@ -24,8 +24,10 @@ import java.util.List;
 
 import org.scijava.InstantiableException;
 import org.scijava.plugin.AbstractPTService;
+import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 import org.scijava.plugin.PluginInfo;
+import org.scijava.prefs.PrefService;
 import org.scijava.service.Service;
 import net.imagej.ImageJService;
 
@@ -40,7 +42,7 @@ public class DefaultReconstructionPluginService
     {
         ArrayList<ReconstructionPlugin> result = new ArrayList<>();
         for (PluginInfo<ReconstructionPlugin> info : getPlugins()) {
-            Class<?> cls;
+            Class<? extends ReconstructionPlugin> cls;
             try {
                 cls = info.loadClass();
             }
@@ -48,9 +50,11 @@ public class DefaultReconstructionPluginService
                 throw new RuntimeException(e);
             }
             if (MainReconstructionPlugin.class.isAssignableFrom(cls)) {
-                ReconstructionPlugin plugin
-                    = pluginService().createInstance(info);
-                result.add(plugin);
+                if (is_enabled(cls)) {
+                    ReconstructionPlugin plugin
+                        = pluginService().createInstance(info);
+                    result.add(plugin);
+                }
             }
             else if (!SubReconstructionPlugin.class.isAssignableFrom(cls)) {
                 throw new RuntimeException(cls.getName() + " must inherit from "
@@ -60,7 +64,29 @@ public class DefaultReconstructionPluginService
         }
         return result;
     }
+    /** {@inheritDoc} */
+    @Override
+    public boolean is_enabled(Class<? extends ReconstructionPlugin> plugin)
+    {
+        return P_prefs.getBoolean(ReconstructionPluginService.class,
+                                  plugin.getName(),
+                                  true);
+    }
+    /** {@inheritDoc} */
+    @Override
+    public void enable(Class<? extends ReconstructionPlugin> plugin)
+    {
+        P_prefs.put(ReconstructionPluginService.class, plugin.getName(), true);
+    }
+    /** {@inheritDoc} */
+    @Override
+    public void disable(Class<? extends ReconstructionPlugin> plugin)
+    {
+        P_prefs.put(ReconstructionPluginService.class, plugin.getName(), false);
+    }
     @Override
     public Class<ReconstructionPlugin> getPluginType()
         {return ReconstructionPlugin.class;}
+
+    @Parameter private PrefService P_prefs;
 }

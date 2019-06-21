@@ -40,4 +40,19 @@ public interface ReconstructionPluginService extends ImageJService {
      * @return An instance of all <code>MainReconstructionPlugin</code>s.
      */
     List<ReconstructionPlugin> get_plugins();
+    /** Check if a plugin is enabled.
+     *
+     * @param plugin The plugin to check if it is enabled.
+     */
+    boolean is_enabled(Class<? extends ReconstructionPlugin> plugin);
+    /** Enable a plugin.
+     *
+     * @param plugin The plugin to enable.
+     */
+    void enable(Class<? extends ReconstructionPlugin> plugin);
+    /** Disable a plugin.
+     *
+     * @param plugin The plugin to disable.
+     */
+    void disable(Class<? extends ReconstructionPlugin> plugin);
 }
