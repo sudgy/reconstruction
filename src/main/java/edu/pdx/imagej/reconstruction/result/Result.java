@@ -50,7 +50,8 @@ import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
  * default operation when not saving to file is to call <code>show()</code> on
  * each result.
  */
-@Plugin(type = ReconstructionPlugin.class, priority = Priority.LAST)
+@Plugin(type = ReconstructionPlugin.class, name = "Result",
+        priority = Priority.LAST)
 public class Result extends AbstractReconstructionPlugin
                     implements MainReconstructionPlugin {
     @Parameter UIService P_ui;

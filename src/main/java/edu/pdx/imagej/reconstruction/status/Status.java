@@ -37,7 +37,7 @@ import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
 /** A {@link edu.pdx.imagej.reconstruction.plugin.ReconstructionPlugin
  * ReconstructionPlugin} that shows the progress of the command.
  */
-@Plugin(type = ReconstructionPlugin.class)
+@Plugin(type = ReconstructionPlugin.class, name = "Status")
 public class Status extends AbstractReconstructionPlugin
                     implements MainReconstructionPlugin {
     /** Get the hologram, to get the name of the slices.

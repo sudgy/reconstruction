@@ -53,7 +53,7 @@ import edu.pdx.imagej.reconstruction.reference.Reference;
  * started.  At that point the sub plugins can call these methods and use them.
  * They are not really intended to be used for other purposes.
  */
-@Plugin(type = ReconstructionPlugin.class)
+@Plugin(type = ReconstructionPlugin.class, name = "Polynomial Tilt Correction")
 public class PolyTilt extends HoldingSinglePlugin<PolyTiltPlugin>
                       implements MainReconstructionPlugin
 {

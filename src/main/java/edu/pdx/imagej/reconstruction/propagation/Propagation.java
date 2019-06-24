@@ -46,7 +46,8 @@ import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
  * propagation then.  So, please don't have a priority before first, because
  * then it won't actually be propagated yet.
  */
-@Plugin(type = ReconstructionPlugin.class, priority = Priority.FIRST)
+@Plugin(type = ReconstructionPlugin.class, name = "Propagation",
+        priority = Priority.FIRST)
 public class Propagation extends HoldingSinglePlugin<PropagationPlugin>
                          implements MainReconstructionPlugin {
     /** Constructor intended for live use of the plugin.

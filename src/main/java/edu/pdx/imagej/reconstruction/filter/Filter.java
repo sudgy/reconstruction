@@ -45,7 +45,8 @@ import edu.pdx.imagej.reconstruction.ConstReconstructionField;
  * Its priority is first, so as soon as {@link process_original_hologram} has
  * started, you are good to use the filter.
  */
-@Plugin(type = ReconstructionPlugin.class, priority = Priority.FIRST)
+@Plugin(type = ReconstructionPlugin.class, name = "Filter",
+        priority = Priority.FIRST)
 public class Filter extends AbstractReconstructionPlugin
                     implements MainReconstructionPlugin {
     /** Manually set the filter.  Use this if you don't want the filter to be

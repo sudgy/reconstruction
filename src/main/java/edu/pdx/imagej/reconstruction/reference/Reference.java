@@ -41,7 +41,8 @@ import edu.pdx.imagej.reconstruction.filter.Filter;
  * seems to be a few issues with that.  The method of getting the reference
  * hologram is customizable by making a {@link ReferencePlugin}.
  */
-@Plugin(type = ReconstructionPlugin.class, priority = Priority.VERY_HIGH * 0.5)
+@Plugin(type = ReconstructionPlugin.class, name = "Reference Hologram",
+        priority = Priority.VERY_HIGH * 0.5)
 public class Reference extends HoldingSinglePlugin<ReferencePlugin>
                        implements MainReconstructionPlugin {
     /** Constructor intended for live use of the plugin.
