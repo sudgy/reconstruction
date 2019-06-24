@@ -208,6 +208,9 @@ class SinglePluginOptionsParameter<T extends ReconstructionPlugin>
         }
         // Sub plugins
     }
+    // Disable reading from prefs, because a programmer could have changed the
+    // options somewhere else.
+    @Override public void read_from_prefs(Class<?> cls, String name) {}
     @Override public T get_value() {return M_plugin;}
     public void execute()
     {

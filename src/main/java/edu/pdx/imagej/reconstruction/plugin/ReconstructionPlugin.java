@@ -236,7 +236,9 @@ public interface ReconstructionPlugin extends ImageJPlugin, ParameterPlugin {
      *         this plugin.
      */
     default DParameter<?> options_param() {return null;}
-    /** Read the options from the options parameter.
+    /** Read the options from the options parameter.  This method is called
+     * after the options command is run, at which point {@link options_param}
+     * should contain all of the necessary values.
      */
     default void read_options() {}
 }
