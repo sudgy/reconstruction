@@ -59,6 +59,10 @@ public class OptionsCommand implements Command, Initializable {
     @Parameter private OptionsParameter M_param;
 }
 
+/* This parameter holds all options.  The first few things aren't in
+ * OptionsCommand directly because I want messages too.  I should add messages
+ * to dynamic_parameters.
+ */
 class OptionsParameter extends HoldingParameter<Void> {
     public OptionsParameter()
     {
@@ -119,6 +123,9 @@ class OptionsParameter extends HoldingParameter<Void> {
     @Parameter private ReconstructionPluginService P_plugins;
 }
 
+/* This holds a bunch of plugins of a given type, which you can only select one
+ * at a time through a ChoiceParameter.
+ */
 class PluginOptionsParameter<T extends ReconstructionPlugin>
       extends HoldingParameter<Void>
 {
@@ -130,9 +137,7 @@ class PluginOptionsParameter<T extends ReconstructionPlugin>
     @Override
     public void initialize()
     {
-        if (M_plugins== null) {
-            M_plugins = P_plugins.get_plugins(M_class);
-        }
+        M_plugins = P_plugins.get_plugins(M_class);
         M_parameters = new HashMap<>();
         ArrayList<String> choices = new ArrayList<>();
         for (T plugin : M_plugins) {
@@ -189,6 +194,9 @@ class PluginOptionsParameter<T extends ReconstructionPlugin>
     private HashMap<String, SinglePluginOptionsParameter<T>> M_parameters;
 }
 
+/* This holds the options for a single plugin.  It always at least has enabling
+ * and disabling.
+ */
 class SinglePluginOptionsParameter<T extends ReconstructionPlugin>
       extends HoldingParameter<T>
 {
