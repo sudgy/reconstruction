@@ -170,6 +170,12 @@ class PluginOptionsParameter<T extends ReconstructionPlugin>
         super.read_from_dialog();
         set_visibilities();
     }
+    @Override
+    public void read_from_prefs(Class<?> cls, String name)
+    {
+        super.read_from_prefs(cls, name);
+        set_visibilities();
+    }
     @Override public Void get_value() {return null;}
     public void execute()
     {
