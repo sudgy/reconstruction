@@ -31,6 +31,7 @@ import ij.process.FloatProcessor;
 
 import org.scijava.Context;
 import org.scijava.plugin.PluginService;
+import org.scijava.prefs.PrefService;
 
 import edu.pdx.imagej.dynamic_parameters.ImageParameter;
 import edu.pdx.imagej.dynamic_parameters.TestDialog;
@@ -71,7 +72,7 @@ public class PolyTiltTest {
     }
     @Test public void test_live()
     {
-        Context context = new Context(PluginService.class);
+        Context context = new Context(PluginService.class, PrefService.class);
         PolyTilt test = new PolyTilt();
         context.inject(test.param());
         TestDialog dialog = new TestDialog();

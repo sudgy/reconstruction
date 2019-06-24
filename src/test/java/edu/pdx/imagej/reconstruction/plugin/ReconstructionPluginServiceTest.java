@@ -87,7 +87,7 @@ public class ReconstructionPluginServiceTest {
             new TestReconstructionPluginService(TestB.class, TestD.class);
         S_context.inject(test);
         test.disable(TestB.class);
-        List<ReconstructionPlugin> plugins
+        List<SubReconstructionPlugin> plugins
             = test.get_plugins(SubReconstructionPlugin.class);
         assertEquals(2, plugins.size());
         assertTrue(plugins.get(0) instanceof TestB

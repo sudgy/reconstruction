@@ -28,6 +28,7 @@ import org.scijava.Priority;
 import org.scijava.plugin.AbstractRichPlugin;
 import org.scijava.plugin.Plugin;
 import org.scijava.plugin.PluginService;
+import org.scijava.prefs.PrefService;
 
 import edu.pdx.imagej.dynamic_parameters.DParameter;
 import edu.pdx.imagej.dynamic_parameters.IntParameter;
@@ -40,7 +41,7 @@ public class HoldingSinglePluginTest {
         HoldingSinglePlugin<TestPlugin> test
             = new HoldingSinglePlugin<>("C", TestPlugin.class);
         TestDialog dialog = new TestDialog();
-        Context context = new Context(PluginService.class);
+        Context context = new Context(PluginService.class, PrefService.class);
         context.inject(test.param());
         test.param().initialize();
         test.param().add_to_dialog(dialog);
@@ -59,7 +60,7 @@ public class HoldingSinglePluginTest {
     {
         HoldingSinglePlugin<TestPlugin> test
             = new HoldingSinglePlugin<>("C", TestPlugin.class);
-        Context context = new Context(PluginService.class);
+        Context context = new Context(PluginService.class, PrefService.class);
         context.inject(test.param());
         test.param().initialize();
         ((HologramPluginParameter)test.param()).set_hologram(null);

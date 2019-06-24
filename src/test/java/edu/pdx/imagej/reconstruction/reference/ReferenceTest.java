@@ -31,6 +31,7 @@ import ij.process.FloatProcessor;
 
 import org.scijava.Context;
 import org.scijava.plugin.PluginService;
+import org.scijava.prefs.PrefService;
 
 import edu.pdx.imagej.dynamic_parameters.TestDialog;
 import edu.pdx.imagej.dynamic_parameters.HoldingParameter;
@@ -91,7 +92,7 @@ public class ReferenceTest {
     }
     @Test public void test_live()
     {
-        Context context = new Context(PluginService.class);
+        Context context = new Context(PluginService.class, PrefService.class);
         Reference test = new Reference();
         context.inject(test.param());
         TestDialog dialog = new TestDialog();

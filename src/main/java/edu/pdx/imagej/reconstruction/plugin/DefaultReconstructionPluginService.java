@@ -31,6 +31,8 @@ import org.scijava.prefs.PrefService;
 import org.scijava.service.Service;
 import net.imagej.ImageJService;
 
+import edu.pdx.imagej.dynamic_parameters.PluginParameter;
+
 /** The default implementation of {@link ReconstructionPluginService}.
  */
 @Plugin(type = Service.class)
@@ -89,7 +91,7 @@ public class DefaultReconstructionPluginService
     @Override
     public boolean is_enabled(Class<? extends ReconstructionPlugin> plugin)
     {
-        return P_prefs.getBoolean(ReconstructionPluginService.class,
+        return P_prefs.getBoolean(PluginParameter.class,
                                   plugin.getName(),
                                   true);
     }
@@ -97,13 +99,13 @@ public class DefaultReconstructionPluginService
     @Override
     public void enable(Class<? extends ReconstructionPlugin> plugin)
     {
-        P_prefs.put(ReconstructionPluginService.class, plugin.getName(), true);
+        P_prefs.put(PluginParameter.class, plugin.getName(), true);
     }
     /** {@inheritDoc} */
     @Override
     public void disable(Class<? extends ReconstructionPlugin> plugin)
     {
-        P_prefs.put(ReconstructionPluginService.class, plugin.getName(), false);
+        P_prefs.put(PluginParameter.class, plugin.getName(), false);
     }
     @Override
     public Class<ReconstructionPlugin> getPluginType()
