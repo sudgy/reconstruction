@@ -19,7 +19,9 @@
 
 package edu.pdx.imagej.reconstruction.propagation;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import ij.ImagePlus;
 
@@ -82,6 +84,13 @@ public class Propagation extends HoldingSinglePlugin<PropagationPlugin>
         }
         get_plugin().propagate(M_original_field, z, field, M_last_z);
         M_last_z = z;
+    }
+    @Override public List<Class<? extends ReconstructionPlugin>> sub_plugins()
+    {
+        ArrayList<Class<? extends ReconstructionPlugin>> result
+            = new ArrayList<>();
+        result.add(PropagationPlugin.class);
+        return result;
     }
 
     private HashSet<Integer> M_ts_processed = new HashSet<>();

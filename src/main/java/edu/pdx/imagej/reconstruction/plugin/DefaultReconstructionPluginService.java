@@ -40,9 +40,9 @@ public class DefaultReconstructionPluginService
              extends    AbstractPTService<ReconstructionPlugin>
              implements ReconstructionPluginService {
     /** {@inheritDoc} */
-    public List<ReconstructionPlugin> get_plugins()
+    public List<MainReconstructionPlugin> get_plugins()
     {
-        ArrayList<ReconstructionPlugin> result = new ArrayList<>();
+        ArrayList<MainReconstructionPlugin> result = new ArrayList<>();
         for (PluginInfo<ReconstructionPlugin> info : getPlugins()) {
             Class<? extends ReconstructionPlugin> cls;
             try {
@@ -53,8 +53,9 @@ public class DefaultReconstructionPluginService
             }
             if (MainReconstructionPlugin.class.isAssignableFrom(cls)) {
                 if (is_enabled(cls)) {
-                    ReconstructionPlugin plugin
-                        = pluginService().createInstance(info);
+                    MainReconstructionPlugin plugin
+                        = (MainReconstructionPlugin)
+                        pluginService().createInstance(info);
                     result.add(plugin);
                 }
             }
@@ -68,7 +69,31 @@ public class DefaultReconstructionPluginService
     }
     @SuppressWarnings("unchecked")  // This is for adding to result, see below
     /** {@inheritDoc} */
-    public <T extends ReconstructionPlugin> List<T> get_plugins(Class<T> type)
+    public <T extends ReconstructionPlugin>
+           List<T> get_enabled_plugins(Class<T> type)
+    {
+        ArrayList<T> result = new ArrayList<>();
+        for (PluginInfo<ReconstructionPlugin> info : getPlugins()) {
+            Class<? extends ReconstructionPlugin> cls;
+            try {
+                cls = info.loadClass();
+            }
+            catch (InstantiableException e) {
+                throw new RuntimeException(e);
+            }
+            if (type.isAssignableFrom(cls)) {
+                if (is_enabled(cls)) {
+                    // This is actually safe because we already checked that we
+                    // can assign
+                    result.add((T)pluginService().createInstance(info));
+                }
+            }
+        }
+        return result;
+    }
+    @SuppressWarnings("unchecked")  // This is for adding to result, see below
+    /** {@inheritDoc} */
+    public<T extends ReconstructionPlugin> List<T> get_all_plugins(Class<T>type)
     {
         ArrayList<T> result = new ArrayList<>();
         for (PluginInfo<ReconstructionPlugin> info : getPlugins()) {

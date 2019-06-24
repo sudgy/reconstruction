@@ -41,7 +41,7 @@ public class ReconstructionPluginServiceTest {
         S_context.inject(test);
         test.enable(TestA.class);
         test.enable(TestB.class);
-        List<ReconstructionPlugin> plugins = test.get_plugins();
+        List<MainReconstructionPlugin> plugins = test.get_plugins();
         assertEquals(plugins.size(), 1, "ReconstructionPluginService should "
             + "only get MainReconstructionPlugins.");
         assertTrue(plugins.get(0) instanceof TestA,
@@ -74,7 +74,7 @@ public class ReconstructionPluginServiceTest {
         test.enable(TestB.class);
         assertTrue(test.is_enabled(TestB.class));
         test.disable(TestA.class);
-        List<ReconstructionPlugin> plugins = test.get_plugins();
+        List<MainReconstructionPlugin> plugins = test.get_plugins();
         assertEquals(0, plugins.size());
         test.enable(TestA.class);
         plugins = test.get_plugins();
@@ -88,7 +88,7 @@ public class ReconstructionPluginServiceTest {
         S_context.inject(test);
         test.disable(TestB.class);
         List<SubReconstructionPlugin> plugins
-            = test.get_plugins(SubReconstructionPlugin.class);
+            = test.get_all_plugins(SubReconstructionPlugin.class);
         assertEquals(2, plugins.size());
         assertTrue(plugins.get(0) instanceof TestB
                 || plugins.get(0) instanceof TestD);

@@ -129,6 +129,12 @@ class OptionsParameter extends HoldingParameter<Void> {
 class PluginOptionsParameter<T extends ReconstructionPlugin>
       extends HoldingParameter<Void>
 {
+    // This is for when you have a class but don't have the type
+    public static <U extends ReconstructionPlugin>
+           PluginOptionsParameter<U> create(Class<U> cls)
+    {
+        return new PluginOptionsParameter<U>(cls);
+    }
     public PluginOptionsParameter(Class<T> cls)
     {
         super(cls.getName());
@@ -137,7 +143,7 @@ class PluginOptionsParameter<T extends ReconstructionPlugin>
     @Override
     public void initialize()
     {
-        M_plugins = P_plugins.get_plugins(M_class);
+        M_plugins = P_plugins.get_all_plugins(M_class);
         M_parameters = new HashMap<>();
         ArrayList<String> choices = new ArrayList<>();
         for (T plugin : M_plugins) {
@@ -220,7 +226,16 @@ class SinglePluginOptionsParameter<T extends ReconstructionPlugin>
         if (param != null) {
             add_premade_parameter(param);
         }
-        // Sub plugins
+        List<Class<? extends ReconstructionPlugin>> sub_classes
+            = M_plugin.sub_plugins();
+        if (sub_classes != null) {
+            for (Class<? extends ReconstructionPlugin> cls : sub_classes) {
+                PluginOptionsParameter<? extends ReconstructionPlugin> sub
+                    = PluginOptionsParameter.create(cls);
+                M_subs.add(sub);
+                add_premade_parameter(sub);
+            }
+        }
     }
     // Disable reading from prefs, because a programmer could have changed the
     // options somewhere else.
@@ -230,9 +245,14 @@ class SinglePluginOptionsParameter<T extends ReconstructionPlugin>
     {
         if (M_enabled.get_value()) P_plugins.enable(M_plugin.getClass());
         else P_plugins.disable(M_plugin.getClass());
+        for (PluginOptionsParameter<?> sub : M_subs) {
+            sub.execute();
+        }
     }
 
     @Parameter private ReconstructionPluginService P_plugins;
     private BoolParameter M_enabled;
+    private ArrayList<PluginOptionsParameter<? extends ReconstructionPlugin>>
+        M_subs = new ArrayList<>();
     private T M_plugin;
 }
