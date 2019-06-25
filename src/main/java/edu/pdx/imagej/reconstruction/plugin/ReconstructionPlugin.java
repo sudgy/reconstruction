@@ -24,6 +24,7 @@ import java.util.List;
 import ij.ImagePlus;
 
 import org.scijava.Prioritized;
+import org.scijava.plugin.Plugin;
 import net.imagej.ImageJPlugin;
 
 import edu.pdx.imagej.dynamic_parameters.DParameter;
@@ -241,4 +242,20 @@ public interface ReconstructionPlugin extends ImageJPlugin, ParameterPlugin {
      * should contain all of the necessary values.
      */
     default void read_options() {}
+    /** Get the name of this parameter.  It will return whatever the name was
+     * set to in <code>@Plugin</code>, so you should never need to override
+     * this.
+     *
+     * @return The name of this plugin.
+     */
+    default String get_name()
+    {
+        String result = null;
+        Plugin annotation = getClass().getAnnotation(Plugin.class);
+        if (annotation != null) result = annotation.name();
+        if (result == null || result.equals("")) {
+            result = getClass().getName();
+        }
+        return result;
+    }
 }

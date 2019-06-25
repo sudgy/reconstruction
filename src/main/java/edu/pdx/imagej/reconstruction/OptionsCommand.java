@@ -48,6 +48,7 @@ public class OptionsCommand implements Command, Initializable {
     @Override
     public void initialize()
     {
+        PluginOptionsParameter.S_all_parameters.clear();
         M_param = new OptionsParameter();
     }
     @Override
@@ -147,13 +148,7 @@ class PluginOptionsParameter<T extends ReconstructionPlugin>
         M_parameters = new HashMap<>();
         ArrayList<String> choices = new ArrayList<>();
         for (T plugin : M_plugins) {
-            String name = null;
-            Plugin annotation = plugin.getClass().getAnnotation(Plugin.class);
-            if (annotation != null) name = annotation.name();
-            if (name == null || name.equals("")) {
-                name = plugin.getClass().getName();
-            }
-            choices.add(name);
+            choices.add(plugin.get_name());
         }
         String[] choices_ar = new String[choices.size()];
         choices_ar = choices.toArray(choices_ar);
@@ -166,6 +161,7 @@ class PluginOptionsParameter<T extends ReconstructionPlugin>
             SinglePluginOptionsParameter<T> param
                 = new SinglePluginOptionsParameter<>(plugin);
             M_parameters.put(name, param);
+            S_all_parameters.add(param);
             add_premade_parameter(param);
         }
         set_visibilities();
@@ -181,6 +177,20 @@ class PluginOptionsParameter<T extends ReconstructionPlugin>
     {
         super.read_from_prefs(cls, name);
         set_visibilities();
+    }
+    // We want all errors, even for invisible parameters.
+    @Override
+    public String get_error()
+    {
+        String result = super.get_error();
+        if (result == null) {
+            for (SinglePluginOptionsParameter<T> param : M_parameters.values()){
+                param.check_for_errors();
+                result = param.get_error();
+                if (result != null) break;
+            }
+        }
+        return result;
     }
     @Override public Void get_value() {return null;}
     public void execute()
@@ -204,6 +214,8 @@ class PluginOptionsParameter<T extends ReconstructionPlugin>
     private List<T> M_plugins;
     private ChoiceParameter M_choice;
     private HashMap<String, SinglePluginOptionsParameter<T>> M_parameters;
+    static ArrayList<SinglePluginOptionsParameter<?>> S_all_parameters
+        = new ArrayList<>();
 }
 
 /* This holds the options for a single plugin.  It always at least has enabling
@@ -236,6 +248,12 @@ class SinglePluginOptionsParameter<T extends ReconstructionPlugin>
                 add_premade_parameter(sub);
             }
         }
+        check_for_errors();
+    }
+    @Override public void read_from_dialog()
+    {
+        super.read_from_dialog();
+        check_for_errors();
     }
     // Disable reading from prefs, because a programmer could have changed the
     // options somewhere else.
@@ -249,6 +267,31 @@ class SinglePluginOptionsParameter<T extends ReconstructionPlugin>
             sub.execute();
         }
         M_plugin.read_options();
+    }
+    public void check_for_errors()
+    {
+        String error = null;
+        if (!M_enabled.get_value()) {
+            for (SinglePluginOptionsParameter<?> param
+                    : PluginOptionsParameter.S_all_parameters) {
+                if (param.M_enabled.get_value()) {
+                    List<Class<? extends ReconstructionPlugin>> dependencies
+                        = param.M_plugin.dependencies();
+                    if (dependencies != null) {
+                        for (Class<? extends ReconstructionPlugin> cls
+                                : dependencies) {
+                            if (cls == M_plugin.getClass()) {
+                                error = "The plugin " + param.M_plugin
+                                    .get_name() + " is enabled but depends on "
+                                    + M_plugin.get_name() + ", which is "
+                                    + "disabled.";
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        set_error(error);
     }
 
     @Parameter private ReconstructionPluginService P_plugins;
