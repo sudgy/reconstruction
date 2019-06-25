@@ -19,6 +19,7 @@
 
 package edu.pdx.imagej.reconstruction.reference;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ij.gui.Roi;
@@ -140,6 +141,16 @@ public class Reference extends HoldingSinglePlugin<ReferencePlugin>
 
         get_reference(reference_field);
         field.field().multiply_in_place(reference_field.field());
+    }
+    /** Returns a singleton list of <code>{@link
+     * ReferencePlugin}.class</code>.
+     */
+    @Override public List<Class<? extends ReconstructionPlugin>> sub_plugins()
+    {
+        ArrayList<Class<? extends ReconstructionPlugin>> result
+            = new ArrayList<>();
+        result.add(ReferencePlugin.class);
+        return result;
     }
 
     void get_reference(ReconstructionField hologram)

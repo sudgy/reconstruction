@@ -85,6 +85,9 @@ public class Propagation extends HoldingSinglePlugin<PropagationPlugin>
         get_plugin().propagate(M_original_field, z, field, M_last_z);
         M_last_z = z;
     }
+    /** Returns a singleton list of <code>{@link
+     * PropagationPlugin}.class</code>.
+     */
     @Override public List<Class<? extends ReconstructionPlugin>> sub_plugins()
     {
         ArrayList<Class<? extends ReconstructionPlugin>> result

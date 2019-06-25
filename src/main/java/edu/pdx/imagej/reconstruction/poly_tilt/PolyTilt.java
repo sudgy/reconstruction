@@ -20,6 +20,7 @@
 package edu.pdx.imagej.reconstruction.poly_tilt;
 
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -158,6 +159,16 @@ public class PolyTilt extends HoldingSinglePlugin<PolyTiltPlugin>
     {
         if (M_live && !M_param.do_poly_tilt()) return;
         field.field().multiply_in_place(M_poly_field);
+    }
+    /** Returns a singleton list of <code>{@link
+     * PolyTiltPlugin}.class</code>.
+     */
+    @Override public List<Class<? extends ReconstructionPlugin>> sub_plugins()
+    {
+        ArrayList<Class<? extends ReconstructionPlugin>> result
+            = new ArrayList<>();
+        result.add(PolyTiltPlugin.class);
+        return result;
     }
 
     /** Get the polynomial fit along a certain set of points.  It will use the
