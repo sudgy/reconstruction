@@ -27,10 +27,12 @@ import ij.ImagePlus;
 import org.scijava.Priority;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
+import org.scijava.prefs.PrefService;
 
 import edu.pdx.imagej.reconstruction.ConstReconstructionField;
 import edu.pdx.imagej.reconstruction.ReconstructionField;
 import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
+import edu.pdx.imagej.reconstruction.plugin.MemoryParameter;
 
 /** A {@link PropagationPlugin} that uses the angular spectrum algorithm to
  * propagate.
@@ -65,7 +67,21 @@ public class AngularSpectrum extends AbstractPropagationPlugin {
     {
         // Eight for sizeof(double), two for real and imaginary
         M_image_memory_size = M_pixel_width * M_pixel_height * 8 * 2;
-
+        if (P_prefs != null) {
+            if (P_prefs.getBoolean(AngularSpectrum.class, "do_cache", true)) {
+                if (P_prefs.getBoolean(AngularSpectrum.class,"percent", true)) {
+                    double percent = P_prefs.getDouble(AngularSpectrum.class,
+                                                       "percent_value", 50.0);
+                    M_max_cache = (long)(IJ.maxMemory() * percent * 0.01);
+                }
+                else {
+                    long flat = P_prefs.getInt(AngularSpectrum.class,
+                                               "flat_value", 1024)
+                                * (1024L * 1024L);
+                    M_max_cache = flat;
+                }
+            }
+        }
 
         M_core = new double[M_pixel_width][M_pixel_height];
         double k = 2.0 * Math.PI / M_wavelength;
@@ -136,11 +152,43 @@ public class AngularSpectrum extends AbstractPropagationPlugin {
                         Math.sin(dz * M_core[x][y]);
                 }
             }
-            if (M_kernels.size() * M_image_memory_size < IJ.maxMemory() / 2) {
+            if (M_kernels.size() * M_image_memory_size < M_max_cache) {
                 M_kernels.put(key, kernel);
             }
         }
         field.fourier().multiply_in_place(kernel);
+    }
+    @Override
+    public MemoryParameter options_param()
+    {
+        if (M_options_param == null) {
+            boolean do_cache = P_prefs.getBoolean(AngularSpectrum.class,
+                                                  "do_cache", true);
+            boolean initial_percent = P_prefs.getBoolean(AngularSpectrum.class,
+                                                         "percent",
+                                                         true);
+            double percent_value = P_prefs.getDouble(AngularSpectrum.class,
+                                                     "percent_value", 50.0);
+            int flat_value = P_prefs.getInt(AngularSpectrum.class, "flat_value",
+                                            1024);
+            M_options_param = new MemoryParameter("AngularSpectrumOptions",
+                                                  do_cache, initial_percent,
+                                                  percent_value, flat_value);
+        }
+        return M_options_param;
+    }
+    @Override
+    public void read_options()
+    {
+        Long val = M_options_param.get_value();
+        boolean do_cache = val != null;
+        boolean percent       = M_options_param.percent();
+        double  percent_value = M_options_param.percent_value();
+        int    flat_value     = M_options_param.flat_value();
+        P_prefs.put(AngularSpectrum.class, "do_cache",      do_cache);
+        P_prefs.put(AngularSpectrum.class, "percent",       percent);
+        P_prefs.put(AngularSpectrum.class, "percent_value", percent_value);
+        P_prefs.put(AngularSpectrum.class, "flat_value",    flat_value);
     }
 
     // The angular spectrum equation is generally
@@ -154,10 +202,14 @@ public class AngularSpectrum extends AbstractPropagationPlugin {
     private HashMap<Integer, double[][]> M_kernels = new HashMap<>();
     // The size of a single image, in bytes.
     private long M_image_memory_size;
+    private long M_max_cache;
 
     int M_pixel_width;
     int M_pixel_height;
     double M_wavelength;
     double M_width;
     double M_height;
+
+    private MemoryParameter M_options_param;
+    @Parameter private PrefService P_prefs;
 }

@@ -248,6 +248,7 @@ class SinglePluginOptionsParameter<T extends ReconstructionPlugin>
         for (PluginOptionsParameter<?> sub : M_subs) {
             sub.execute();
         }
+        M_plugin.read_options();
     }
 
     @Parameter private ReconstructionPluginService P_plugins;

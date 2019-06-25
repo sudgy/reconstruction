@@ -35,7 +35,7 @@ import edu.pdx.imagej.dynamic_parameters.RadioParameter;
  * has two ways to select the memory usage: A flat value, or a percentage of
  * ImageJ's max memory.
  */
-public class MemoryParameter extends HoldingParameter<Supplier<Long>> {
+public class MemoryParameter extends HoldingParameter<Long> {
     public MemoryParameter(String label, boolean do_cache,
                            boolean initial_percent, double percent_value,
                            int flat_value)
@@ -51,13 +51,13 @@ public class MemoryParameter extends HoldingParameter<Supplier<Long>> {
     {
         String[] choices = {"Percent", "Flat"};
         M_do = add_parameter(BoolParameter.class, "Cache partial results?",
-                             true);
+                             M_do_cache);
         M_choice = new RadioParameter("Memory limit", choices,
                                       M_initial_percent ? "Percent" : "Flat",
                                       1, 2);
         add_premade_parameter(M_choice);
         M_percent = add_parameter(DoubleParameter.class, M_percent_value,
-                                  "Percent Value", "%");
+                                  "Percent of Maximum", "%");
         M_flat = add_parameter(IntParameter.class, M_flat_value, "Flat Value",
                                "MB");
         M_percent.set_bounds(0.0, 100.0);
@@ -77,30 +77,19 @@ public class MemoryParameter extends HoldingParameter<Supplier<Long>> {
     @Override
     public void read_from_prefs(Class<?> cls, String name) {}
     @Override
-    public Supplier<Long> get_value()
+    public Long get_value()
     {
         if (!M_do.get_value()) return null;
         if (M_choice.get_value().equals("Percent")) {
-            final double percent = M_percent.get_value();
-            return new Supplier<Long>() {
-                @Override
-                public Long get()
-                {
-                    return (long)(IJ.maxMemory() * percent * 0.01);
-                }
-            };
+            return (long)(IJ.maxMemory() * M_percent.get_value() * 0.01);
         }
         else {
-            final long flat = M_flat.get_value() * (1024L * 1024L);
-            return new Supplier<Long>() {
-                @Override
-                public Long get()
-                {
-                    return flat;
-                }
-            };
+            return M_flat.get_value() * (1024L * 1024L);
         }
     }
+    public boolean percent() {return M_choice.get_value().equals("Percent");}
+    public double percent_value() {return M_percent.get_value();}
+    public int flat_value() {return M_flat.get_value();}
 
     private void set_visibilities()
     {
