@@ -36,6 +36,19 @@ import edu.pdx.imagej.dynamic_parameters.RadioParameter;
  * ImageJ's max memory.
  */
 public class MemoryParameter extends HoldingParameter<Long> {
+    /** Constructor.  Note that unlike most dynamic parameters, this one does
+     * not read from prefs, so the values passed in to this constructor will be
+     * the starting values seen by the user, no exceptions.
+     *
+     * @param label The internal label used to identify this parameter.
+     * @param do_cache Whether or not to start out with caching enabled.
+     * @param initial_percent If you want to have the default setting be a
+     *                        percentage of the maximum memory.
+     * @param percent_value The value to be used for the initial percent (0 &le;
+     *                      x &le; 100).
+     * @param flat_value The value, in megabytes, to be used for the initial
+     *                   flat value (x &gt; 0).
+     */
     public MemoryParameter(String label, boolean do_cache,
                            boolean initial_percent, double percent_value,
                            int flat_value)
@@ -46,6 +59,8 @@ public class MemoryParameter extends HoldingParameter<Long> {
         M_percent_value = percent_value;
         M_flat_value = flat_value;
     }
+    /** Initialize the parameters.
+     */
     @Override
     public void initialize()
     {
@@ -72,10 +87,18 @@ public class MemoryParameter extends HoldingParameter<Long> {
         set_visibilities();
         check_for_errors();
     }
-    // We trust that the programmer put in the right values for everything in
-    // the constructor
+    /** <strong>Does nothing</strong>.  Because options should be read from
+     * prefs somewhere else, this method does nothing.  We expect you to pass
+     * the correct, current value in the constructor.
+     */
     @Override
     public void read_from_prefs(Class<?> cls, String name) {}
+    /** Get the number of bytes the parameter says to use.  If caching has been
+     * disabled, it will return <code>null</code>.
+     *
+     * @return The number of bytes the parameter says to use, or <code>null
+     *         </code> if caching has been disabled.
+     */
     @Override
     public Long get_value()
     {
@@ -87,8 +110,20 @@ public class MemoryParameter extends HoldingParameter<Long> {
             return M_flat.get_value() * (1024L * 1024L);
         }
     }
+    /** Get whether or not it was set to be a percent rather than a flat value.
+     *
+     * @return Whether or not it was set to be a percent.
+     */
     public boolean percent() {return M_choice.get_value().equals("Percent");}
+    /** Get the percent value selected.
+     *
+     * @return The percent value.  Make sure to multiply by 0.01.
+     */
     public double percent_value() {return M_percent.get_value();}
+    /** Get the flat value, in megabytes.
+     *
+     * @return The flat value.
+     */
     public int flat_value() {return M_flat.get_value();}
 
     private void set_visibilities()
