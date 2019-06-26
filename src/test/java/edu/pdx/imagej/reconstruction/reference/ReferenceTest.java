@@ -134,6 +134,39 @@ public class ReferenceTest {
             }
         }
     }
+    // Test that process_filtered_field always produces the same result.  This
+    // was a bug.
+    @Test public void test_constant()
+    {
+        float[][] ref = {
+            {0.8447616701F, 0.4280179246F, 0.6236040991F},
+            {0.5490310073F, 0.8402175080F, 0.2656365367F},
+            {0.9427865837F, 0.6489800130F, 0.0992594036F}
+        };
+        ImagePlus ref_image = new ImagePlus("", new FloatProcessor(ref));
+        Filter filter = new Filter();
+        filter.set_filter(new PointRoi(new int[]{1, 1, 2, 2},
+                                       new int[]{1, 2, 1, 2}, 4));
+        Reference test = new Reference(new Single(ref_image), true, false);
+        ArrayList<ReconstructionPlugin> plugins = new ArrayList<>();
+        plugins.add(filter);
+        test.read_plugins(plugins);
+        ReconstructionField field1 = new ReconstructionFieldImpl(real, imag);
+        ReconstructionField field2 = field1.copy();
+
+        test.process_filtered_field(field1, 1);
+        test.process_filtered_field(field2, 1);
+
+        for (int x = 0; x < 3; ++x) {
+            for (int y = 0; y < 3; ++y) {
+                String coord = "(" + x + ", " + y + ")";
+                double[][] f1 = field1.field().get_field();
+                double[][] f2 = field2.field().get_field();
+                assertEquals(f1[x][2*y], f2[x][2*y], coord);
+                assertEquals(f1[x][2*y+1], f2[x][2*y+1], coord);
+            }
+        }
+    }
     public static class TestPlugin extends AbstractReferencePlugin {
         @Override
         public ReconstructionField get_reference_holo(
