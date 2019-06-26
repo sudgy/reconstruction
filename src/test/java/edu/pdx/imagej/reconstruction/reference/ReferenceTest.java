@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 
 import ij.ImagePlus;
+import ij.ImageStack;
 import ij.gui.PointRoi;
 import ij.process.FloatProcessor;
 
@@ -138,32 +139,50 @@ public class ReferenceTest {
     // was a bug.
     @Test public void test_constant()
     {
-        float[][] ref = {
+        float[][] ref1 = {
             {0.8447616701F, 0.4280179246F, 0.6236040991F},
             {0.5490310073F, 0.8402175080F, 0.2656365367F},
             {0.9427865837F, 0.6489800130F, 0.0992594036F}
         };
-        ImagePlus ref_image = new ImagePlus("", new FloatProcessor(ref));
+        float[][] ref2 = {
+            {0.9998434794F, 0.5681384218F, 0.7113728796F},
+            {0.6662169492F, 0.0381267463F, 0.9366164646F},
+            {0.9904258024F, 0.0142653695F, 0.1162896629F}
+        };
+        ImageStack ref_stack = new ImageStack(3, 3);
+        ref_stack.addSlice(new FloatProcessor(ref1));
+        ref_stack.addSlice(new FloatProcessor(ref2));
+        ImagePlus ref_image = new ImagePlus("", ref_stack);
         Filter filter = new Filter();
         filter.set_filter(new PointRoi(new int[]{1, 1, 2, 2},
                                        new int[]{1, 2, 1, 2}, 4));
-        Reference test = new Reference(new Single(ref_image), true, false);
+        Reference test = new Reference(new TestPlugin2(ref_image), true, false);
         ArrayList<ReconstructionPlugin> plugins = new ArrayList<>();
         plugins.add(filter);
         test.read_plugins(plugins);
         ReconstructionField field1 = new ReconstructionFieldImpl(real, imag);
         ReconstructionField field2 = field1.copy();
+        ReconstructionField field3 = field1.copy();
+        ReconstructionField field4 = field1.copy();
 
         test.process_filtered_field(field1, 1);
         test.process_filtered_field(field2, 1);
+        test.process_filtered_field(field3, 2);
+        test.process_filtered_field(field4, 2);
 
         for (int x = 0; x < 3; ++x) {
             for (int y = 0; y < 3; ++y) {
                 String coord = "(" + x + ", " + y + ")";
                 double[][] f1 = field1.field().get_field();
                 double[][] f2 = field2.field().get_field();
+                double[][] f3 = field3.field().get_field();
+                double[][] f4 = field4.field().get_field();
                 assertEquals(f1[x][2*y], f2[x][2*y], coord);
                 assertEquals(f1[x][2*y+1], f2[x][2*y+1], coord);
+                assertEquals(f3[x][2*y], f4[x][2*y], coord);
+                assertEquals(f3[x][2*y+1], f4[x][2*y+1], coord);
+                assertTrue(f1[x][2*y] != f3[x][2*y], coord);
+                assertTrue(f1[x][2*y+1] != f3[x][2*y+1], coord);
             }
         }
     }
@@ -172,6 +191,36 @@ public class ReferenceTest {
         public ReconstructionField get_reference_holo(
             ConstReconstructionField field, int t)
         {
+            return new ReconstructionFieldImpl(real, imag);
+        }
+    }
+    public static class TestPlugin2 extends AbstractReferencePlugin {
+        public TestPlugin2(ImagePlus ref_image)
+        {
+            M_1 = create(ref_image, 1);
+            M_2 = create(ref_image, 2);
+        }
+        @Override
+        public ReconstructionField get_reference_holo(
+            ConstReconstructionField field, int t)
+        {
+            if (t == 1) return M_1;
+            else return M_2;
+        }
+        private ReconstructionField M_1;
+        private ReconstructionField M_2;
+        private ReconstructionField create(ImagePlus ref_image, int t)
+        {
+            float[][] arr = ref_image.getStack()
+                                     .getProcessor(t)
+                                     .getFloatArray();
+            double[][] real = new double[arr.length][arr[0].length];
+            double[][] imag = new double[arr.length][arr[0].length];
+            for (int x = 0; x < arr.length; ++x) {
+                for (int y = 0; y < arr.length; ++y) {
+                    real[x][y] = arr[x][y];
+                }
+            }
             return new ReconstructionFieldImpl(real, imag);
         }
     }
