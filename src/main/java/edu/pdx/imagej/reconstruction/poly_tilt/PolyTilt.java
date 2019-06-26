@@ -113,6 +113,9 @@ public class PolyTilt extends HoldingSinglePlugin<PolyTiltPlugin>
     public void process_original_hologram(ConstReconstructionField field)
     {
         super.process_original_hologram(field);
+        if (M_live) {
+            if (!M_param.do_poly_tilt()) return;
+        }
         ReconstructionField filtered_field = field.copy();
         if (M_filter != null) M_filter.filter_field(filtered_field);
         if (M_reference != null) {
@@ -122,7 +125,6 @@ public class PolyTilt extends HoldingSinglePlugin<PolyTiltPlugin>
         double[] h_poly;
         double[] v_poly;
         if (M_live) {
-            if (!M_param.do_poly_tilt()) return;
             M_degree = M_param.degree();
             h_poly = fit_along(M_param.h_line());
             v_poly = fit_along(M_param.v_line());
