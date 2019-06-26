@@ -20,6 +20,7 @@
 package edu.pdx.imagej.reconstruction.reference;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import ij.gui.Roi;
@@ -123,23 +124,24 @@ public class Reference extends HoldingSinglePlugin<ReferencePlugin>
         }
         ReconstructionField reference_field
             = get_plugin().get_reference_holo(
-                            new ConstReconstructionField(field), t).copy();
+                            new ConstReconstructionField(field), t);
         if (reference_field == null) return;
-        if (M_use_same_roi && !get_plugin().dont_use_same_roi()) {
-            M_filter.filter_field(reference_field);
-        }
-        else {
-            if (M_not_same_filter == null) {
-                M_not_same_filter = new Filter();
-                M_not_same_filter.get_filter(
-                    new ConstReconstructionField(reference_field),
-                    "Please select the ROI for the reference hologram and then "
-                    + "press OK.");
+        if (M_already_filtered.add(reference_field)) {
+            if (M_use_same_roi && !get_plugin().dont_use_same_roi()) {
+                M_filter.filter_field(reference_field);
             }
-            M_not_same_filter.filter_field(reference_field);
+            else {
+                if (M_not_same_filter == null) {
+                    M_not_same_filter = new Filter();
+                    M_not_same_filter.get_filter(
+                        new ConstReconstructionField(reference_field),
+                        "Please select the ROI for the reference hologram and then "
+                        + "press OK.");
+                }
+                M_not_same_filter.filter_field(reference_field);
+            }
+            get_reference(reference_field);
         }
-
-        get_reference(reference_field);
         field.field().multiply_in_place(reference_field.field());
     }
     /** Returns a singleton list of <code>{@link
@@ -196,5 +198,6 @@ public class Reference extends HoldingSinglePlugin<ReferencePlugin>
     private boolean M_phase = false;
     private boolean M_amplitude = false;
     private boolean M_live = false;
+    private HashSet<ReconstructionField> M_already_filtered = new HashSet<>();
     ReferenceParameter M_param; // Package private for testing
 }
