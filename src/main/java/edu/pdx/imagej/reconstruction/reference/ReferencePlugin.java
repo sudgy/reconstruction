@@ -28,10 +28,10 @@ import edu.pdx.imagej.reconstruction.plugin.SubReconstructionPlugin;
  * edu.pdx.imagej.reconstruction.plugin.ReconstructionPlugin
  * ReconstructionPlugin}, you can still do things during any other step of the
  * process, but you are <strong>not</strong> allowed to do something for {@link
- * edu.pdx.imagej.reconstruction.plugin.ReconstructionPlugin#process_filtered_field
- * ReconstructionPlugin#process_filtered_field}.  Calling that function will
+ * edu.pdx.imagej.reconstruction.plugin.ReconstructionPlugin#processFilteredField
+ * ReconstructionPlugin#processFilteredField}.  Calling that function will
  * throw an <code>UnsupportedOperationException</code>.  Instead, you need to
- * use {@link get_reference_holo get_reference_holo}.
+ * use {@link getReferenceHolo getReferenceHolo}.
  * <p>
  * Most of the time, you should not implement this interface directly, and
  * instead extend {@link AbstractReferencePlugin}.
@@ -48,7 +48,7 @@ public interface ReferencePlugin extends SubReconstructionPlugin {
      * @param t The time slice used to get the field.  You may not need it.
      * @return The reference hologram field.
      */
-    ReconstructionField get_reference_holo(ConstReconstructionField field,
+    ReconstructionField getReferenceHolo(ConstReconstructionField field,
                                            int t);
     /** Whether or not you want the option to use the same {@link
      * edu.pdx.imagej.reconstruction.filter.Filter Filter} as everything else.
@@ -57,16 +57,16 @@ public interface ReferencePlugin extends SubReconstructionPlugin {
      * @return <code>true</code> if you want to <em>disable</em> the option,
      *         <code>false</code> if you want to <em>enable</em> the option.
      */
-    default boolean dont_use_same_roi() {return false;}
+    default boolean dontUseSameRoi() {return false;}
     /** Throws an <code>UnsupportedOperationException</code>.
      * @param field Unused.
      * @param t Unused.
      */
     @Override
-    default void process_filtered_field(ReconstructionField field, int t)
+    default void processFilteredField(ReconstructionField field, int t)
     {
         throw new UnsupportedOperationException("A ReferencePlugin should not "
-            + "use process_filtered_field to get the reference hologram.  Use "
-            + "get_reference_holo instead.");
+            + "use processFilteredField to get the reference hologram.  Use "
+            + "getReferenceHolo instead.");
     }
 }

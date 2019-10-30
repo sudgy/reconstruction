@@ -36,8 +36,8 @@ public abstract class AbstractReferencePlugin
      * try to override it anyway.
      */
     @Override
-    final public void process_filtered_field(ReconstructionField field, int t)
+    final public void processFilteredField(ReconstructionField field, int t)
     {
-        ReferencePlugin.super.process_filtered_field(field, t);
+        ReferencePlugin.super.processFilteredField(field, t);
     }
 }

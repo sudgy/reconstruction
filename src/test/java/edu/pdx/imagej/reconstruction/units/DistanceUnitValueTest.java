@@ -24,13 +24,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 public class DistanceUnitValueTest {
-    @Test public void test_convert()
+    @Test public void testConvert()
     {
         DistanceUnitValue val = new DistanceUnitValue(2, DistanceUnits.Milli);
-        assertEquals(val.as_meter(), 2e-3);
+        assertEquals(val.asMeter(), 2e-3);
         val = new DistanceUnitValue(2, DistanceUnits.Meter);
-        assertEquals(val.as_milli(), 2e3);
+        assertEquals(val.asMilli(), 2e3);
         val = new DistanceUnitValue(2, DistanceUnits.Centi);
-        assertEquals(val.as_micro(), 2e4);
+        assertEquals(val.asMicro(), 2e4);
     }
 }

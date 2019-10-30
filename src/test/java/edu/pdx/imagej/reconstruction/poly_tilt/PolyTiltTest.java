@@ -41,7 +41,7 @@ import edu.pdx.imagej.reconstruction.ReconstructionField;
 import edu.pdx.imagej.reconstruction.ReconstructionFieldImpl;
 
 public class PolyTiltTest {
-    @Test public void test_linear_fit()
+    @Test public void testLinearFit()
     {
         PolyTilt test = new PolyTilt();
         test.M_phase = new double[][]{{1, 3, 5}};
@@ -50,11 +50,11 @@ public class PolyTiltTest {
         points.add(new Point(0, 0));
         points.add(new Point(0, 1));
         points.add(new Point(0, 2));
-        double[] poly = test.fit_along(points);
+        double[] poly = test.fitAlong(points);
         assertEquals(1, poly.length);
         assertEquals(2, poly[0]);
     }
-    @Test public void test_quadratic_fit()
+    @Test public void testQuadraticFit()
     {
         PolyTilt test = new PolyTilt();
         // The polynomial is 0.1x^2 + 0.5x + 1
@@ -65,49 +65,49 @@ public class PolyTiltTest {
         points.add(new Point(0, 2));
         points.add(new Point(0, 3));
         points.add(new Point(0, 4));
-        double[] poly = test.fit_along(points);
+        double[] poly = test.fitAlong(points);
         assertEquals(2, poly.length);
         assertEquals(0.5, 1e-6, poly[0]);
         assertEquals(0.1, 1e-6, poly[1]);
     }
-    @Test public void test_live()
+    @Test public void testLive()
     {
         Context context = new Context(PluginService.class, PrefService.class);
         PolyTilt test = new PolyTilt();
         context.inject(test.param());
         TestDialog dialog = new TestDialog();
         test.param().initialize();
-        test.param().set_hologram(M_test_image);
-        test.param().add_to_dialog(dialog);
+        test.param().setHologram(M_testImage);
+        test.param().addToDialog(dialog);
         // Set do to true to make everything else appear
-        dialog.get_boolean(0).value = true;
-        test.param().read_from_dialog();
+        dialog.getBoolean(0).value = true;
+        test.param().readFromDialog();
         dialog = new TestDialog();
-        test.param().add_to_dialog(dialog);
-        dialog.get_integer(0).value = 2; // Set to quadratic
+        test.param().addToDialog(dialog);
+        dialog.getInteger(0).value = 2; // Set to quadratic
         // Manual is annoying, but it's the only one that gives us as much
         // control as we want
-        dialog.get_string(0).value = "Manual";
-        test.param().read_from_dialog();
+        dialog.getString(0).value = "Manual";
+        test.param().readFromDialog();
         dialog = new TestDialog();
-        test.param().add_to_dialog(dialog);
+        test.param().addToDialog(dialog);
         // Manual is finally on the dialog.  Its integer indices start at one
         // becuase the degree is zero.
-        dialog.get_integer(1).value = 0;
-        dialog.get_integer(2).value = 0;
-        dialog.get_integer(3).value = 4;
-        dialog.get_integer(4).value = 0;
-        dialog.get_integer(5).value = 0;
-        dialog.get_integer(6).value = 2;
-        test.param().read_from_dialog();
-        test_common(test);
+        dialog.getInteger(1).value = 0;
+        dialog.getInteger(2).value = 0;
+        dialog.getInteger(3).value = 4;
+        dialog.getInteger(4).value = 0;
+        dialog.getInteger(5).value = 0;
+        dialog.getInteger(6).value = 2;
+        test.param().readFromDialog();
+        testCommon(test);
     }
-    @Test public void test_programmatic()
+    @Test public void testProgrammatic()
     {
-        test_common(new PolyTilt(new Manual(0, 0, 4, 0, 0, 2), 2));
+        testCommon(new PolyTilt(new Manual(0, 0, 4, 0, 0, 2), 2));
 
     }
-    private void test_common(PolyTilt test)
+    private void testCommon(PolyTilt test)
     {
         double[][] phase = {
             {0,   0.1, 0.4},
@@ -128,19 +128,19 @@ public class PolyTiltTest {
                 imag1[x][y] = 0;
             }
         }
-        test.process_original_hologram(new ConstReconstructionField(
+        test.processOriginalHologram(new ConstReconstructionField(
             new ReconstructionFieldImpl(real, imag)));
         ReconstructionField field = new ReconstructionFieldImpl(real1, imag1);
-        test.process_filtered_field(field, 0);
-        double[][] new_phase = field.field().get_arg();
-        assertEquals(0, new_phase[0][0], 1e-6);
-        assertEquals(-0.2, new_phase[1][0], 1e-6);
-        assertEquals(-0.8, new_phase[2][0], 1e-6);
-        assertEquals(-1.8, new_phase[3][0], 1e-6);
-        assertEquals(-0.1, new_phase[0][1], 1e-6);
-        assertEquals(-0.4, new_phase[0][2], 1e-6);
-        assertEquals(-0.9, new_phase[2][1], 1e-6);
+        test.processFilteredField(field, 0);
+        double[][] newPhase = field.field().getArg();
+        assertEquals(0, newPhase[0][0], 1e-6);
+        assertEquals(-0.2, newPhase[1][0], 1e-6);
+        assertEquals(-0.8, newPhase[2][0], 1e-6);
+        assertEquals(-1.8, newPhase[3][0], 1e-6);
+        assertEquals(-0.1, newPhase[0][1], 1e-6);
+        assertEquals(-0.4, newPhase[0][2], 1e-6);
+        assertEquals(-0.9, newPhase[2][1], 1e-6);
     }
-    private ImageParameter M_test_image = new ImageParameter("", new ImagePlus[]
+    private ImageParameter M_testImage = new ImageParameter("", new ImagePlus[]
         {new ImagePlus("", new FloatProcessor(5, 3))});
 }

@@ -38,7 +38,7 @@ public class ReconstructionComplexField implements ComplexField {
         M_containing = containing;
         M_field = field;
     }
-    void set_containing(ReconstructionFieldImpl containing)
+    void setContaining(ReconstructionFieldImpl containing)
     {
         M_containing = containing;
     }
@@ -50,23 +50,23 @@ public class ReconstructionComplexField implements ComplexField {
      * <code>a b<br>
      *       c d</code>.<br>
      *
-     * The reason there is a <code>shift_forward()</code> and a {@link
-     * #shift_backward shift_backward()} method is that when the array is odd
+     * The reason there is a <code>shiftForward()</code> and a {@link
+     * #shiftBackward shiftBackward()} method is that when the array is odd
      * the above diagram does not work perfectly, and the forward shift and the
      * backward shift no longer represent the same operation.
      *
-     * @see shift_backward
+     * @see shiftBackward
      */
-    public void shift_forward()
+    public void shiftForward()
     {
-        field_changed();
+        fieldChanged();
         int w = width();
         int h = height();
         // If both sides are even, the algorithm can be done in place with a
         // single temporary value.  If not, several values rotate, and copying
         // the whole thing is simpler.
-        if (w % 2 == 0 && h % 2 == 0) shift_even();
-        else shift_odd(true);
+        if (w % 2 == 0 && h % 2 == 0) shiftEven();
+        else shiftOdd(true);
     }
     /** Perform a shift of the data.  As an example, when the width and height
      * are even, the data can be represented as four equally-sized pieces:<br>
@@ -76,23 +76,23 @@ public class ReconstructionComplexField implements ComplexField {
      * <code>a b<br>
      *       c d</code>.<br>
      *
-     * The reason there is a {@link #shift_forward shift_forward()} and a
-     * <code>shift_backward()</code> method is that when the array is odd the
+     * The reason there is a {@link #shiftForward shiftForward()} and a
+     * <code>shiftBackward()</code> method is that when the array is odd the
      * above diagram does not work perfectly, and the forward shift and the
      * backward shift no longer represent the same operation.
      *
-     * @see shift_forward
+     * @see shiftForward
      */
-    public void shift_backward()
+    public void shiftBackward()
     {
-        field_changed();
+        fieldChanged();
         int w = width();
         int h = height();
-        if (w % 2 == 0 && h % 2 == 0) shift_even();
-        else shift_odd(false);
+        if (w % 2 == 0 && h % 2 == 0) shiftEven();
+        else shiftOdd(false);
     }
     // Perform the shift when it is even
-    private void shift_even()
+    private void shiftEven()
     {
         int w = width();
         int h = height();
@@ -125,17 +125,17 @@ public class ReconstructionComplexField implements ComplexField {
         }
     }
     // Perform the shift when it is odd
-    private void shift_odd(boolean forward)
+    private void shiftOdd(boolean forward)
     {
         int w = width();
         int h = height();
-        boolean width_even = w % 2 == 0;
-        boolean height_even = h % 2 == 0;
+        boolean widthEven = w % 2 == 0;
+        boolean heightEven = h % 2 == 0;
         int w2 = w / 2;
         int h2 = h / 2;
-        int wp = width_even ? 0 : 1;
-        int hp = height_even ? 0 : 1;
-        double[][] new_field = new double[w][h * 2];
+        int wp = widthEven ? 0 : 1;
+        int hp = heightEven ? 0 : 1;
+        double[][] newField = new double[w][h * 2];
         for (int i = 0; i < w2 + wp; ++i) {
             for (int j = 0; j < h2 + hp; ++j) {
                 // Coord one is on the top left
@@ -154,50 +154,50 @@ public class ReconstructionComplexField implements ComplexField {
                 // Top left
                 if (forward || (i != w2 && j != h2)) {
                     if (forward) {
-                        new_field[x1][y1r] = M_field[x2][y2r];
-                        new_field[x1][y1i] = M_field[x2][y2i];
+                        newField[x1][y1r] = M_field[x2][y2r];
+                        newField[x1][y1i] = M_field[x2][y2i];
                     }
                     else {
-                        new_field[x1][y1r] = M_field[x3][y3r];
-                        new_field[x1][y1i] = M_field[x3][y3i];
+                        newField[x1][y1r] = M_field[x3][y3r];
+                        newField[x1][y1i] = M_field[x3][y3i];
                     }
                 }
                 // Top right
                 if ((forward && i != w2) || (!forward && j != h2)) {
                     if (forward) {
-                        new_field[x3][y1r] = M_field[x1][y2r];
-                        new_field[x3][y1i] = M_field[x1][y2i];
+                        newField[x3][y1r] = M_field[x1][y2r];
+                        newField[x3][y1i] = M_field[x1][y2i];
                     }
                     else {
-                        new_field[x2][y1r] = M_field[x1][y3r];
-                        new_field[x2][y1i] = M_field[x1][y3i];
+                        newField[x2][y1r] = M_field[x1][y3r];
+                        newField[x2][y1i] = M_field[x1][y3i];
                     }
                 }
                 // Bottom left
                 if ((forward && j != h2) || (!forward && i != w2)) {
                     if (forward) {
-                        new_field[x1][y3r] = M_field[x2][y1r];
-                        new_field[x1][y3i] = M_field[x2][y1i];
+                        newField[x1][y3r] = M_field[x2][y1r];
+                        newField[x1][y3i] = M_field[x2][y1i];
                     }
                     else {
-                        new_field[x1][y2r] = M_field[x3][y1r];
-                        new_field[x1][y2i] = M_field[x3][y1i];
+                        newField[x1][y2r] = M_field[x3][y1r];
+                        newField[x1][y2i] = M_field[x3][y1i];
                     }
                 }
                 // Bottom right
                 if (!forward || (i != w2 && j != h2)) {
                     if (forward) {
-                        new_field[x3][y3r] = M_field[x1][y1r];
-                        new_field[x3][y3i] = M_field[x1][y1i];
+                        newField[x3][y3r] = M_field[x1][y1r];
+                        newField[x3][y3i] = M_field[x1][y1i];
                     }
                     else {
-                        new_field[x2][y2r] = M_field[x1][y1r];
-                        new_field[x2][y2i] = M_field[x1][y1i];
+                        newField[x2][y2r] = M_field[x1][y1r];
+                        newField[x2][y2i] = M_field[x1][y1i];
                     }
                 }
             }
         }
-        M_field = new_field;
+        M_field = newField;
     }
 
     /** {@inheritDoc} */
@@ -215,26 +215,26 @@ public class ReconstructionComplexField implements ComplexField {
         return result;
     }
     // Copy, but make containing set
-    ReconstructionComplexField copy_in(ReconstructionFieldImpl containing)
+    ReconstructionComplexField copyIn(ReconstructionFieldImpl containing)
     {
         ReconstructionComplexField result = copy();
         result.M_containing = containing;
         return result;
     }
     /** {@inheritDoc} */
-    @Override public double[][] get_field()
+    @Override public double[][] getField()
     {
-        field_changed();
+        fieldChanged();
         return M_field;
     }
     /** {@inheritDoc} */
-    @Override public void set_field(double[][] field)
+    @Override public void setField(double[][] field)
     {
-        field_changed();
+        fieldChanged();
         M_field = field;
     }
     /** {@inheritDoc} */
-    @Override public double[][] get_real()
+    @Override public double[][] getReal()
     {
         int w = width();
         int h = height();
@@ -247,7 +247,7 @@ public class ReconstructionComplexField implements ComplexField {
         return result;
     }
     /** {@inheritDoc} */
-    @Override public double[][] get_imag()
+    @Override public double[][] getImag()
     {
         int w = width();
         int h = height();
@@ -260,7 +260,7 @@ public class ReconstructionComplexField implements ComplexField {
         return result;
     }
     /** {@inheritDoc} */
-    @Override public double[][] get_amp()
+    @Override public double[][] getAmp()
     {
         int w = width();
         int h = height();
@@ -275,7 +275,7 @@ public class ReconstructionComplexField implements ComplexField {
         return result;
     }
     /** {@inheritDoc} */
-    @Override public double[][] get_amp2()
+    @Override public double[][] getAmp2()
     {
         int w = width();
         int h = height();
@@ -290,7 +290,7 @@ public class ReconstructionComplexField implements ComplexField {
         return result;
     }
     /** {@inheritDoc} */
-    @Override public double[][] get_arg()
+    @Override public double[][] getArg()
     {
         int w = width();
         int h = height();
@@ -305,18 +305,18 @@ public class ReconstructionComplexField implements ComplexField {
         return result;
     }
     /** {@inheritDoc} */
-    @Override public double get_real(int x, int y) {return M_field[x][y*2];}
+    @Override public double getReal(int x, int y) {return M_field[x][y*2];}
     /** {@inheritDoc} */
-    @Override public double get_imag(int x, int y) {return M_field[x][y*2+1];}
+    @Override public double getImag(int x, int y) {return M_field[x][y*2+1];}
     /** {@inheritDoc} */
     @Override public int width()  {return M_field.length;}
     /** {@inheritDoc} */
     @Override public int height() {return M_field[0].length / 2;}
 
     /** {@inheritDoc} */
-    @Override public void negate_in_place()
+    @Override public void negateInPlace()
     {
-        field_changed();
+        fieldChanged();
         int w = width();
         int h = height();
         for (int x = 0; x < w; ++x) {
@@ -326,57 +326,57 @@ public class ReconstructionComplexField implements ComplexField {
         }
     }
     /** {@inheritDoc} */
-    @Override public void add_in_place(ComplexField other)
+    @Override public void addInPlace(ComplexField other)
     {
         if (other instanceof ReconstructionComplexField) {
-            add_in_place(((ReconstructionComplexField)other).M_field);
+            addInPlace(((ReconstructionComplexField)other).M_field);
         }
         else {
-            field_changed();
+            fieldChanged();
             int w = width();
             int h = height();
             for (int x = 0; x < w; ++x) {
                 for (int y = 0; y < h * 2; ++y) {
-                    M_field[x][y*2] += other.get_real(x, y);
-                    M_field[x][y*2+1] += other.get_imag(x, y);
+                    M_field[x][y*2] += other.getReal(x, y);
+                    M_field[x][y*2+1] += other.getImag(x, y);
                 }
             }
         }
     }
     /** {@inheritDoc} */
-    @Override public void subtract_in_place(ComplexField other)
+    @Override public void subtractInPlace(ComplexField other)
     {
         if (other instanceof ReconstructionComplexField) {
-            subtract_in_place(((ReconstructionComplexField)other).M_field);
+            subtractInPlace(((ReconstructionComplexField)other).M_field);
         }
         else {
-            field_changed();
+            fieldChanged();
             int w = width();
             int h = height();
             for (int x = 0; x < w; ++x) {
                 for (int y = 0; y < h * 2; ++y) {
-                    M_field[x][y*2] -= other.get_real(x, y);
-                    M_field[x][y*2+1] -= other.get_imag(x, y);
+                    M_field[x][y*2] -= other.getReal(x, y);
+                    M_field[x][y*2+1] -= other.getImag(x, y);
                 }
             }
         }
     }
     /** {@inheritDoc} */
-    @Override public void multiply_in_place(ComplexField other)
+    @Override public void multiplyInPlace(ComplexField other)
     {
         if (other instanceof ReconstructionComplexField) {
-            multiply_in_place(((ReconstructionComplexField)other).M_field);
+            multiplyInPlace(((ReconstructionComplexField)other).M_field);
         }
         else {
-            field_changed();
+            fieldChanged();
             int w = width();
             int h = height();
             for (int x = 0; x < w; ++x) {
                 for (int y = 0; y < h * 2; ++y) {
                     double a = M_field[x][y*2];
                     double b = M_field[x][y*2+1];
-                    double c = other.get_real(x, y);
-                    double d = other.get_imag(x, y);
+                    double c = other.getReal(x, y);
+                    double d = other.getImag(x, y);
                     M_field[x][y*2] = a * c - b * d;
                     M_field[x][y*2+1] = a * d + b * c;
                 }
@@ -384,21 +384,21 @@ public class ReconstructionComplexField implements ComplexField {
         }
     }
     /** {@inheritDoc} */
-    @Override public void divide_in_place(ComplexField other)
+    @Override public void divideInPlace(ComplexField other)
     {
         if (other instanceof ReconstructionComplexField) {
-            divide_in_place(((ReconstructionComplexField)other).M_field);
+            divideInPlace(((ReconstructionComplexField)other).M_field);
         }
         else {
-            field_changed();
+            fieldChanged();
             int w = width();
             int h = height();
             for (int x = 0; x < w; ++x) {
                 for (int y = 0; y < h * 2; ++y) {
                     double a = M_field[x][y*2];
                     double b = M_field[x][y*2+1];
-                    double c = other.get_real(x, y);
-                    double d = other.get_imag(x, y);
+                    double c = other.getReal(x, y);
+                    double d = other.getImag(x, y);
                     double denom = c*c + d*d;
                     M_field[x][y*2] = (a * c + b * d) / denom;
                     M_field[x][y*2+1] = (b * c - a * d) / denom;
@@ -407,9 +407,9 @@ public class ReconstructionComplexField implements ComplexField {
         }
     }
     /** {@inheritDoc} */
-    @Override public void add_in_place(double[][] other)
+    @Override public void addInPlace(double[][] other)
     {
-        field_changed();
+        fieldChanged();
         int w = width();
         int h = height() * 2;
         for (int x = 0; x < w; ++x) {
@@ -419,9 +419,9 @@ public class ReconstructionComplexField implements ComplexField {
         }
     }
     /** {@inheritDoc} */
-    @Override public void subtract_in_place(double[][] other)
+    @Override public void subtractInPlace(double[][] other)
     {
-        field_changed();
+        fieldChanged();
         int w = width();
         int h = height() * 2;
         for (int x = 0; x < w; ++x) {
@@ -431,9 +431,9 @@ public class ReconstructionComplexField implements ComplexField {
         }
     }
     /** {@inheritDoc} */
-    @Override public void multiply_in_place(double[][] other)
+    @Override public void multiplyInPlace(double[][] other)
     {
-        field_changed();
+        fieldChanged();
         int w = width();
         int h = height();
         for (int x = 0; x < w; ++x) {
@@ -448,9 +448,9 @@ public class ReconstructionComplexField implements ComplexField {
         }
     }
     /** {@inheritDoc} */
-    @Override public void divide_in_place(double[][] other)
+    @Override public void divideInPlace(double[][] other)
     {
-        field_changed();
+        fieldChanged();
         int w = width();
         int h = height();
         for (int x = 0; x < w; ++x) {
@@ -466,9 +466,9 @@ public class ReconstructionComplexField implements ComplexField {
         }
     }
     /** {@inheritDoc} */
-    @Override public void add_in_place(double real, double imag)
+    @Override public void addInPlace(double real, double imag)
     {
-        field_changed();
+        fieldChanged();
         int w = width();
         int h = height();
         for (int x = 0; x < w; ++x) {
@@ -479,14 +479,14 @@ public class ReconstructionComplexField implements ComplexField {
         }
     }
     /** {@inheritDoc} */
-    @Override public void subtract_in_place(double real, double imag)
+    @Override public void subtractInPlace(double real, double imag)
     {
-        add_in_place(-real, -imag);
+        addInPlace(-real, -imag);
     }
     /** {@inheritDoc} */
-    @Override public void multiply_in_place(double real, double imag)
+    @Override public void multiplyInPlace(double real, double imag)
     {
-        field_changed();
+        fieldChanged();
         int w = width();
         int h = height();
         double c = real;
@@ -501,9 +501,9 @@ public class ReconstructionComplexField implements ComplexField {
         }
     }
     /** {@inheritDoc} */
-    @Override public void divide_in_place(double real, double imag)
+    @Override public void divideInPlace(double real, double imag)
     {
-        field_changed();
+        fieldChanged();
         int w = width();
         int h = height();
         double c = real;
@@ -519,10 +519,10 @@ public class ReconstructionComplexField implements ComplexField {
         }
     }
 
-    private void field_changed()
+    private void fieldChanged()
     {
         if (M_containing != null) {
-            M_containing.field_changed(this);
+            M_containing.fieldChanged(this);
         }
     }
     private ReconstructionComplexField() {}

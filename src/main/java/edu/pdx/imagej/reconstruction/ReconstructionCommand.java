@@ -63,29 +63,29 @@ public class ReconstructionCommand implements Command, Initializable {
         P_zs = new ZParameter();
         P_plugins = new AllPluginsParameter(P_hologram);
 
-        P_wavelength.set_bounds(Double.MIN_VALUE, Double.MAX_VALUE);
-        P_width.set_bounds(Double.MIN_VALUE, Double.MAX_VALUE);
-        P_height.set_bounds(Double.MIN_VALUE, Double.MAX_VALUE);
+        P_wavelength.setBounds(Double.MIN_VALUE, Double.MAX_VALUE);
+        P_width.setBounds(Double.MIN_VALUE, Double.MAX_VALUE);
+        P_height.setBounds(Double.MIN_VALUE, Double.MAX_VALUE);
     }
     /** Run the command, which just calls the op. */
     @Override
     public void run()
     {
         DistanceUnitValue wavelength
-            = new DistanceUnitValue(P_wavelength.get_value(),
+            = new DistanceUnitValue(P_wavelength.getValue(),
                                     P_units.wavelength());
         DistanceUnitValue width
-            = new DistanceUnitValue(P_width.get_value(), P_units.image());
+            = new DistanceUnitValue(P_width.getValue(), P_units.image());
         DistanceUnitValue height
-            = new DistanceUnitValue(P_height.get_value(), P_units.image());
+            = new DistanceUnitValue(P_height.getValue(), P_units.image());
 
         P_ops.run("Hologram Reconstruction",
-                  P_hologram.get_value(),
+                  P_hologram.getValue(),
                   wavelength,
                   width,
                   height,
-                  P_ts.get_value(),
-                  P_zs.get_value(),
-                  P_plugins.get_value());
+                  P_ts.getValue(),
+                  P_zs.getValue(),
+                  P_plugins.getValue());
     }
 }

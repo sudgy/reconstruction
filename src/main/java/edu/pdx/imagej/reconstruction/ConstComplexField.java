@@ -32,13 +32,13 @@ public final class ConstComplexField {
 
     public ComplexField copy() {return M_field.copy();}
 
-    public double[][] get_real() {return M_field.get_real();}
-    public double[][] get_imag() {return M_field.get_real();}
-    public double[][] get_amp() {return M_field.get_amp();}
-    public double[][] get_amp2() {return M_field.get_amp2();}
-    public double[][] get_arg() {return M_field.get_arg();}
-    public double get_real(int x, int y) {return M_field.get_real(x, y);}
-    public double get_imag(int x, int y) {return M_field.get_real(x, y);}
+    public double[][] getReal() {return M_field.getReal();}
+    public double[][] getImag() {return M_field.getReal();}
+    public double[][] getAmp() {return M_field.getAmp();}
+    public double[][] getAmp2() {return M_field.getAmp2();}
+    public double[][] getArg() {return M_field.getArg();}
+    public double getReal(int x, int y) {return M_field.getReal(x, y);}
+    public double getImag(int x, int y) {return M_field.getReal(x, y);}
     public int width() {return M_field.width();}
     public int height() {return M_field.height();}
 

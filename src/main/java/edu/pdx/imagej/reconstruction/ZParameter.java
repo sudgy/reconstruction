@@ -47,44 +47,44 @@ public class ZParameter extends HoldingParameter<List<DistanceUnitValue>> {
     @Override
     public void initialize()
     {
-        M_choice = add_parameter(ChoiceParameter.class, "Z_plane selection",
-                                 S_choices, "Single");
-        M_param_single = add_parameter(SingleZ.class, this);
-        M_param_list = add_parameter(ListZ.class, this);
-        M_param_range = add_parameter(RangeZ.class, this);
-        set_visibilities();
+        M_choice = addParameter(new ChoiceParameter("Z_plane selection",
+                                 S_choices, "Single"));
+        M_paramSingle = addParameter(new SingleZ());
+        M_paramList = addParameter(new ListZ());
+        M_paramRange = addParameter(new RangeZ());
+        setVisibilities();
     }
     @Override
-    public void read_from_dialog()
+    public void readFromDialog()
     {
-        super.read_from_dialog();
-        set_visibilities();
+        super.readFromDialog();
+        setVisibilities();
     }
     @Override
-    public void read_from_prefs(Class<?> c, String name)
+    public void readFromPrefs(Class<?> c, String name)
     {
-        super.read_from_prefs(c, name);
-        set_visibilities();
+        super.readFromPrefs(c, name);
+        setVisibilities();
     }
     @Override
-    public List<DistanceUnitValue> get_value()
+    public List<DistanceUnitValue> getValue()
     {
-        return current_param().get_value();
+        return currentParam().getValue();
     }
 
-    private void set_visibilities()
+    private void setVisibilities()
     {
-        M_param_single.set_new_visibility(false);
-        M_param_list.set_new_visibility(false);
-        M_param_range.set_new_visibility(false);
-        current_param().set_new_visibility(true);
+        M_paramSingle.setNewVisibility(false);
+        M_paramList.setNewVisibility(false);
+        M_paramRange.setNewVisibility(false);
+        currentParam().setNewVisibility(true);
     }
-    private DParameter<List<DistanceUnitValue>> current_param()
+    private DParameter<List<DistanceUnitValue>> currentParam()
     {
-        switch (Choices.valueOf(M_choice.get_value())) {
-            case Single: return M_param_single;
-            case List: return M_param_list;
-            case Range: return M_param_range;
+        switch (Choices.valueOf(M_choice.getValue())) {
+            case Single: return M_paramSingle;
+            case List: return M_paramList;
+            case Range: return M_paramRange;
         }
         return null;
     }
@@ -100,9 +100,9 @@ public class ZParameter extends HoldingParameter<List<DistanceUnitValue>> {
 
     private ChoiceParameter M_choice;
 
-    private SingleZ M_param_single;
-    private ListZ M_param_list;
-    private RangeZ M_param_range;
+    private SingleZ M_paramSingle;
+    private ListZ M_paramList;
+    private RangeZ M_paramRange;
     @Parameter private UnitService P_units;
 
 
@@ -113,16 +113,16 @@ public class ZParameter extends HoldingParameter<List<DistanceUnitValue>> {
         @Override
         public void initialize()
         {
-            M_z = add_parameter(DoubleParameter.class, 0.0, "Z_value",
-                                P_units.z().toString());
+            M_z = addParameter(new DoubleParameter(0.0, "Z_value",
+                                P_units.z().toString()));
         }
         @Override
-        public List<DistanceUnitValue> get_value()
+        public List<DistanceUnitValue> getValue()
         {
             return new AbstractList<DistanceUnitValue>() {
                 @Override
                 public DistanceUnitValue get(int index)
-                {return new DistanceUnitValue(M_z.get_value(), P_units.z());}
+                {return new DistanceUnitValue(M_z.getValue(), P_units.z());}
                 @Override
                 public int size()
                 {return 1;}
@@ -139,54 +139,54 @@ public class ZParameter extends HoldingParameter<List<DistanceUnitValue>> {
         @Override
         public void initialize()
         {
-            set_error("Z list is empty.");
+            setError("Z list is empty.");
         }
         @Override
-        public void add_to_dialog(DPDialog dialog)
+        public void addToDialog(DPDialog dialog)
         {
-            M_supplier = dialog.add_text_box(
-                "Z values (in a comma separated list)", M_current_string);
+            M_supplier = dialog.addTextBox(
+                "Z values (in a comma separated list)", M_currentString);
         }
         @Override
-        public void read_from_dialog()
+        public void readFromDialog()
         {
-            M_current_string = M_supplier.get();
-            process_errors();
+            M_currentString = M_supplier.get();
+            processErrors();
         }
         @Override
-        public void save_to_prefs(Class<?> c, String name)
+        public void saveToPrefs(Class<?> c, String name)
         {
-            prefs().put(c, name + ".value", M_current_string);
+            prefs().put(c, name + ".value", M_currentString);
         }
         @Override
-        public void read_from_prefs(Class<?> c, String name)
+        public void readFromPrefs(Class<?> c, String name)
         {
-            M_current_string = prefs().get(c, name + ".value", "");
-            process_errors();
+            M_currentString = prefs().get(c, name + ".value", "");
+            processErrors();
         }
         @Override
-        public List<DistanceUnitValue> get_value() {return M_zs;}
+        public List<DistanceUnitValue> getValue() {return M_zs;}
 
-        private void process_errors()
+        private void processErrors()
         {
-            List<String> zs_as_string
-                = Arrays.asList(M_current_string.split("\\s*,\\s*"));
-            M_zs = new ArrayList<DistanceUnitValue>(zs_as_string.size());
-            for (String s : zs_as_string) {
+            List<String> zsAsString
+                = Arrays.asList(M_currentString.split("\\s*,\\s*"));
+            M_zs = new ArrayList<DistanceUnitValue>(zsAsString.size());
+            for (String s : zsAsString) {
                 try {
                     M_zs.add(new DistanceUnitValue(Double.parseDouble(s),
                              P_units.z()));
                 }
                 catch (NumberFormatException e) {
-                    set_error("Unable to parse Z list.  \"" + s
+                    setError("Unable to parse Z list.  \"" + s
                               + "\" is not a number.");
                     return;
                 }
             }
-            set_error(null);
+            setError(null);
         }
         private ArrayList<DistanceUnitValue> M_zs;
-        private String M_current_string;
+        private String M_currentString;
         private Supplier<String> M_supplier;
     }
 
@@ -199,60 +199,60 @@ public class ZParameter extends HoldingParameter<List<DistanceUnitValue>> {
         public void initialize()
         {
             String units = P_units.z().toString();
-            M_begin = add_parameter(DoubleParameter.class, 0.0, "Z_value_begin",
-                                    units);
-            M_end = add_parameter(DoubleParameter.class, 0.0, "Z_value_end",
-                                  units);
-            M_step = add_parameter(DoubleParameter.class, 1.0, "Z_value_step",
-                                   units);
+            M_begin = addParameter(new DoubleParameter(0.0, "Z_value_begin",
+                                    units));
+            M_end = addParameter(new DoubleParameter(0.0, "Z_value_end",
+                                  units));
+            M_step = addParameter(new DoubleParameter(1.0, "Z_value_step",
+                                   units));
         }
         @Override
-        public void read_from_dialog()
+        public void readFromDialog()
         {
-            super.read_from_dialog();
-            process_errors();
+            super.readFromDialog();
+            processErrors();
         }
         @Override
-        public void read_from_prefs(Class<?> c, String name)
+        public void readFromPrefs(Class<?> c, String name)
         {
-            super.read_from_prefs(c, name);
-            process_errors();
+            super.readFromPrefs(c, name);
+            processErrors();
         }
         @Override
-        public List<DistanceUnitValue> get_value()
+        public List<DistanceUnitValue> getValue()
         {
             return new AbstractList<DistanceUnitValue>() {
                 @Override
                 public DistanceUnitValue get(int index)
-                {return new DistanceUnitValue(M_begin.get_value()
-                    + M_step.get_value() * index, P_units.z());}
+                {return new DistanceUnitValue(M_begin.getValue()
+                    + M_step.getValue() * index, P_units.z());}
                 @Override
                 public int size()
-                {return Math.abs((int)((M_end.get_value() - M_begin.get_value())
-                              / M_step.get_value())) + 1;}
+                {return Math.abs((int)((M_end.getValue() - M_begin.getValue())
+                              / M_step.getValue())) + 1;}
             };
         }
 
-        private void process_errors()
+        private void processErrors()
         {
-            set_error(M_begin.get_error());
-            if (get_error() != null) return;
-            set_error(M_end.get_error());
-            if (get_error() != null) return;
-            set_error(M_step.get_error());
-            if (get_error() != null) return;
-            if (M_step.get_value() == 0) {
-                set_error("Z value step cannot be zero.");
+            setError(M_begin.getError());
+            if (getError() != null) return;
+            setError(M_end.getError());
+            if (getError() != null) return;
+            setError(M_step.getError());
+            if (getError() != null) return;
+            if (M_step.getValue() == 0) {
+                setError("Z value step cannot be zero.");
                 return;
             }
-            if (!(M_begin.get_value().equals(M_end.get_value())) &&
-                (M_end.get_value() < M_begin.get_value())
-                    == (M_step.get_value() > 0)) {
-                set_error("The sign of Z value step must be the same as the "
+            if (!(M_begin.getValue().equals(M_end.getValue())) &&
+                (M_end.getValue() < M_begin.getValue())
+                    == (M_step.getValue() > 0)) {
+                setError("The sign of Z value step must be the same as the "
                     + "sign of Z value end minus Z value begin.");
                 return;
             }
-            set_error(null);
+            setError(null);
         }
         private DoubleParameter M_begin;
         private DoubleParameter M_end;

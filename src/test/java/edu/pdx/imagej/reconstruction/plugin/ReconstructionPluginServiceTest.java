@@ -34,20 +34,20 @@ import org.scijava.plugin.PluginService;
 import org.scijava.prefs.PrefService;
 
 public class ReconstructionPluginServiceTest {
-    @Test public void test_get_main()
+    @Test public void testGetMain()
     {
         TestReconstructionPluginService test
             = new TestReconstructionPluginService(TestA.class, TestB.class);
         S_context.inject(test);
         test.enable(TestA.class);
         test.enable(TestB.class);
-        List<MainReconstructionPlugin> plugins = test.get_plugins();
+        List<MainReconstructionPlugin> plugins = test.getMainPlugins();
         assertEquals(plugins.size(), 1, "ReconstructionPluginService should "
             + "only get MainReconstructionPlugins.");
         assertTrue(plugins.get(0) instanceof TestA,
             "ReconstructionPluginService should get a particular plugin type.");
     }
-    @Test public void test_bad_plugin()
+    @Test public void testBadPlugin()
     {
         TestReconstructionPluginService test
             = new TestReconstructionPluginService(TestA.class, TestC.class);
@@ -55,40 +55,40 @@ public class ReconstructionPluginServiceTest {
         test.enable(TestA.class);
         test.enable(TestB.class);
         try {
-            test.get_plugins();
+            test.getMainPlugins();
             assertTrue(false, "A bad plugin should cause an exception.");
         }
         catch (RuntimeException e) {}
     }
-    @Test public void test_enable()
+    @Test public void testEnable()
     {
         TestReconstructionPluginService test =
             new TestReconstructionPluginService(TestA.class, TestB.class);
         S_context.inject(test);
         test.enable(TestA.class);
         test.enable(TestB.class);
-        assertTrue(test.is_enabled(TestA.class));
-        assertTrue(test.is_enabled(TestB.class));
+        assertTrue(test.isEnabled(TestA.class));
+        assertTrue(test.isEnabled(TestB.class));
         test.disable(TestB.class);
-        assertTrue(!test.is_enabled(TestB.class));
+        assertTrue(!test.isEnabled(TestB.class));
         test.enable(TestB.class);
-        assertTrue(test.is_enabled(TestB.class));
+        assertTrue(test.isEnabled(TestB.class));
         test.disable(TestA.class);
-        List<MainReconstructionPlugin> plugins = test.get_plugins();
+        List<MainReconstructionPlugin> plugins = test.getMainPlugins();
         assertEquals(0, plugins.size());
         test.enable(TestA.class);
-        plugins = test.get_plugins();
+        plugins = test.getMainPlugins();
         assertEquals(1, plugins.size());
         assertTrue(plugins.get(0) instanceof TestA);
     }
-    @Test public void test_get_type()
+    @Test public void testGetType()
     {
         TestReconstructionPluginService test =
             new TestReconstructionPluginService(TestB.class, TestD.class);
         S_context.inject(test);
         test.disable(TestB.class);
         List<SubReconstructionPlugin> plugins
-            = test.get_all_plugins(SubReconstructionPlugin.class);
+            = test.getAllPlugins(SubReconstructionPlugin.class);
         assertEquals(2, plugins.size());
         assertTrue(plugins.get(0) instanceof TestB
                 || plugins.get(0) instanceof TestD);
@@ -103,7 +103,10 @@ public class ReconstructionPluginServiceTest {
     private static Context S_context = new Context(PluginService.class,
                                                    PrefService.class);
 
-    public static abstract class TestPlugin extends AbstractRichPlugin {}
+    public static abstract class TestPlugin extends AbstractRichPlugin
+                                            implements ReconstructionPlugin {
+        @Override public TestPlugin duplicate() {return null;}
+    }
     @Plugin(type = TestPlugin.class)
     public static class TestA extends TestPlugin
                               implements MainReconstructionPlugin {}

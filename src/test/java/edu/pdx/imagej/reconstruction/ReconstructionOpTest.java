@@ -52,7 +52,7 @@ import edu.pdx.imagej.reconstruction.result.ResultOptions;
 
 // This is basically the one system test we have here.
 public class ReconstructionOpTest {
-    @Test public void test_op()
+    @Test public void testOp()
     {
         // The question is, what can we test that we can know perfectly?  We
         // make everything really simple.  We use most of the plugins, but in
@@ -107,28 +107,28 @@ public class ReconstructionOpTest {
         ArrayList<ReconstructionPlugin> plugins = new ArrayList<>();
         // Filter
         Filter filter = new Filter();
-        filter.set_filter(new PointRoi(
+        filter.setFilter(new PointRoi(
             new int[]{0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3},
             new int[]{0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3}, 16));
         plugins.add(filter);
         // Reference Hologram
-        Filter new_filter = new Filter();
-        new_filter.set_filter(new PointRoi(
+        Filter newFilter = new Filter();
+        newFilter.setFilter(new PointRoi(
             new int[]{2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0},
             new int[]{2, 3, 4, 5, 2, 3, 4, 5, 2, 3, 4, 5, 2, 3, 4, 5, 0}, 17));
-        plugins.add(new Reference(new Self(), true, false, new_filter));
+        plugins.add(new Reference(new Self(), true, false, newFilter));
         // Polynomial Tilt Correction
         plugins.add(new PolyTilt(new Auto(), 1));
         plugins.add(new AbstractReconstructionPlugin() {
             @Override
-            public void set_beginning_priority()
+            public void setBeginningPriority()
             {
                 setPriority(-999999999999.0);
             }
             @Override
-            public void process_filtered_field(ReconstructionField field, int t)
+            public void processFilteredField(ReconstructionField field, int t)
             {
-                double[][] array = field.field().get_field();
+                double[][] array = field.field().getField();
                 for (int x = 0; x < 8; ++x) {
                     for (int y = 0; y < 8; ++y) {
                         double real = array[x][y*2];
@@ -139,6 +139,8 @@ public class ReconstructionOpTest {
                     }
                 }
             }
+            @Override
+            public ReconstructionPlugin duplicate() {return null;}
         });
         // Propagation
         plugins.add(new Propagation(new AngularSpectrum()));
@@ -148,8 +150,8 @@ public class ReconstructionOpTest {
         options.amplitude = true;
         options.phase = true;
         options.type = ResultOptions.Type.Type32Bit;
-        options.amplitude_func = (ImagePlus imp) -> result[0] = imp;
-        options.phase_func = (ImagePlus imp) -> result[1] = imp;
+        options.amplitudeFunc = (ImagePlus imp) -> result[0] = imp;
+        options.phaseFunc = (ImagePlus imp) -> result[1] = imp;
         plugins.add(new Result(options));
 
         // Run it!
@@ -164,24 +166,24 @@ public class ReconstructionOpTest {
             for (int y = 0; y < 8; ++y) {
                 for (int t = 1; t <= 2; ++t) {
                     /*
-                    double const_amp
+                    double constAmp
                         = amp.getStack()
                              .getProcessor(amp.getStackIndex(1, 1, t))
                              .getFloatArray()[x][y];
                              */
                     for (int z = 1; z <= 11; ++z) {
-                        double this_amp
+                        double thisAmp
                             = amp.getStack()
                                  .getProcessor(amp.getStackIndex(1, z, t))
                                  .getFloatArray()[x][y];
-                        double this_arg
+                        double thisArg
                             = arg.getStack()
                                  .getProcessor(arg.getStackIndex(1, z, t))
                                  .getFloatArray()[x][y];
                         String coord = "(" + x + ", " + y + ", " + (z - 6) * 10
                                        + ", " + t + ")";
-                        assertEquals(1.0, this_amp, 1e-6, coord);
-                        assertEquals((z - 6) * Math.PI / 25.0, this_arg, 1e-6, coord);
+                        assertEquals(1.0, thisAmp, 1e-6, coord);
+                        assertEquals((z - 6) * Math.PI / 25.0, thisArg, 1e-6, coord);
                     }
                 }
             }

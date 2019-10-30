@@ -41,8 +41,8 @@ import edu.pdx.imagej.reconstruction.ConstReconstructionField;
 /** A {@link edu.pdx.imagej.reconstruction.plugin.ReconstructionPlugin
  * ReconstructionPlugin} that performs filtering of holograms.  Not only does it
  * get the filter from the user and then applies it to every image, but you can
- * also use that same filter on any image you like using {@link filter_field}.
- * Its priority is first, so as soon as {@link process_original_hologram} has
+ * also use that same filter on any image you like using {@link filterField}.
+ * Its priority is first, so as soon as {@link processOriginalHologram} has
  * started, you are good to use the filter.
  */
 @Plugin(type = ReconstructionPlugin.class, name = "Filter",
@@ -54,10 +54,14 @@ public class Filter extends AbstractReconstructionPlugin
      *
      * @param roi The roi to set the filter to be.
      */
-    public void set_filter(Roi roi)
+    public void setFilter(Roi roi)
     {
         M_roi = roi;
         M_filtered = true;
+    }
+    public void setDefaultMessage(String message)
+    {
+        M_message = message;
     }
     /** Get the filter from the user through the gui, if a filter hasn't been
      * set already.
@@ -65,10 +69,10 @@ public class Filter extends AbstractReconstructionPlugin
      * @param field The field to acquire the filter from
      */
     @Override
-    public void process_original_hologram(ConstReconstructionField field)
+    public void processOriginalHologram(ConstReconstructionField field)
     {
         if (!M_filtered) {
-            get_filter(field, "Please select the ROI and then press OK.");
+            getFilter(field, M_message);
             M_filtered = true;
         }
     }
@@ -78,9 +82,9 @@ public class Filter extends AbstractReconstructionPlugin
      * @param message The message to display to the user describing what's going
      *                on.
      */
-    public void get_filter(ConstReconstructionField field, String message)
+    public void getFilter(ConstReconstructionField field, String message)
     {
-        double[][] fourier = field.fourier().get_amp();
+        double[][] fourier = field.fourier().getAmp();
         float[][] array = new float[fourier.length][fourier[0].length];
         for (int x = 0; x < fourier.length; ++x) {
             for (int y = 0; y < fourier[0].length; ++y) {
@@ -101,46 +105,48 @@ public class Filter extends AbstractReconstructionPlugin
         M_roi = imp.getRoi();
         imp.hide();
     }
-    /** Filter a field (just calls {@link filter_field filter_field}.
+    /** Filter a field (just calls {@link filterField filterField}.
      *
      * @param field The field to filter.
      * @param t Unused.
      */
     @Override
-    public void process_filtered_field(ReconstructionField field, int t)
+    public void processFilteredField(ReconstructionField field, int t)
     {
-        filter_field(field);
+        filterField(field);
     }
-    /** Filter a field.  This is separate from {@link process_filtered_field
-     * process_filtered_field} so that other plugins can filter by the same roi.
+    /** Filter a field.  This is separate from {@link processFilteredField
+     * processFilteredField} so that other plugins can filter by the same roi.
      *
      * @param field The field to filter.
      */
-    public void filter_field(ReconstructionField field)
+    public void filterField(ReconstructionField field)
     {
         if (M_roi == null) return; // If the user didn't select any roi
-        double[][] fourier = field.fourier().get_field();
+        double[][] fourier = field.fourier().getField();
         double[][] filtered = new double[fourier.length][fourier[0].length];
         Rectangle rect = M_roi.getBounds();
-        int center_x = (int)rect.getCenterX();
-        int center_y = (int)rect.getCenterY();
-        int xp = field.fourier().width() / 2 - center_x;
-        int yp = field.fourier().height() / 2 - center_y;
+        int centerX = (int)rect.getCenterX();
+        int centerY = (int)rect.getCenterY();
+        int xp = field.fourier().width() / 2 - centerX;
+        int yp = field.fourier().height() / 2 - centerY;
         for (Point p : M_roi) {
             if (p.x < 0 || p.x >= fourier.length) continue;
             if (p.y < 0 || p.y >= fourier[0].length / 2) continue;
             filtered[p.x + xp][(p.y + yp) * 2] = fourier[p.x][p.y * 2];
             filtered[p.x + xp][(p.y + yp) * 2 + 1] = fourier[p.x][p.y * 2 + 1];
         }
-        field.fourier().set_field(filtered);
+        field.fourier().setField(filtered);
     }
     /** Returns whether or not the user quit when getting the filter.
      *
      * @return Whether or not the user quit.
      */
-    @Override public boolean has_error() {return M_error;}
+    @Override public boolean hasError() {return M_error;}
+    @Override public Filter duplicate() {return new Filter();}
 
     private Roi M_roi;
     private boolean M_error = false;
     private boolean M_filtered = false;
+    private String M_message = "Please select the ROI and then press OK.";
 }

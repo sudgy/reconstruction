@@ -43,18 +43,18 @@ public interface ReconstructionField {
      * the FFT/IFFT if it is not needed.
      *
      * @return Whether or not the normal field has been computed.
-     * @see has_fourier
+     * @see hasFourier
      */
-    boolean has_field();
+    boolean hasField();
     /** See if the Fourier transform has been computed.  If an algorithm could
      * work well with both the normal field and the fourier transform, this can
      * be used to check which is available to save on computation time to
      * calculate the FFT/IFFT if it is not needed.
      *
      * @return Whether or not the Fourier transform has been computed.
-     * @see has_field
+     * @see hasField
      */
-    boolean has_fourier();
+    boolean hasFourier();
     /** Copy this ReconstructionField.  It will copy any fields (normal or
      * Fourier) that already exist.
      *

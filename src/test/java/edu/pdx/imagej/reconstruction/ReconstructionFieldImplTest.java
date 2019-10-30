@@ -24,54 +24,54 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 public class ReconstructionFieldImplTest {
-    @Test public void test_changes()
+    @Test public void testChanges()
     {
         // They need to be at least 2x2 for the FFT's sake
         double[][] real = new double[][] {{0, 0}, {0, 0}};
         double[][] imag = new double[][] {{0, 0}, {0, 0}};
         ReconstructionFieldImpl test = new ReconstructionFieldImpl(real, imag);
-        assertTrue(test.has_field(), "It should start out with a field.");
-        assertTrue(!test.has_fourier(), "It should not start out with a "
+        assertTrue(test.hasField(), "It should start out with a field.");
+        assertTrue(!test.hasFourier(), "It should not start out with a "
             + "fourier.");
 
         ReconstructionComplexField field = test.field();
-        assertTrue(test.has_field(), "It should still have a field when the "
+        assertTrue(test.hasField(), "It should still have a field when the "
             + "field is retrieved.");
-        assertTrue(!test.has_fourier(), "It should still not have a fourier "
+        assertTrue(!test.hasFourier(), "It should still not have a fourier "
             + "when the field is retrieved.");
 
-        field.get_field(); // This triggers field_changed
-        assertTrue(test.has_field(), "It should still have a field when the "
+        field.getField(); // This triggers fieldChanged
+        assertTrue(test.hasField(), "It should still have a field when the "
             + "field has changed.");
-        assertTrue(!test.has_fourier(), "It should still not have a fourier "
+        assertTrue(!test.hasFourier(), "It should still not have a fourier "
             + "when the field has changed.");
 
         ReconstructionComplexField fourier = test.fourier();
-        assertTrue(test.has_field(), "It should still have a field when the "
+        assertTrue(test.hasField(), "It should still have a field when the "
             + "fourier is retrieved.");
-        assertTrue(test.has_fourier(), "It should have a fourier when the "
+        assertTrue(test.hasFourier(), "It should have a fourier when the "
             + "fourier is retrieved.");
 
-        field.get_field();
-        assertTrue(test.has_field(), "It should still have a field when the "
+        field.getField();
+        assertTrue(test.hasField(), "It should still have a field when the "
             + "field has changed, again.");
-        assertTrue(!test.has_fourier(), "It should not have a fourier when the "
+        assertTrue(!test.hasFourier(), "It should not have a fourier when the "
             + "field has changed.");
 
         assertTrue(test.fourier() != fourier, "When the fourier has to be "
             + "recreated, it should not be the same object as before.");
         fourier = test.fourier();
-        fourier.get_field();
-        assertTrue(!test.has_field(), "It should not have a field when the "
+        fourier.getField();
+        assertTrue(!test.hasField(), "It should not have a field when the "
             + "fourier has changed.");
-        assertTrue(test.has_fourier(), "It should have a fourier when the "
+        assertTrue(test.hasFourier(), "It should have a fourier when the "
             + "fourier has changed.");
 
         assertTrue(test.field() != field, "When the field has to be recreated, "
             + "it should not be the same object as before.");
-        assertTrue(test.has_field(), "It should have a field when the field is "
+        assertTrue(test.hasField(), "It should have a field when the field is "
             + "retrieved after it was gone.");
-        assertTrue(test.has_fourier(), "It should have a fourier when the field"
+        assertTrue(test.hasFourier(), "It should have a fourier when the field"
             + " is retrieved after it was gone.");
     }
     // The rest of these are testing the implementation of the fourier transform
@@ -81,7 +81,7 @@ public class ReconstructionFieldImplTest {
     // These test ideas were taken from https://dsp.stackexchange.com/a/635
 
     // Test that the inverse gives back the original field
-    @Test public void test_inverse_even()
+    @Test public void testInverseEven()
     {
         // These values were taken from random.org
         double[][] real = {
@@ -96,13 +96,13 @@ public class ReconstructionFieldImplTest {
             {0.352819170, 0.963542928, 0.935250921, 0.974076885},
             {0.588840304, 0.342984407, 0.946417343, 0.426974965},
         };
-        ReconstructionFieldImpl test = create_field(real, imag);
-        test.field_changed(test.fourier());
+        ReconstructionFieldImpl test = createField(real, imag);
+        test.fieldChanged(test.fourier());
         ComplexField field = test.field();
         for (int x = 0; x < 4; ++x) {
             for (int y = 0; y < 4; ++y) {
-                double fr = field.get_real(x, y);
-                double fi = field.get_imag(x, y);
+                double fr = field.getReal(x, y);
+                double fi = field.getImag(x, y);
                 double or = real[x][y];
                 double oi = imag[x][y];
                 String coords = "should be the same at (" + x + ", " + y + ").";
@@ -111,7 +111,7 @@ public class ReconstructionFieldImplTest {
             }
         }
     }
-    @Test public void test_inverse_odd()
+    @Test public void testInverseOdd()
     {
         double[][] real = {
             {0.815898329, 0.881980484, 0.182344800, 0.562266110, 0.456393194},
@@ -127,13 +127,13 @@ public class ReconstructionFieldImplTest {
             {0.588840304, 0.342984407, 0.946417343, 0.426974965, 0.896290421},
             {0.125369785, 0.626356339, 0.410700467, 0.190303355, 0.697610398}
         };
-        ReconstructionFieldImpl test = create_field(real, imag);
-        test.field_changed(test.fourier());
+        ReconstructionFieldImpl test = createField(real, imag);
+        test.fieldChanged(test.fourier());
         ComplexField field = test.field();
         for (int x = 0; x < 5; ++x) {
             for (int y = 0; y < 5; ++y) {
-                double fr = field.get_real(x, y);
-                double fi = field.get_imag(x, y);
+                double fr = field.getReal(x, y);
+                double fi = field.getImag(x, y);
                 double or = real[x][y];
                 double oi = imag[x][y];
                 String coords = "should be the same at (" + x + ", " + y + ").";
@@ -142,7 +142,7 @@ public class ReconstructionFieldImplTest {
             }
         }
     }
-    @Test public void test_inverse_rectangle()
+    @Test public void testInverseRectangle()
     {
         double[][] real = {
             {0.815898329, 0.881980484, 0.182344800, 0.562266110, 0.456393194},
@@ -152,13 +152,13 @@ public class ReconstructionFieldImplTest {
             {0.588840304, 0.342984407, 0.946417343, 0.426974965, 0.896290421},
             {0.125369785, 0.626356339, 0.410700467, 0.190303355, 0.697610398}
         };
-        ReconstructionFieldImpl test = create_field(real, imag);
-        test.field_changed(test.fourier());
+        ReconstructionFieldImpl test = createField(real, imag);
+        test.fieldChanged(test.fourier());
         ComplexField field = test.field();
         for (int x = 0; x < 2; ++x) {
             for (int y = 0; y < 5; ++y) {
-                double fr = field.get_real(x, y);
-                double fi = field.get_imag(x, y);
+                double fr = field.getReal(x, y);
+                double fi = field.getImag(x, y);
                 double or = real[x][y];
                 double oi = imag[x][y];
                 String coords = "should be the same at (" + x + ", " + y + ").";
@@ -168,7 +168,7 @@ public class ReconstructionFieldImplTest {
         }
     }
     // Test that the relationship F(ax + by) = aF(x) + bF(y)
-    @Test public void test_linearity()
+    @Test public void testLinearity()
     {
         double[][] real1 = {
             {0.815898329, 0.881980484, 0.182344800, 0.562266110, 0.456393194},
@@ -202,29 +202,29 @@ public class ReconstructionFieldImplTest {
         final double a2 = 0.990190876;
         final double a3 = 0.376310383;
         final double a4 = 0.865926190;
-        ReconstructionFieldImpl test1 = create_field(real1, imag1);
-        ReconstructionFieldImpl test2 = create_field(real2, imag2);
+        ReconstructionFieldImpl test1 = createField(real1, imag1);
+        ReconstructionFieldImpl test2 = createField(real2, imag2);
         ComplexField field1 = test1.field();
         ComplexField field2 = test2.field();
         ComplexField fourier1 = test1.fourier();
         ComplexField fourier2 = test2.fourier();
 
-        field1.multiply_in_place(a1, a2);
-        field2.multiply_in_place(a3, a4);
-        field1.add_in_place(field2);
+        field1.multiplyInPlace(a1, a2);
+        field2.multiplyInPlace(a3, a4);
+        field1.addInPlace(field2);
         ComplexField final1 = test1.fourier();
 
-        fourier1.multiply_in_place(a1, a2);
-        fourier2.multiply_in_place(a3, a4);
-        fourier1.add_in_place(fourier2);
+        fourier1.multiplyInPlace(a1, a2);
+        fourier2.multiplyInPlace(a3, a4);
+        fourier1.addInPlace(fourier2);
         ComplexField final2 = fourier1;
 
         for (int x = 0; x < 5; ++x) {
             for (int y = 0; y < 5; ++y) {
-                double r1 = final1.get_real(x, y);
-                double i1 = final1.get_imag(x, y);
-                double r2 = final2.get_real(x, y);
-                double i2 = final2.get_imag(x, y);
+                double r1 = final1.getReal(x, y);
+                double i1 = final1.getImag(x, y);
+                double r2 = final2.getReal(x, y);
+                double i2 = final2.getImag(x, y);
                 String coords = "should be the same at (" + x + ", " + y + ").";
                 assertEquals(r1, r2, 1e-6, "The real part " + coords);
                 assertEquals(i1, i2, 1e-6, "The imaginary part " + coords);
@@ -232,7 +232,7 @@ public class ReconstructionFieldImplTest {
         }
     }
     // Test that F(δ) = 1
-    @Test public void test_unit_impulse()
+    @Test public void testUnitImpulse()
     {
         double[][] real = {
             {1, 0, 0, 0, 0},
@@ -248,21 +248,21 @@ public class ReconstructionFieldImplTest {
             {0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0}
         };
-        ReconstructionFieldImpl test = create_field(real, imag);
+        ReconstructionFieldImpl test = createField(real, imag);
         ComplexField fourier = test.fourier();
         for (int x = 0; x < 5; ++x) {
             for (int y = 0; y < 5; ++y) {
                 String coords = "(" + x + ", " + y + ")";
-                assertEquals(fourier.get_real(x, y), 1, "The real value at "
+                assertEquals(fourier.getReal(x, y), 1, "The real value at "
                     + coords + " should be one.");
-                assertEquals(fourier.get_imag(x, y), 0, "The imaginary value at"
+                assertEquals(fourier.getImag(x, y), 0, "The imaginary value at"
                     + " " + coords + " should be zero.");
             }
         }
     }
     // Test that an offset corresponds to a predictable change in phase, but no
     // change in amplitude
-    @Test public void test_offset()
+    @Test public void testOffset()
     {
         double[][] real1 = {
             {0.815898329, 0.881980484, 0.182344800, 0.562266110, 0.456393194},
@@ -292,31 +292,31 @@ public class ReconstructionFieldImplTest {
             {0.190303355, 0.697610398, 0.125369785, 0.626356339, 0.410700467},
             {0.484473145, 0.411468675, 0.317941931, 0.847148538, 0.913971166}
         };
-        final int x_shift = -1;
-        final int y_shift = 2;
-        final int x_size = 5;
-        final int y_size = 5;
-        ReconstructionFieldImpl test1 = create_field(real1, imag1);
-        ReconstructionFieldImpl test2 = create_field(real2, imag2);
+        final int xShift = -1;
+        final int yShift = 2;
+        final int xSize = 5;
+        final int ySize = 5;
+        ReconstructionFieldImpl test1 = createField(real1, imag1);
+        ReconstructionFieldImpl test2 = createField(real2, imag2);
         ComplexField fourier1 = test1.fourier();
         ComplexField fourier2 = test2.fourier();
-        double[][] amp1 = fourier1.get_amp();
-        double[][] amp2 = fourier2.get_amp();
-        double[][] arg1 = fourier1.get_arg();
-        double[][] arg2 = fourier2.get_arg();
-        for (int x = 0; x < x_size; ++x) {
-            for (int y = 0; y < y_size; ++y) {
+        double[][] amp1 = fourier1.getAmp();
+        double[][] amp2 = fourier2.getAmp();
+        double[][] arg1 = fourier1.getArg();
+        double[][] arg2 = fourier2.getArg();
+        for (int x = 0; x < xSize; ++x) {
+            for (int y = 0; y < ySize; ++y) {
                 String coord = "(" + x + ", " + y + ")";
                 assertEquals(amp1[x][y], amp2[x][y], 1e-6, "The amplitude of "
                     + "the Fourier transform should be identical at " + coord
                     + " when there is a shift.");
-                final int x_distance = 3 - x;
-                final int y_distance = 3 - y;
-                final double x_change = x_shift * x_distance;
-                final double y_change = y_shift * y_distance;
-                final double phase_diff = 2*Math.PI * (x_change / x_size +
-                                                       y_change / y_size);
-                double arg1_mod = phase_diff + arg1[x][y];
+                final int xDistance = 3 - x;
+                final int yDistance = 3 - y;
+                final double xChange = xShift * xDistance;
+                final double yChange = yShift * yDistance;
+                final double phaseDiff = 2*Math.PI * (xChange / xSize +
+                                                       yChange / ySize);
+                double arg1_mod = phaseDiff + arg1[x][y];
                 while (arg1_mod > Math.PI) arg1_mod -= 2 * Math.PI;
                 while (arg1_mod < -Math.PI) arg1_mod += 2 * Math.PI;
                 assertEquals(arg1_mod, arg2[x][y], 1e-6, "The phase of the "
@@ -326,7 +326,7 @@ public class ReconstructionFieldImplTest {
         }
     }
 
-    private ReconstructionFieldImpl create_field(double[][] real,
+    private ReconstructionFieldImpl createField(double[][] real,
                                                  double[][] imag)
     {
         return new ReconstructionFieldImpl(real, imag);

@@ -40,13 +40,13 @@ public interface UnitService extends ImageJService {
     /** Set the units used for wavelength.
      * @param val The unit to set it to.
      */
-    void set_wavelength(String val);
+    void setWavelength(String val);
     /** Set the units used for image dimensions.
      * @param val The unit to set it to.
      */
-    void set_image(String val);
+    void setImage(String val);
     /** Set the units used for z.
      * @param val The unit to set it to.
      */
-    void set_z(String val);
+    void setZ(String val);
 }

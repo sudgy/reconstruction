@@ -24,9 +24,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 public class NoneTest {
-    @Test public void test_null()
+    @Test public void testNull()
     {
         None test = new None();
-        assertTrue(test.get_reference_holo(null, 0) == null);
+        assertTrue(test.getReferenceHolo(null, 0) == null);
     }
 }

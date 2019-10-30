@@ -36,57 +36,59 @@ import edu.pdx.imagej.dynamic_parameters.ImageParameter;
 import edu.pdx.imagej.dynamic_parameters.TestDialog;
 
 public class HoldingSinglePluginTest {
-    @Test public void test_dialog()
+    @Test public void testDialog()
     {
-        HoldingSinglePlugin<TestPlugin> test
-            = new HoldingSinglePlugin<>("C", TestPlugin.class);
+        TestHoldingSinglePlugin<TestPlugin> test
+            = new TestHoldingSinglePlugin<>("C", TestPlugin.class);
         TestDialog dialog = new TestDialog();
         Context context = new Context(PluginService.class, PrefService.class);
         context.inject(test.param());
         test.param().initialize();
-        test.param().add_to_dialog(dialog);
-        assertEquals(dialog.get_string(0).value, "B", "HoldingSinglePlugin "
+        test.param().addToDialog(dialog);
+        assertEquals(dialog.getString(0).value, "B", "HoldingSinglePlugin "
             + "should discover plugins and should start with the "
             + "highest-priority plugin.");
-        assertTrue(test.param().get_value() instanceof TestB,
+        assertTrue(test.param().getValue() instanceof TestB,
             "HoldingSinglePlugin should return a correct parameter.");
 
-        dialog.get_string(0).value = "A";
-        test.param().read_from_dialog();
-        assertTrue(test.param().get_value() instanceof TestA,
+        dialog.getString(0).value = "A";
+        test.param().readFromDialog();
+        assertTrue(test.param().getValue() instanceof TestA,
             "HoldingSinglePlugin should change the parameter correctly.");
     }
-    @Test public void test_process()
+    @Test public void testProcess()
     {
-        HoldingSinglePlugin<TestPlugin> test
-            = new HoldingSinglePlugin<>("C", TestPlugin.class);
+        TestHoldingSinglePlugin<TestPlugin> test
+            = new TestHoldingSinglePlugin<>("C", TestPlugin.class);
         Context context = new Context(PluginService.class, PrefService.class);
         context.inject(test.param());
         test.param().initialize();
-        ((HologramPluginParameter)test.param()).set_hologram(null);
-        test.process_beginning();
+        ((HologramPluginParameter)test.param()).setHologram(null);
+        test.processBeginning();
 
-        assertTrue(test.param().get_value().M_processed);
-        assertTrue(test.param().get_value().M_hologrammed);
+        assertTrue(test.param().getValue().M_processed);
+        assertTrue(test.param().getValue().M_hologrammed);
 
         TestDialog dialog = new TestDialog();
-        test.param().add_to_dialog(dialog);
-        dialog.get_string(0).value = "A";
-        test.param().read_from_dialog();
-        assertTrue(!test.param().get_value().M_processed, "Non-selected plugins"
+        test.param().addToDialog(dialog);
+        dialog.getString(0).value = "A";
+        test.param().readFromDialog();
+        assertTrue(!test.param().getValue().M_processed, "Non-selected plugins"
             + " should not get processed.");
-        assertTrue(test.param().get_value().M_hologrammed, "Non-selected "
+        assertTrue(test.param().getValue().M_hologrammed, "Non-selected "
             + "plugins should still see the hologram.");
     }
     public static abstract class TestPlugin extends    AbstractRichPlugin
                                             implements SubReconstructionPlugin {
         @Override
-        public void process_beginning()
+        public void processBeginning()
         {
             M_processed = true;
         }
         @Override
         public DParameter<?> param() {return M_param;}
+        @Override
+        public TestPlugin duplicate() {return null;}
         public boolean M_processed = false;
         public boolean M_hologrammed = false;
 
@@ -95,7 +97,7 @@ public class HoldingSinglePluginTest {
                                 implements HologramPluginParameter {
             public HoloParam() {super(0, "");}
             @Override
-            public void set_hologram(ImageParameter hologram)
+            public void setHologram(ImageParameter hologram)
             {
                 M_hologrammed = true;
             }
@@ -106,4 +108,14 @@ public class HoldingSinglePluginTest {
     public static class TestA extends TestPlugin {}
     @Plugin(type = TestPlugin.class, name = "B", priority = Priority.HIGH)
     public static class TestB extends TestPlugin {}
+    public class TestHoldingSinglePlugin<T extends ReconstructionPlugin>
+                 extends HoldingSinglePlugin<T>
+    {
+        public TestHoldingSinglePlugin(String label, Class<T> cls)
+        {
+            super(label, cls);
+        }
+        @Override
+        public TestHoldingSinglePlugin duplicate() {return null;}
+    }
 }

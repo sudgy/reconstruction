@@ -45,7 +45,7 @@ public class ReconstructionFieldImpl implements ReconstructionField {
         }
         M_field = new ReconstructionComplexField(field, this);
     }
-    void field_changed(ReconstructionComplexField field)
+    void fieldChanged(ReconstructionComplexField field)
     {
         if (field == M_field) M_fourier = null;
         if (field == M_fourier) M_field = null;
@@ -54,11 +54,11 @@ public class ReconstructionFieldImpl implements ReconstructionField {
     @Override
     public ReconstructionComplexField field()
     {
-        if (!has_field()) {
+        if (!hasField()) {
             M_field = M_fourier.copy();
-            M_field.shift_backward();
+            M_field.shiftBackward();
             M_fft.complexInverse(M_field.M_field, true);
-            M_field.set_containing(this);
+            M_field.setContaining(this);
         }
         return M_field;
     }
@@ -66,18 +66,18 @@ public class ReconstructionFieldImpl implements ReconstructionField {
     @Override
     public ReconstructionComplexField fourier()
     {
-        if (!has_fourier()) {
+        if (!hasFourier()) {
             M_fourier = M_field.copy();
             M_fft.complexForward(M_fourier.M_field);
-            M_fourier.shift_forward();
-            M_fourier.set_containing(this);
+            M_fourier.shiftForward();
+            M_fourier.setContaining(this);
         }
         return M_fourier;
     }
     /** {@inheritDoc} */
-    @Override public boolean has_field()   {return M_field   != null;}
+    @Override public boolean hasField()   {return M_field   != null;}
     /** {@inheritDoc} */
-    @Override public boolean has_fourier() {return M_fourier != null;}
+    @Override public boolean hasFourier() {return M_fourier != null;}
 
     /** {@inheritDoc} */
     @Override
@@ -85,8 +85,8 @@ public class ReconstructionFieldImpl implements ReconstructionField {
     {
         ReconstructionFieldImpl result = new ReconstructionFieldImpl();
         result.M_fft = M_fft;
-        if (M_fourier != null) result.M_fourier = M_fourier.copy_in(result);
-        if (M_field != null) result.M_field = M_field.copy_in(result);
+        if (M_fourier != null) result.M_fourier = M_fourier.copyIn(result);
+        if (M_field != null) result.M_field = M_field.copyIn(result);
         return result;
     }
 

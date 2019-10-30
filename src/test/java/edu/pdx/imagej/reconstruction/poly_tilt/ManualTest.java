@@ -33,102 +33,102 @@ import edu.pdx.imagej.dynamic_parameters.ImageParameter;
 import edu.pdx.imagej.dynamic_parameters.TestDialog;
 
 public class ManualTest {
-    @Test public void test_initial_values()
+    @Test public void testInitialValues()
     {
         Manual.ManualParameter test = new Manual.ManualParameter();
         ImageParameter image = new ImageParameter("", M_imgs4);
-        test.set_hologram(image);
-        Line[] lines = test.get_value();
-        Line h_line = lines[0];
-        Line v_line = lines[1];
+        test.setHologram(image);
+        Line[] lines = test.getValue();
+        Line hLine = lines[0];
+        Line vLine = lines[1];
         int i = 0;
-        for (Point p : h_line) {
+        for (Point p : hLine) {
             assertEquals(i++, p.x);
             assertEquals(2, p.y); // In the middle
         }
         assertEquals(4, i, "It should end at the end of the image.");
         i = 0;
-        for (Point p : v_line) {
+        for (Point p : vLine) {
             assertEquals(2, p.x); // In the middle
             assertEquals(i++, p.y);
         }
         assertEquals(4, i, "It should end at the end of the image.");
     }
-    @Test public void test_change()
+    @Test public void testChange()
     {
         Manual.ManualParameter test = new Manual.ManualParameter();
         ImageParameter image = new ImageParameter("", M_imgs4);
-        test.set_hologram(image);
+        test.setHologram(image);
         TestDialog dialog = new TestDialog();
-        test.add_to_dialog(dialog);
+        test.addToDialog(dialog);
         // h line goes forward, while v line goes backwards
-        dialog.get_integer(0).value = 1;
-        dialog.get_integer(1).value = 1;
-        dialog.get_integer(2).value = 2;
-        dialog.get_integer(3).value = 3;
-        dialog.get_integer(4).value = 3;
-        dialog.get_integer(5).value = 1;
-        test.read_from_dialog();
-        Line[] lines = test.get_value();
-        Line h_line = lines[0];
-        Line v_line = lines[1];
+        dialog.getInteger(0).value = 1;
+        dialog.getInteger(1).value = 1;
+        dialog.getInteger(2).value = 2;
+        dialog.getInteger(3).value = 3;
+        dialog.getInteger(4).value = 3;
+        dialog.getInteger(5).value = 1;
+        test.readFromDialog();
+        Line[] lines = test.getValue();
+        Line hLine = lines[0];
+        Line vLine = lines[1];
         int i = 1;
-        for (Point p : h_line) {
+        for (Point p : hLine) {
             assertEquals(i++, p.x);
             assertEquals(1, p.y);
         }
         assertEquals(3, i);
         i = 1;
-        for (Point p : v_line) {
+        for (Point p : vLine) {
             assertEquals(3, p.x);
             assertEquals(i++, p.y);
         }
         assertEquals(4, i);
     }
-    @Test public void test_bounds()
+    @Test public void testBounds()
     {
         Manual.ManualParameter test = new Manual.ManualParameter();
         ImageParameter image = new ImageParameter("", M_imgs4);
-        test.set_hologram(image);
+        test.setHologram(image);
         TestDialog dialog = new TestDialog();
-        test.add_to_dialog(dialog);
+        test.addToDialog(dialog);
 
-        assertTrue(test.get_error() == null);
+        assertTrue(test.getError() == null);
 
-        dialog.get_integer(0).value = 4;
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
+        dialog.getInteger(0).value = 4;
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
 
-        dialog.get_integer(0).value = 3;
-        test.read_from_dialog();
-        assertTrue(test.get_error() == null);
+        dialog.getInteger(0).value = 3;
+        test.readFromDialog();
+        assertTrue(test.getError() == null);
 
-        dialog.get_integer(0).value = -1;
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
+        dialog.getInteger(0).value = -1;
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
     }
-    @Test public void test_changing_bounds()
+    @Test public void testChangingBounds()
     {
         Manual.ManualParameter test = new Manual.ManualParameter();
         ImageParameter image = new ImageParameter("", M_imgs);
-        test.set_hologram(image);
+        test.setHologram(image);
         TestDialog dialog = new TestDialog();
-        image.add_to_dialog(dialog);
-        test.add_to_dialog(dialog);
+        image.addToDialog(dialog);
+        test.addToDialog(dialog);
 
-        dialog.get_integer(0).value = 4;
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
+        dialog.getInteger(0).value = 4;
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
 
-        dialog.get_string_index(0).value = 1;
-        image.read_from_dialog();
-        test.read_from_dialog();
-        assertTrue(test.get_error() == null);
+        dialog.getStringIndex(0).value = 1;
+        image.readFromDialog();
+        test.readFromDialog();
+        assertTrue(test.getError() == null);
 
-        dialog.get_string_index(0).value = 0;
-        image.read_from_dialog();
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
+        dialog.getStringIndex(0).value = 0;
+        image.readFromDialog();
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
     }
     private ImagePlus M_img4 = new ImagePlus("", new FloatProcessor(4, 4));
     private ImagePlus M_img8 = new ImagePlus("", new FloatProcessor(8, 8));

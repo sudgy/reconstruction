@@ -31,7 +31,7 @@ import edu.pdx.imagej.reconstruction.ReconstructionField;
 import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
 
 /** A {@link ReconstructionPlugin} that holds other ReconstructionPlugins.  To
- * use this, you must override {@link get_plugins} and {@link sort_plugins}.  It
+ * use this, you must override {@link getPlugins} and {@link sortPlugins}.  It
  * automatically calls all of the ReconstructionPlugin's methods on all of the
  * plugins contained within this one, so if you override any of these methods,
  * you <strong>must</strong> call <code>super.[method]</code> if you want that
@@ -43,151 +43,151 @@ public interface HoldingPlugin<T extends ReconstructionPlugin>
     extends ReconstructionPlugin
 {
     @Override
-    default void read_plugins(List<ReconstructionPlugin> plugins)
+    default void readPlugins(List<ReconstructionPlugin> plugins)
     {
-        for (T plugin : get_plugins()) {
-            plugin.read_plugins(plugins);
+        for (T plugin : getPlugins()) {
+            plugin.readPlugins(plugins);
         }
     }
     @Override
-    default void process_before_param()
+    default void processBeforeParam()
     {
-        for (T plugin : get_plugins()) {
-            plugin.process_before_param();
+        for (T plugin : getPlugins()) {
+            plugin.processBeforeParam();
         }
     }
     @Override
-    default void process_hologram_param(ImagePlus hologram)
+    default void processHologramParam(ImagePlus hologram)
     {
-        for (T plugin : get_plugins()) {
-            plugin.process_hologram_param(hologram);
+        for (T plugin : getPlugins()) {
+            plugin.processHologramParam(hologram);
         }
     }
     @Override
-    default void process_wavelength_param(DistanceUnitValue wavelength)
+    default void processWavelengthParam(DistanceUnitValue wavelength)
     {
-        for (T plugin : get_plugins()) {
-            plugin.process_wavelength_param(wavelength);
+        for (T plugin : getPlugins()) {
+            plugin.processWavelengthParam(wavelength);
         }
     }
     @Override
-    default void process_dimensions_param(DistanceUnitValue width,
+    default void processDimensionsParam(DistanceUnitValue width,
                                           DistanceUnitValue height)
     {
-        for (T plugin : get_plugins()) {
-            plugin.process_dimensions_param(width, height);
+        for (T plugin : getPlugins()) {
+            plugin.processDimensionsParam(width, height);
         }
     }
     @Override
-    default void process_ts_param(List<Integer> ts)
+    default void processTsParam(List<Integer> ts)
     {
-        for (T plugin : get_plugins()) {
-            plugin.process_ts_param(ts);
+        for (T plugin : getPlugins()) {
+            plugin.processTsParam(ts);
         }
     }
     @Override
-    default void process_zs_param(List<DistanceUnitValue> zs)
+    default void processZsParam(List<DistanceUnitValue> zs)
     {
-        for (T plugin : get_plugins()) {
-            plugin.process_zs_param(zs);
+        for (T plugin : getPlugins()) {
+            plugin.processZsParam(zs);
         }
     }
     @Override
-    default void process_beginning()
+    default void processBeginning()
     {
-        for (T plugin : get_plugins()) {
-            plugin.process_beginning();
+        for (T plugin : getPlugins()) {
+            plugin.processBeginning();
         }
     }
     @Override
-    default void process_original_hologram(ConstReconstructionField field)
+    default void processOriginalHologram(ConstReconstructionField field)
     {
-        for (T plugin : get_plugins()) {
-            plugin.process_original_hologram(field);
+        for (T plugin : getPlugins()) {
+            plugin.processOriginalHologram(field);
         }
     }
     @Override
-    default void process_hologram(ReconstructionField field, int t)
+    default void processHologram(ReconstructionField field, int t)
     {
-        for (T plugin : get_plugins()) {
-            plugin.process_hologram(field, t);
+        for (T plugin : getPlugins()) {
+            plugin.processHologram(field, t);
         }
     }
     @Override
-    default void process_filtered_field(ReconstructionField field, int t)
+    default void processFilteredField(ReconstructionField field, int t)
     {
-        for (T plugin : get_plugins()) {
-            plugin.process_filtered_field(field, t);
+        for (T plugin : getPlugins()) {
+            plugin.processFilteredField(field, t);
         }
     }
     @Override
-    default void process_propagated_field(ReconstructionField field,
+    default void processPropagatedField(ReconstructionField field,
                                           int t, DistanceUnitValue z)
     {
-        for (T plugin : get_plugins()) {
-            plugin.process_propagated_field(field, t, z);
+        for (T plugin : getPlugins()) {
+            plugin.processPropagatedField(field, t, z);
         }
     }
     @Override
-    default void process_ending()
+    default void processEnding()
     {
-        for (T plugin : get_plugins()) {
-            plugin.process_ending();
+        for (T plugin : getPlugins()) {
+            plugin.processEnding();
         }
     }
     @Override
-    default void set_beginning_priority()
+    default void setBeginningPriority()
     {
-        for (T plugin : get_plugins()) {
-            plugin.set_beginning_priority();
+        for (T plugin : getPlugins()) {
+            plugin.setBeginningPriority();
         }
-        sort_plugins();
+        sortPlugins();
     }
     @Override
-    default void set_original_hologram_priority()
+    default void setOriginalHologramPriority()
     {
-        for (T plugin : get_plugins()) {
-            plugin.set_original_hologram_priority();
+        for (T plugin : getPlugins()) {
+            plugin.setOriginalHologramPriority();
         }
-        sort_plugins();
+        sortPlugins();
     }
     @Override
-    default void set_hologram_priority()
+    default void setHologramPriority()
     {
-        for (T plugin : get_plugins()) {
-            plugin.set_hologram_priority();
+        for (T plugin : getPlugins()) {
+            plugin.setHologramPriority();
         }
-        sort_plugins();
+        sortPlugins();
     }
     @Override
-    default void set_filtered_field_priority()
+    default void setFilteredFieldPriority()
     {
-        for (T plugin : get_plugins()) {
-            plugin.set_filtered_field_priority();
+        for (T plugin : getPlugins()) {
+            plugin.setFilteredFieldPriority();
         }
-        sort_plugins();
+        sortPlugins();
     }
     @Override
-    default void set_propagated_field_priority()
+    default void setPropagatedFieldPriority()
     {
-        for (T plugin : get_plugins()) {
-            plugin.set_propagated_field_priority();
+        for (T plugin : getPlugins()) {
+            plugin.setPropagatedFieldPriority();
         }
-        sort_plugins();
+        sortPlugins();
     }
     @Override
-    default void set_ending_priority()
+    default void setEndingPriority()
     {
-        for (T plugin : get_plugins()) {
-            plugin.set_ending_priority();
+        for (T plugin : getPlugins()) {
+            plugin.setEndingPriority();
         }
-        sort_plugins();
+        sortPlugins();
     }
     @Override
-    default boolean has_error()
+    default boolean hasError()
     {
-        for (T plugin : get_plugins()) {
-            if (plugin.has_error()) return true;
+        for (T plugin : getPlugins()) {
+            if (plugin.hasError()) return true;
         }
         return false;
     }
@@ -198,9 +198,9 @@ public interface HoldingPlugin<T extends ReconstructionPlugin>
      *
      * @return The plugins that are held by this plugin.
      */
-    Iterable<T> get_plugins();
-    /** Sort the plugins for the iteration order in {@link get_plugins}.  This
+    Iterable<T> getPlugins();
+    /** Sort the plugins for the iteration order in {@link getPlugins}.  This
      * will be called after priorities might have changed.
      */
-    void sort_plugins();
+    void sortPlugins();
 }

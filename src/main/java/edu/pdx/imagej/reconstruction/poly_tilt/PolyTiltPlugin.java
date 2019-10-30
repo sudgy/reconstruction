@@ -30,9 +30,9 @@ public interface PolyTiltPlugin extends SubReconstructionPlugin {
     /** Get the horizontal line.
      * @return The horizontal line.
      */
-    Iterable<Point> get_h_line();
+    Iterable<Point> getHLine();
     /** Get the vertical line.
      * @return The vertical line.
      */
-    Iterable<Point> get_v_line();
+    Iterable<Point> getVLine();
 }

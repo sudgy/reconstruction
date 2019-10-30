@@ -69,7 +69,7 @@ public class Reference extends HoldingSinglePlugin<ReferencePlugin>
         super(plugin);
         M_phase = phase;
         M_amplitude = amplitude;
-        M_use_same_roi = true;
+        M_useSameRoi = true;
     }
     /** Constructor intended for programmatic use of the plugin, with a custom
      * filter.  If you want to use the same filter as everyting else, use {@link
@@ -87,8 +87,27 @@ public class Reference extends HoldingSinglePlugin<ReferencePlugin>
         super(plugin);
         M_phase = phase;
         M_amplitude = amplitude;
-        M_use_same_roi = false;
-        M_not_same_filter = filter;
+        M_useSameRoi = false;
+        M_notSameFilter = filter;
+    }
+    private Reference(ReferencePlugin plugin, boolean phase, boolean amplitude,
+                      boolean useSameRoi, Filter filter)
+    {
+        super(plugin);
+        M_phase = phase;
+        M_amplitude = amplitude;
+        M_useSameRoi = useSameRoi;
+        M_notSameFilter = filter;
+    }
+    @Override public Reference duplicate()
+    {
+        if (M_live) {
+            M_phase = M_param.phase();
+            M_amplitude = M_param.amplitude();
+            M_useSameRoi = M_param.useSameRoi();
+        }
+        return new Reference((ReferencePlugin)getPlugin().duplicate(), M_phase,
+                             M_amplitude, M_useSameRoi, M_notSameFilter);
     }
 
     /** Get the parameter for this plugin.
@@ -105,9 +124,9 @@ public class Reference extends HoldingSinglePlugin<ReferencePlugin>
      * hologram.
      */
     @Override
-    public void read_plugins(List<ReconstructionPlugin> plugins)
+    public void readPlugins(List<ReconstructionPlugin> plugins)
     {
-        super.read_plugins(plugins);
+        super.readPlugins(plugins);
         for (ReconstructionPlugin plugin : plugins) {
             if (plugin instanceof Filter) M_filter = (Filter)plugin;
         }
@@ -115,39 +134,39 @@ public class Reference extends HoldingSinglePlugin<ReferencePlugin>
     /** Apply the reference hologram.
      */
     @Override
-    public void process_filtered_field(ReconstructionField field, int t)
+    public void processFilteredField(ReconstructionField field, int t)
     {
         if (M_live) {
             M_phase = M_param.phase();
             M_amplitude = M_param.amplitude();
-            M_use_same_roi = M_param.use_same_roi();
+            M_useSameRoi = M_param.useSameRoi();
         }
-        ReconstructionField reference_field
-            = get_plugin().get_reference_holo(
+        ReconstructionField referenceField
+            = getPlugin().getReferenceHolo(
                             new ConstReconstructionField(field), t);
-        if (reference_field == null) return;
-        if (M_already_filtered.add(reference_field)) {
-            if (M_use_same_roi && !get_plugin().dont_use_same_roi()) {
-                M_filter.filter_field(reference_field);
+        if (referenceField == null) return;
+        if (M_alreadyFiltered.add(referenceField)) {
+            if (M_useSameRoi && !getPlugin().dontUseSameRoi()) {
+                M_filter.filterField(referenceField);
             }
             else {
-                if (M_not_same_filter == null) {
-                    M_not_same_filter = new Filter();
-                    M_not_same_filter.get_filter(
-                        new ConstReconstructionField(reference_field),
+                if (M_notSameFilter == null) {
+                    M_notSameFilter = new Filter();
+                    M_notSameFilter.getFilter(
+                        new ConstReconstructionField(referenceField),
                         "Please select the ROI for the reference hologram and then "
                         + "press OK.");
                 }
-                M_not_same_filter.filter_field(reference_field);
+                M_notSameFilter.filterField(referenceField);
             }
-            get_reference(reference_field);
+            getReference(referenceField);
         }
-        field.field().multiply_in_place(reference_field.field());
+        field.field().multiplyInPlace(referenceField.field());
     }
     /** Returns a singleton list of <code>{@link
      * ReferencePlugin}.class</code>.
      */
-    @Override public List<Class<? extends ReconstructionPlugin>> sub_plugins()
+    @Override public List<Class<? extends ReconstructionPlugin>> subPlugins()
     {
         ArrayList<Class<? extends ReconstructionPlugin>> result
             = new ArrayList<>();
@@ -155,9 +174,9 @@ public class Reference extends HoldingSinglePlugin<ReferencePlugin>
         return result;
     }
 
-    void get_reference(ReconstructionField hologram)
+    void getReference(ReconstructionField hologram)
     {
-        double[][] reference = hologram.field().get_field();
+        double[][] reference = hologram.field().getField();
         for (int x = 0; x < hologram.field().width(); ++x) {
             for (int y = 0; y < hologram.field().height(); ++y) {
                 double real = reference[x][y * 2];
@@ -193,11 +212,11 @@ public class Reference extends HoldingSinglePlugin<ReferencePlugin>
     }
 
     private Filter M_filter;
-    Filter M_not_same_filter; // Package private for testing
-    private boolean M_use_same_roi = false;
+    Filter M_notSameFilter; // Package private for testing
+    private boolean M_useSameRoi = false;
     private boolean M_phase = false;
     private boolean M_amplitude = false;
     private boolean M_live = false;
-    private HashSet<ReconstructionField> M_already_filtered = new HashSet<>();
+    private HashSet<ReconstructionField> M_alreadyFiltered = new HashSet<>();
     ReferenceParameter M_param; // Package private for testing
 }

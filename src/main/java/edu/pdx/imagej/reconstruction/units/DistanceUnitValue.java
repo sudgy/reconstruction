@@ -59,7 +59,7 @@ public class DistanceUnitValue {
      *
      * @return The numerical value in nanometers.
      */
-    public double as_nano()
+    public double asNano()
     {
         return DistanceUnits.convert(M_value, M_unit, DistanceUnits.Nano);
     }
@@ -67,7 +67,7 @@ public class DistanceUnitValue {
      *
      * @return The numerical value in micrometers.
      */
-    public double as_micro()
+    public double asMicro()
     {
         return DistanceUnits.convert(M_value, M_unit, DistanceUnits.Micro);
     }
@@ -75,7 +75,7 @@ public class DistanceUnitValue {
      *
      * @return The numerical value in millimeters.
      */
-    public double as_milli()
+    public double asMilli()
     {
         return DistanceUnits.convert(M_value, M_unit, DistanceUnits.Milli);
     }
@@ -83,7 +83,7 @@ public class DistanceUnitValue {
      *
      * @return The numerical value in centimeters.
      */
-    public double as_centi()
+    public double asCenti()
     {
         return DistanceUnits.convert(M_value, M_unit, DistanceUnits.Centi);
     }
@@ -91,7 +91,7 @@ public class DistanceUnitValue {
      *
      * @return The numerical value in meters.
      */
-    public double as_meter()
+    public double asMeter()
     {
         return DistanceUnits.convert(M_value, M_unit, DistanceUnits.Meter);
     }

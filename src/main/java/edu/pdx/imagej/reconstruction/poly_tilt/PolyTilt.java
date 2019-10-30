@@ -50,7 +50,7 @@ import edu.pdx.imagej.reconstruction.reference.Reference;
  * PolyTiltPlugin}.  See that page for more info.
  * <p>
  * This class does include many methods for determining polynomials and
- * evaluating them, but they only work once process_original_hologram has
+ * evaluating them, but they only work once processOriginalHologram has
  * started.  At that point the sub plugins can call these methods and use them.
  * They are not really intended to be used for other purposes.
  */
@@ -76,6 +76,10 @@ public class PolyTilt extends HoldingSinglePlugin<PolyTiltPlugin>
         super(plugin);
         M_degree = degree;
     }
+    @Override public PolyTilt duplicate()
+    {
+        return new PolyTilt((PolyTiltPlugin)getPlugin().duplicate(), M_degree);
+    }
 
     /** Get the parameter for this plugin.
      */
@@ -90,16 +94,16 @@ public class PolyTilt extends HoldingSinglePlugin<PolyTiltPlugin>
     /** Get the starting slice from the hologram.
      */
     @Override
-    public void process_hologram_param(ImagePlus imp)
+    public void processHologramParam(ImagePlus imp)
     {
-        M_starting_t = imp.getCurrentSlice();
+        M_startingT = imp.getCurrentSlice();
     }
     /** Get the filter from the list of plugins.
      */
     @Override
-    public void read_plugins(List<ReconstructionPlugin> plugins)
+    public void readPlugins(List<ReconstructionPlugin> plugins)
     {
-        super.read_plugins(plugins);
+        super.readPlugins(plugins);
         for (ReconstructionPlugin plugin : plugins) {
             if (plugin instanceof Filter) M_filter = (Filter)plugin;
             if (plugin instanceof Reference) M_reference = (Reference)plugin;
@@ -110,43 +114,43 @@ public class PolyTilt extends HoldingSinglePlugin<PolyTiltPlugin>
      * @param field The field to apply the polynomial fit to.
      */
     @Override
-    public void process_original_hologram(ConstReconstructionField field)
+    public void processOriginalHologram(ConstReconstructionField field)
     {
-        super.process_original_hologram(field);
+        super.processOriginalHologram(field);
         if (M_live) {
-            if (!M_param.do_poly_tilt()) return;
+            if (!M_param.doPolyTilt()) return;
         }
-        ReconstructionField filtered_field = field.copy();
-        if (M_filter != null) M_filter.filter_field(filtered_field);
+        ReconstructionField filteredField = field.copy();
+        if (M_filter != null) M_filter.filterField(filteredField);
         if (M_reference != null) {
-            M_reference.process_filtered_field(filtered_field, M_starting_t);
+            M_reference.processFilteredField(filteredField, M_startingT);
         }
-        M_phase = filtered_field.field().get_arg();
-        double[] h_poly;
-        double[] v_poly;
+        M_phase = filteredField.field().getArg();
+        double[] hPoly;
+        double[] vPoly;
         if (M_live) {
             M_degree = M_param.degree();
-            h_poly = fit_along(M_param.h_line());
-            v_poly = fit_along(M_param.v_line());
+            hPoly = fitAlong(M_param.hLine());
+            vPoly = fitAlong(M_param.vLine());
         }
         else {
-            h_poly = fit_along(get_plugin().get_h_line());
-            v_poly = fit_along(get_plugin().get_v_line());
+            hPoly = fitAlong(getPlugin().getHLine());
+            vPoly = fitAlong(getPlugin().getVLine());
         }
 
         final int width = M_phase.length;
         final int height = M_phase[0].length;
-        M_poly_field = new double[width][height*2];
+        M_polyField = new double[width][height*2];
         for (int x = 0; x < width; ++x) {
             for (int y = 0; y < height; ++y) {
                 double val = 0;
-                for (int i = 0; i < h_poly.length; ++i) {
-                    val += h_poly[i] * Math.pow(x, i + 1);
-                    val += v_poly[i] * Math.pow(y, i + 1);
+                for (int i = 0; i < hPoly.length; ++i) {
+                    val += hPoly[i] * Math.pow(x, i + 1);
+                    val += vPoly[i] * Math.pow(y, i + 1);
                 }
                 val *= -1;
-                M_poly_field[x][2*y  ] = (float)Math.cos(val);
-                M_poly_field[x][2*y+1] = (float)Math.sin(val);
+                M_polyField[x][2*y  ] = (float)Math.cos(val);
+                M_polyField[x][2*y+1] = (float)Math.sin(val);
             }
         }
     }
@@ -157,15 +161,15 @@ public class PolyTilt extends HoldingSinglePlugin<PolyTiltPlugin>
      * @param t Unused.
      */
     @Override
-    public void process_filtered_field(ReconstructionField field, int t)
+    public void processFilteredField(ReconstructionField field, int t)
     {
-        if (M_live && !M_param.do_poly_tilt()) return;
-        field.field().multiply_in_place(M_poly_field);
+        if (M_live && !M_param.doPolyTilt()) return;
+        field.field().multiplyInPlace(M_polyField);
     }
     /** Returns a singleton list of <code>{@link
      * PolyTiltPlugin}.class</code>.
      */
-    @Override public List<Class<? extends ReconstructionPlugin>> sub_plugins()
+    @Override public List<Class<? extends ReconstructionPlugin>> subPlugins()
     {
         ArrayList<Class<? extends ReconstructionPlugin>> result
             = new ArrayList<>();
@@ -181,11 +185,11 @@ public class PolyTilt extends HoldingSinglePlugin<PolyTiltPlugin>
      *         polynomial.  The first element is the linear term, the second
      *         element is the quadratic term, etc.  There is no constant term.
      *         If you need a constant term, use {@link
-     *         fit_along_including_constant}.
+     *         fitAlongIncludingConstant}.
      */
-    public double[] fit_along(Iterable<Point> line)
+    public double[] fitAlong(Iterable<Point> line)
     {
-        return remove_constant(fit_along_including_constant(line));
+        return removeConstant(fitAlongIncludingConstant(line));
     }
     /** Get the polynomial fit along a certain set of points, including the
      * constant term.  It will use the phase value and degree that were set
@@ -196,39 +200,39 @@ public class PolyTilt extends HoldingSinglePlugin<PolyTiltPlugin>
      *         polynomial.  The first element is the constant term, the second
      *         element is the linear term, etc.
      *
-     * @see fit_along
+     * @see fitAlong
      */
-    public double[] fit_along_including_constant(Iterable<Point> line)
+    public double[] fitAlongIncludingConstant(Iterable<Point> line)
     {
         WeightedObservedPoints points = new WeightedObservedPoints();
         int x = 0;
-        double current_phase = 0;
-        double last_value = 0;
+        double currentPhase = 0;
+        double lastValue = 0;
         final double C_phase = 2*Math.PI;
-        final double C_half_phase = C_phase / 2;
-        M_last_phase = new double[Math.max(M_phase.length, M_phase[0].length)];
+        final double C_halfPhase = C_phase / 2;
+        M_lastPhase = new double[Math.max(M_phase.length, M_phase[0].length)];
         for (Point p : line) {
             int px = p.x;
             int py = p.y;
             if (px < 0 || py < 0 || px >= M_phase.length
                                  || py >= M_phase[0].length) continue;
             double value = M_phase[px][py];
-            if (value > last_value + C_half_phase) {
-                current_phase -= C_phase;
+            if (value > lastValue + C_halfPhase) {
+                currentPhase -= C_phase;
             }
-            else if (value < last_value - C_half_phase) {
-                current_phase += C_phase;
+            else if (value < lastValue - C_halfPhase) {
+                currentPhase += C_phase;
             }
-            last_value = value;
-            value += current_phase;
+            lastValue = value;
+            value += currentPhase;
             points.add(x, value);
-            M_last_phase[x] = value;
+            M_lastPhase[x] = value;
             ++x;
         }
-        List<WeightedObservedPoint> points_list = points.toList();
+        List<WeightedObservedPoint> pointsList = points.toList();
         PolynomialCurveFitter fit
             = PolynomialCurveFitter.create(M_degree);
-        return fit.fit(points_list);
+        return fit.fit(pointsList);
     }
     /** Evaluate a polynomial.
      *
@@ -238,7 +242,7 @@ public class PolyTilt extends HoldingSinglePlugin<PolyTiltPlugin>
      * @param x The input to the polynomial to evaluate.
      * @return The value of the polynomial at x.
      */
-    public static double poly_eval(double[] poly, double x)
+    public static double polyEval(double[] poly, double x)
     {
         double result = 0;
         for (int i = 0; i < poly.length; ++i) {
@@ -250,9 +254,9 @@ public class PolyTilt extends HoldingSinglePlugin<PolyTiltPlugin>
      * Yeah, this is a little funny to have, but {@link Auto} needs it.
      *
      * @return The unwrapped phase values that were calculated the last time
-     *         {@link fit_along_including_constant} was called.
+     *         {@link fitAlongIncludingConstant} was called.
      */
-    public double[] get_last_phase() {return M_last_phase;}
+    public double[] getLastPhase() {return M_lastPhase;}
     /** Get the width of the phase image
      * @return The width of the phase image, in pixels.
      */
@@ -262,7 +266,7 @@ public class PolyTilt extends HoldingSinglePlugin<PolyTiltPlugin>
      */
     public int height() {return M_phase[0].length;}
 
-    private static double[] remove_constant(double[] poly)
+    private static double[] removeConstant(double[] poly)
     {
         return Arrays.copyOfRange(poly, 1, poly.length);
     }
@@ -271,9 +275,9 @@ public class PolyTilt extends HoldingSinglePlugin<PolyTiltPlugin>
     private Reference M_reference;
     private PolyTiltParameter M_param;
     double[][] M_phase; // Package private for testing
-    private double[] M_last_phase;
-    private double[][] M_poly_field;
+    private double[] M_lastPhase;
+    private double[][] M_polyField;
     int M_degree; // Package private for testing
     boolean M_live = false;
-    private int M_starting_t;
+    private int M_startingT;
 }

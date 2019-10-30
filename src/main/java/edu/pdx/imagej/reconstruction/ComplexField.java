@@ -56,42 +56,42 @@ public interface ComplexField {
      *
      * @return A reference to the data representing this ComplexField.
      */
-    double[][] get_field();
+    double[][] getField();
     /** Set the data for this ComplexField.  This is a modifying operation.
      *
      * @param field The new data to represent this ComplexField.
      */
-    void set_field(double[][] field);
+    void setField(double[][] field);
     /** Get a copy of the real values of this ComplexField.  This is a
      * non-modifying operation.
      *
      * @return A copy of the real values of this ComplexField.
      */
-    double[][] get_real();
+    double[][] getReal();
     /** Get a copy of the imaginary values of this ComplexField.  This is a
      * non-modifying operation.
      *
      * @return A copy of the imaginary values of this ComplexField.
      */
-    double[][] get_imag();
+    double[][] getImag();
     /** Get a copy of the amplitude values of this ComplexField.  This is a
      * non-modifying operation.  The result is sqrt(a² + b²).
      *
      * @return A copy of the amplitude values of this ComplexField.
      */
-    double[][] get_amp();
+    double[][] getAmp();
     /** Get a copy of the amplitude squared values of this ComplexField.  This
      * is a non-modifying operation.  The result is a² + b².
      *
      * @return A copy of the amplitude squared values of this ComplexField.
      */
-    double[][] get_amp2();
+    double[][] getAmp2();
     /** Get a copy of the phase values of this ComplexField.  This is a
      * non-modifying operation.  The result is atan2(b, a).
      *
      * @return A copy of the phase values of this ComplexField.
      */
-    double[][] get_arg();
+    double[][] getArg();
     /** Get a single real value from this ComplexField.  This is a non-modifying
      * operation.
      *
@@ -99,7 +99,7 @@ public interface ComplexField {
      * @param y The y coordinate to get the value from
      * @return The real value corresponding to the x and y coordinates
      */
-    double get_real(int x, int y);
+    double getReal(int x, int y);
     /** Get a single imaginary value from this ComplexField.  This is a
      * non-modifying operation.
      *
@@ -107,7 +107,7 @@ public interface ComplexField {
      * @param y The y coordinate to get the value from
      * @return The imaginary value corresponding to the x and y coordinates
      */
-    double get_imag(int x, int y);
+    double getImag(int x, int y);
     /** Get the width of this ComplexField.  This is a non-modifying operation.
      *
      * @return The width of this ComplexField.
@@ -122,73 +122,73 @@ public interface ComplexField {
     /** Negate this ComplexField.  This is a modifying operation.  The result is
      * -a - bi.
      */
-    void negate_in_place();
+    void negateInPlace();
     /** Add a ComplexField to this one.  This is a modifying operation.  The
      * result is (a + c) + (b + d)i.
      *
      * @param other The ComplexField to add to this one.
      */
-    void add_in_place(ComplexField other);
+    void addInPlace(ComplexField other);
     /** Subtract another ComplexField from this one.  This is a modifying
      * operation.  The result is (a - c) + (b - d)i.
      *
      * @param other The ComplexField to subtract with.
      */
-    void subtract_in_place(ComplexField other);
+    void subtractInPlace(ComplexField other);
     /** Multiply a ComplexField with this one.  This is a modifying operation.
      * The result is (ac - bd) + (ad + bc)i.
      *
      * @param other The ComplexField to multiply with this one.
      */
-    void multiply_in_place(ComplexField other);
+    void multiplyInPlace(ComplexField other);
     /** Divide another ComplexField from this one.  This is a modifying
      * operation.  The result is (ac + bd)/(c² + d²) + ((bc - ad)/(c² + d²))i
      *
      * @param other The ComplexField to divide with.
      */
-    void divide_in_place(ComplexField other);
+    void divideInPlace(ComplexField other);
     /** Add an array to this ComplexField.  This is a modifying operation.  The
      * result is (a + c) + (b + d)i.
      *
      * @param other A two-dimensional array that must be in the same format as
-     *              the return value of {@link get_field}.
+     *              the return value of {@link getField}.
      */
-    void add_in_place(double[][] other);
+    void addInPlace(double[][] other);
     /** Subtract an array from this ComplexField.  This is a modifying
      * operation.  The result is (a - c) + (b - d)i.
      *
      * @param other A two-dimensional array that must be in the same format as
-     *              the return value of {@link get_field}.
+     *              the return value of {@link getField}.
      */
-    void subtract_in_place(double[][] other);
+    void subtractInPlace(double[][] other);
     /** Multiply an array with this ComplexField.  This is a modifying
      * operation. The result is (ac - bd) + (ad + bc)i.
      *
      * @param other A two-dimensional array that must be in the same format as
-     *              the return value of {@link get_field}.
+     *              the return value of {@link getField}.
      */
-    void multiply_in_place(double[][] other);
+    void multiplyInPlace(double[][] other);
     /** Divide an array from this ComplexField.  This is a modifying operation.
      * The result is (ac + bd)/(c² + d²) + ((bc - ad)/(c² + d²))i
      *
      * @param other A two-dimensional array that must be in the same format as
-     *              the return value of {@link get_field}.
+     *              the return value of {@link getField}.
      */
-    void divide_in_place(double[][] other);
+    void divideInPlace(double[][] other);
     /** Add a single value to this ComplexField.  This is a modifying operation.
      * The result is (a + c) + (b + d)i, with c = real and d = imag.
      *
      * @param real The real value for the complex number to add.
      * @param imag The imaginary value for the complex number to add.
      */
-    void add_in_place(double real, double imag);
+    void addInPlace(double real, double imag);
     /** Subtract a single value from this ComplexField.  This is a modifying
      * operation.  The result is (a - c) + (b - d)i, with c = real and d = imag.
      *
      * @param real The real value for the complex number to subtract.
      * @param imag The imaginary value for the complex number to subtract.
      */
-    void subtract_in_place(double real, double imag);
+    void subtractInPlace(double real, double imag);
     /** Multiply a single value to this ComplexField.  This is a modifying
      * operation.  The result is (ac - bd) + (ad + bc)i, with c = real and d =
      * imag.
@@ -196,7 +196,7 @@ public interface ComplexField {
      * @param real The real value for the complex number to multiply.
      * @param imag The imaginary value for the complex number to multipy.
      */
-    void multiply_in_place(double real, double imag);
+    void multiplyInPlace(double real, double imag);
     /** Divide a single value from this ComplexField.  This is a modifying
      * operation.  The result is (ac + bd)/(c² + d²) + ((bc - ad)/(c² + d²))i
      * with c = real and d = imag.
@@ -204,35 +204,35 @@ public interface ComplexField {
      * @param real The real value for the complex number to divide.
      * @param imag The imaginary value for the complex number to divide.
      */
-    void divide_in_place(double real, double imag);
+    void divideInPlace(double real, double imag);
     /** Add a single real number to this ComplexField.  This is a modifying
-     * operation.  It is equivalent to {@link #add_in_place(double, double)
-     * add_in_place(real, 0)}.
+     * operation.  It is equivalent to {@link #addInPlace(double, double)
+     * addInPlace(real, 0)}.
      *
      * @param real The real number to add.
      */
-    default void add_in_place(double real) {add_in_place(real, 0);}
+    default void addInPlace(double real) {addInPlace(real, 0);}
     /** Subtract a single real number from this ComplexField.  This is a
-     * modifying operation.  It is equivalent to {@link #subtract_in_place(
-     * double, double) subtract_in_place(real, 0)}.
+     * modifying operation.  It is equivalent to {@link #subtractInPlace(
+     * double, double) subtractInPlace(real, 0)}.
      *
      * @param real The real number to subract.
      */
-    default void subtract_in_place(double real) {subtract_in_place(real, 0);}
+    default void subtractInPlace(double real) {subtractInPlace(real, 0);}
     /** Multiply a single real number to this ComplexField.  This is a modifying
-     * operation.  It is equivalent to {@link #multiply_in_place(double, double)
-     * multiply_in_place(real, 0)}.
+     * operation.  It is equivalent to {@link #multiplyInPlace(double, double)
+     * multiplyInPlace(real, 0)}.
      *
      * @param real The real number to multiply.
      */
-    default void multiply_in_place(double real) {multiply_in_place(real, 0);}
+    default void multiplyInPlace(double real) {multiplyInPlace(real, 0);}
     /** Divide a single real number from this ComplexField.  This is a modifying
-     * operation.  It is equivalent to {@link #divide_in_place(double, double)
-     * divide_in_place(real, 0)}.
+     * operation.  It is equivalent to {@link #divideInPlace(double, double)
+     * divideInPlace(real, 0)}.
      *
      * @param real The real number to divide.
      */
-    default void divide_in_place(double real) {divide_in_place(real, 0);}
+    default void divideInPlace(double real) {divideInPlace(real, 0);}
 
     /** Create a negation of this ComplexField.  This is a non-modifying
      * operation.
@@ -242,12 +242,12 @@ public interface ComplexField {
     default ComplexField negate()
     {
         ComplexField result = copy();
-        result.negate_in_place();
+        result.negateInPlace();
         return result;
     }
     /** Create the sum of this ComplexField and another.  This is a
      * non-modifying operation.  It is equivalent to {@link
-     * add_in_place(ComplexField) add_in_place(other)} on a copy of this.
+     * addInPlace(ComplexField) addInPlace(other)} on a copy of this.
      *
      * @param other The ComplexField to add.
      * @return The sum of this and other.
@@ -255,12 +255,12 @@ public interface ComplexField {
     default ComplexField add(ComplexField other)
     {
         ComplexField result = copy();
-        result.add_in_place(other);
+        result.addInPlace(other);
         return result;
     }
     /** Create the difference of this ComplexField and another.  This is a
      * non-modifying operation.  It is equivalent to {@link
-     * subtract_in_place(ComplexField) subtract_in_place(other)} on a copy of
+     * subtractInPlace(ComplexField) subtractInPlace(other)} on a copy of
      * this.
      *
      * @param other The ComplexField to subtract.
@@ -269,12 +269,12 @@ public interface ComplexField {
     default ComplexField subtract(ComplexField other)
     {
         ComplexField result = copy();
-        result.subtract_in_place(other);
+        result.subtractInPlace(other);
         return result;
     }
     /** Create the product of this ComplexField and another.  This is a
      * non-modifying operation.  It is equivalent to {@link
-     * multiply_in_place(ComplexField) multiply_in_place(other)} on a copy of
+     * multiplyInPlace(ComplexField) multiplyInPlace(other)} on a copy of
      * this.
      *
      * @param other The ComplexField to multiply.
@@ -283,12 +283,12 @@ public interface ComplexField {
     default ComplexField multiply(ComplexField other)
     {
         ComplexField result = copy();
-        result.multiply_in_place(other);
+        result.multiplyInPlace(other);
         return result;
     }
     /** Create the quotient of this ComplexField and another.  This is a
      * non-modifying operation.  It is equivalent to {@link
-     * divide_in_place(ComplexField) divide_in_place(other)} on a copy of this.
+     * divideInPlace(ComplexField) divideInPlace(other)} on a copy of this.
      *
      * @param other The ComplexField to divide.
      * @return The quotient of this and other.
@@ -296,70 +296,70 @@ public interface ComplexField {
     default ComplexField divide(ComplexField other)
     {
         ComplexField result = copy();
-        result.divide_in_place(other);
+        result.divideInPlace(other);
         return result;
     }
     /** Create the sum of this ComplexField and an array.  This is a
      * non-modifying operation.  It is equivalent to {@link
-     * add_in_place(double[][]) add_in_place(other)} on a copy of this.
+     * addInPlace(double[][]) addInPlace(other)} on a copy of this.
      *
      * @param other A two-dimensional array that must be in the same format as
-     *              the return value of {@link get_field}.
+     *              the return value of {@link getField}.
      * @return The sum of this and other.
      */
     default ComplexField add(double[][] other)
     {
         ComplexField result = copy();
-        result.add_in_place(other);
+        result.addInPlace(other);
         return result;
     }
     /** Create the difference of this ComplexField and an array.  This is a
      * non-modifying operation.  It is equivalent to {@link
-     * subtract_in_place(double[][]) subtract_in_place(other)} on a copy of
+     * subtractInPlace(double[][]) subtractInPlace(other)} on a copy of
      * this.
      *
      * @param other A two-dimensional array that must be in the same format as
-     *              the return value of {@link get_field}.
+     *              the return value of {@link getField}.
      * @return The difference of this and other.
      */
     default ComplexField subtract(double[][] other)
     {
         ComplexField result = copy();
-        result.subtract_in_place(other);
+        result.subtractInPlace(other);
         return result;
     }
     /** Create the product of this ComplexField and an array.  This is a
      * non-modifying operation.  It is equivalent to {@link
-     * multiply_in_place(double[][]) multiply_in_place(other)} on a copy of
+     * multiplyInPlace(double[][]) multiplyInPlace(other)} on a copy of
      * this.
      *
      * @param other A two-dimensional array that must be in the same format as
-     *              the return value of {@link get_field}.
+     *              the return value of {@link getField}.
      * @return The product of this and other.
      */
     default ComplexField multiply(double[][] other)
     {
         ComplexField result = copy();
-        result.multiply_in_place(other);
+        result.multiplyInPlace(other);
         return result;
     }
     /** Create the quotient of this ComplexField and an array.  This is a
      * non-modifying operation.  It is equivalent to {@link
-     * divide_in_place(double[][]) divide_in_place(other)} on a copy of this.
+     * divideInPlace(double[][]) divideInPlace(other)} on a copy of this.
      *
      * @param other A two-dimensional array that must be in the same format as
-     *              the return value of {@link get_field}.
+     *              the return value of {@link getField}.
      * @return The quotient of this and other.
      */
     default ComplexField divide(double[][] other)
     {
         ComplexField result = copy();
-        result.divide_in_place(other);
+        result.divideInPlace(other);
         return result;
     }
     /** Create the sum of this ComplexField and a single value.  This is a
      * non-modifying operation.  It is equivalent to {@link
-     * add_in_place(double, double) add_in_place(real, imag)} on a copy of this.
+     * addInPlace(double, double) addInPlace(real, imag)} on a copy of this.
      *
      * @param real The real value for the complex number to add.
      * @param imag The imaginary value for the complex number to add.
@@ -368,12 +368,12 @@ public interface ComplexField {
     default ComplexField add(double real, double imag)
     {
         ComplexField result = copy();
-        result.add_in_place(real, imag);
+        result.addInPlace(real, imag);
         return result;
     }
     /** Create the difference of this ComplexField and a single value.  This is
      * a non-modifying operation.  It is equivalent to {@link
-     * subtract_in_place(double, double) subtract_in_place(real, imag)} on a
+     * subtractInPlace(double, double) subtractInPlace(real, imag)} on a
      * copy of this.
      *
      * @param real The real value for the complex number to subtract.
@@ -383,12 +383,12 @@ public interface ComplexField {
     default ComplexField subtract(double real, double imag)
     {
         ComplexField result = copy();
-        result.subtract_in_place(real, imag);
+        result.subtractInPlace(real, imag);
         return result;
     }
     /** Create the product of this ComplexField and a single value.  This is a
      * non-modifying operation.  It is equivalent to {@link
-     * multiply_in_place(double, double) multiply_in_place(real, imag)} on a
+     * multiplyInPlace(double, double) multiplyInPlace(real, imag)} on a
      * copy of this.
      *
      * @param real The real value for the complex number to multiply.
@@ -398,12 +398,12 @@ public interface ComplexField {
     default ComplexField multiply(double real, double imag)
     {
         ComplexField result = copy();
-        result.multiply_in_place(real, imag);
+        result.multiplyInPlace(real, imag);
         return result;
     }
     /** Create the qoutient of this ComplexField and a single value.  This is
      * a non-modifying operation.  It is equivalent to {@link
-     * divide_in_place(double, double) divide_in_place(real, imag)} on a copy of
+     * divideInPlace(double, double) divideInPlace(real, imag)} on a copy of
      * this.
      *
      * @param real The real value for the complex number to divide.
@@ -413,7 +413,7 @@ public interface ComplexField {
     default ComplexField divide(double real, double imag)
     {
         ComplexField result = copy();
-        result.divide_in_place(real, imag);
+        result.divideInPlace(real, imag);
         return result;
     }
 }

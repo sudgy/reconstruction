@@ -46,15 +46,15 @@ public class ReconstructionPluginParameter<T extends ReconstructionPlugin>
     /** {@inheritDoc}
      * <p>
      * This looks through all of the plugin's parameters and calls <code>
-     * set_hologram</code> on all of them.
+     * setHologram</code> on all of them.
      */
     @Override
-    public void set_hologram(ImageParameter hologram)
+    public void setHologram(ImageParameter hologram)
     {
-        for (T plugin : get_all_plugins()) {
+        for (T plugin : getAllPlugins()) {
             DParameter<?> param = plugin.param();
             if (param instanceof HologramPluginParameter) {
-                ((HologramPluginParameter)param).set_hologram(hologram);
+                ((HologramPluginParameter)param).setHologram(hologram);
             }
         }
     }

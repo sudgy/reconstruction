@@ -29,7 +29,7 @@ import edu.pdx.imagej.dynamic_parameters.PluginParameter;
  *
  * @param <T> The type of plugin you are holding
  */
-public class HoldingSinglePlugin<T extends ReconstructionPlugin>
+public abstract class HoldingSinglePlugin<T extends ReconstructionPlugin>
              extends AbstractHoldingPlugin<T> {
     /** Constructor intended for live use of this plugin.
      *
@@ -56,22 +56,22 @@ public class HoldingSinglePlugin<T extends ReconstructionPlugin>
      *
      * @return The plugin this plugin is holding.
      */
-    public T get_plugin()
+    public T getPlugin()
     {
-        if (M_plugin == null) M_plugin = M_param.get_value();
+        if (M_plugin == null) M_plugin = M_param.getValue();
         return M_plugin;
     }
-    /** This just returns a singleton of {@link get_plugin}.
+    /** This just returns a singleton of {@link getPlugin}.
      *
      * @return An Iterable of just the single plugin this is holding.
      */
     @Override
-    public Iterable<T> get_plugins()
+    public Iterable<T> getPlugins()
     {
-        return Collections.singleton(get_plugin());
+        return Collections.singleton(getPlugin());
     }
     /** Does nothing, because one thing does not need to be sorted. */
-    @Override public void sort_plugins() {}
+    @Override public void sortPlugins() {}
 
     private ReconstructionPluginParameter<T> M_param;
     private T M_plugin;

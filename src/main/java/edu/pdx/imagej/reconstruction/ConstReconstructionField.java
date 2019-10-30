@@ -39,8 +39,8 @@ public final class ConstReconstructionField {
         {return new ConstComplexField(M_field.field());}
     public ConstComplexField fourier()
         {return new ConstComplexField(M_field.fourier());}
-    public boolean has_field() {return M_field.has_field();}
-    public boolean has_fourier() {return M_field.has_fourier();}
+    public boolean hasField() {return M_field.hasField();}
+    public boolean hasFourier() {return M_field.hasFourier();}
     public ReconstructionField copy() {return M_field.copy();}
 
     private ReconstructionField M_field;

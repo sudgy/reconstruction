@@ -37,46 +37,46 @@ import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
 public class AngularSpectrumTest {
     // Test that the process changes anything at all
     // Yes, this does need to be here.  It failed after I first wrote it :/
-    @Test public void test_change()
+    @Test public void testChange()
     {
         AngularSpectrum test = new AngularSpectrum();
-        process_beginning(test, M_even_hologram, M_wavelength,
+        processBeginning(test, M_evenHologram, M_wavelength,
                                M_width, M_height);
-        ReconstructionFieldImpl field = make_even_field();
+        ReconstructionFieldImpl field = makeEvenField();
         test.propagate(null, M_z100, field, M_z0);
-        double[][] result = field.field().get_field();
+        double[][] result = field.field().getField();
         for (int x = 0; x < 4; ++x) {
             for (int y = 0; y < 4; ++y) {
                 String coord = "(" + x + ", " + y + ").";
-                assertTrue(M_even_real[x][y] != result[x][2*y],
+                assertTrue(M_evenReal[x][y] != result[x][2*y],
                     "The real value should not be the same at " + coord);
-                assertTrue(M_even_imag[x][y] != result[x][2*y+1],
+                assertTrue(M_evenImag[x][y] != result[x][2*y+1],
                     "The imaginary value should not be the same at " + coord);
             }
         }
     }
     // Test that changing units but having the same values does nothing
-    @Test public void test_units()
+    @Test public void testUnits()
     {
-        ReconstructionFieldImpl field = make_even_field();
+        ReconstructionFieldImpl field = makeEvenField();
         AngularSpectrum test = new AngularSpectrum();
-        process_beginning(test, M_even_hologram,
+        processBeginning(test, M_evenHologram,
                                new DistanceUnitValue(500, DistanceUnits.Nano),
                                new DistanceUnitValue(300, DistanceUnits.Micro),
                                new DistanceUnitValue(310, DistanceUnits.Micro));
         test.propagate(null, M_z100, field, M_z0);
-        double[][] result1 = field.field().get_field();
+        double[][] result1 = field.field().getField();
 
-        field = make_even_field();
+        field = makeEvenField();
         test = new AngularSpectrum();
-        process_beginning(test, M_even_hologram,
+        processBeginning(test, M_evenHologram,
                                new DistanceUnitValue(0.5, DistanceUnits.Micro),
                                new DistanceUnitValue(0.3, DistanceUnits.Milli),
                                new DistanceUnitValue(0.031, DistanceUnits.Centi)
                               );
         test.propagate(null, new DistanceUnitValue(0.0001, DistanceUnits.Meter),
                        field, M_z0);
-        double[][] result2 = field.field().get_field();
+        double[][] result2 = field.field().getField();
 
         for (int x = 0; x < 4; ++x) {
             for (int y = 0; y < 4; ++y) {
@@ -89,59 +89,59 @@ public class AngularSpectrumTest {
         }
     }
     // Test that propagating forwards then backwards gives the original image
-    @Test public void test_inverse_even()
+    @Test public void testInverseEven()
     {
-        ReconstructionFieldImpl field = make_even_field();
+        ReconstructionFieldImpl field = makeEvenField();
         AngularSpectrum test = new AngularSpectrum();
-        process_beginning(test, M_even_hologram, M_wavelength,
+        processBeginning(test, M_evenHologram, M_wavelength,
                                M_width, M_height);
         test.propagate(null, M_z100, field, M_z0);
         test.propagate(null, M_z0, field, M_z100);
-        double[][] result = field.field().get_field();
+        double[][] result = field.field().getField();
         for (int x = 0; x < 4; ++x) {
             for (int y = 0; y < 4; ++y) {
                 String coord = "(" + x + ", " + y + ").";
-                assertEquals(M_even_real[x][y], result[x][2*y], 1e-6,
+                assertEquals(M_evenReal[x][y], result[x][2*y], 1e-6,
                     "The real value should be the same at " + coord);
-                assertEquals(M_even_imag[x][y], result[x][2*y+1], 1e-6,
+                assertEquals(M_evenImag[x][y], result[x][2*y+1], 1e-6,
                     "The imaginary value should be the same at " + coord);
             }
         }
     }
     // Test that propagating forwards then backwards gives the original image
-    @Test public void test_inverse_odd()
+    @Test public void testInverseOdd()
     {
-        ReconstructionFieldImpl field = make_odd_field();
+        ReconstructionFieldImpl field = makeOddField();
         AngularSpectrum test = new AngularSpectrum();
-        process_beginning(test, M_odd_hologram, M_wavelength,
+        processBeginning(test, M_oddHologram, M_wavelength,
                           M_width, M_height);
         test.propagate(null, M_z100, field, M_z0);
         test.propagate(null, M_z0, field, M_z100);
-        double[][] result = field.field().get_field();
+        double[][] result = field.field().getField();
         for (int x = 0; x < 4; ++x) {
             for (int y = 0; y < 4; ++y) {
                 String coord = "(" + x + ", " + y + ").";
-                assertEquals(M_odd_real[x][y], result[x][2*y], 1e-6,
+                assertEquals(M_oddReal[x][y], result[x][2*y], 1e-6,
                     "The real value should be the same at " + coord);
-                assertEquals(M_odd_imag[x][y], result[x][2*y+1], 1e-6,
+                assertEquals(M_oddImag[x][y], result[x][2*y+1], 1e-6,
                     "The imaginary value should be the same at " + coord);
             }
         }
     }
     // Test that propagating forwards twice in smaller increments is the same as
     // propagating forwards once in a bigger increment
-    @Test public void test_combination_even()
+    @Test public void testCombinationEven()
     {
-        ReconstructionFieldImpl field = make_even_field();
+        ReconstructionFieldImpl field = makeEvenField();
         AngularSpectrum test = new AngularSpectrum();
-        process_beginning(test, M_even_hologram, M_wavelength,
+        processBeginning(test, M_evenHologram, M_wavelength,
                                M_width, M_height);
         test.propagate(null, M_z100, field, M_z0);
         test.propagate(null, M_z200, field, M_z100);
-        double[][] result1 = field.field().get_field();
-        field = make_even_field();
+        double[][] result1 = field.field().getField();
+        field = makeEvenField();
         test.propagate(null, M_z200, field, M_z0);
-        double[][] result2 = field.field().get_field();
+        double[][] result2 = field.field().getField();
         for (int x = 0; x < 4; ++x) {
             for (int y = 0; y < 4; ++y) {
                 String coord = "(" + x + ", " + y + ").";
@@ -154,18 +154,18 @@ public class AngularSpectrumTest {
     }
     // Test that propagating forwards twice in smaller increments is the same as
     // propagating forwards once in a bigger increment
-    @Test public void test_combination_odd()
+    @Test public void testCombinationOdd()
     {
-        ReconstructionFieldImpl field = make_odd_field();
+        ReconstructionFieldImpl field = makeOddField();
         AngularSpectrum test = new AngularSpectrum();
-        process_beginning(test, M_odd_hologram, M_wavelength,
+        processBeginning(test, M_oddHologram, M_wavelength,
                           M_width, M_height);
         test.propagate(null, M_z100, field, M_z0);
         test.propagate(null, M_z200, field, M_z100);
-        double[][] result1 = field.field().get_field();
-        field = make_odd_field();
+        double[][] result1 = field.field().getField();
+        field = makeOddField();
         test.propagate(null, M_z200, field, M_z0);
-        double[][] result2 = field.field().get_field();
+        double[][] result2 = field.field().getField();
         for (int x = 0; x < 4; ++x) {
             for (int y = 0; y < 4; ++y) {
                 String coord = "(" + x + ", " + y + ").";
@@ -178,20 +178,20 @@ public class AngularSpectrumTest {
     }
     // Test that many reconstructions on the same field is stable
     // This is mainly a numerical accuracy test
-    @Test public void test_big_combination()
+    @Test public void testBigCombination()
     {
-        ReconstructionFieldImpl field = make_even_field();
+        ReconstructionFieldImpl field = makeEvenField();
         AngularSpectrum test = new AngularSpectrum();
-        process_beginning(test, M_even_hologram, M_wavelength,
+        processBeginning(test, M_evenHologram, M_wavelength,
                                M_width, M_height);
         DistanceUnitValue z1 = new DistanceUnitValue(1, DistanceUnits.Micro);
         for (int i = 0; i < 100; ++i) {
             test.propagate(null, z1, field, M_z0);
         }
-        double[][] result1 = field.field().get_field();
-        field = make_even_field();
+        double[][] result1 = field.field().getField();
+        field = makeEvenField();
         test.propagate(null, M_z100, field, M_z0);
-        double[][] result2 = field.field().get_field();
+        double[][] result2 = field.field().getField();
         for (int x = 0; x < 4; ++x) {
             for (int y = 0; y < 4; ++y) {
                 String coord = "(" + x + ", " + y + ").";
@@ -203,15 +203,15 @@ public class AngularSpectrumTest {
         }
     }
     // Test that the amplitude of the fourier transform is constant
-    @Test public void test_amplitude()
+    @Test public void testAmplitude()
     {
-        ReconstructionFieldImpl field = make_even_field();
-        double[][] amp1 = field.fourier().get_amp();
+        ReconstructionFieldImpl field = makeEvenField();
+        double[][] amp1 = field.fourier().getAmp();
         AngularSpectrum test = new AngularSpectrum();
-        process_beginning(test, M_even_hologram, M_wavelength,
+        processBeginning(test, M_evenHologram, M_wavelength,
                                M_width, M_height);
         test.propagate(null, M_z100, field, M_z0);
-        double[][] amp2 = field.fourier().get_amp();
+        double[][] amp2 = field.fourier().getAmp();
         for (int x = 0; x < 4; ++x) {
             for (int y = 0; y < 4; ++y) {
                 assertEquals(amp1[x][y], amp2[x][y], 1e-6, "The amplitudes "
@@ -221,19 +221,19 @@ public class AngularSpectrumTest {
     }
     // Test that a change in z causes a linear change in the fourier transform's
     // phase, no matter where on the image
-    @Test public void test_z()
+    @Test public void testZ()
     {
         DistanceUnitValue z10 = new DistanceUnitValue(10, DistanceUnits.Nano);
         DistanceUnitValue z20 = new DistanceUnitValue(20, DistanceUnits.Nano);
-        ReconstructionFieldImpl field = make_odd_field();
-        double[][] arg1 = field.fourier().get_arg();
+        ReconstructionFieldImpl field = makeOddField();
+        double[][] arg1 = field.fourier().getArg();
         AngularSpectrum test = new AngularSpectrum();
-        process_beginning(test, M_odd_hologram, M_wavelength,
+        processBeginning(test, M_oddHologram, M_wavelength,
                           M_width, M_height);
         test.propagate(null, z10, field, M_z0);
-        double[][] arg2 = field.fourier().get_arg();
+        double[][] arg2 = field.fourier().getArg();
         test.propagate(null, z20, field, z10);
-        double[][] arg3 = field.fourier().get_arg();
+        double[][] arg3 = field.fourier().getArg();
         for (int x = 0; x < 5; ++x) {
             for (int y = 0; y < 5; ++y) {
                 double dif1 = arg2[x][y] - arg1[x][y];
@@ -250,10 +250,10 @@ public class AngularSpectrumTest {
     }
     // Test that in the middle of the image, changing the wavelength should
     // cause an inverse-linear change in the phase of the fourier transform
-    @Test public void test_wavelength_middle()
+    @Test public void testWavelengthMiddle()
     {
-        ReconstructionFieldImpl field = make_odd_field();
-        double arg1 = field.fourier().get_arg()[2][2];
+        ReconstructionFieldImpl field = makeOddField();
+        double arg1 = field.fourier().getArg()[2][2];
         DistanceUnitValue z10 = new DistanceUnitValue(10, DistanceUnits.Nano);
         DistanceUnitValue wavelength500
             = new DistanceUnitValue(500, DistanceUnits.Nano);
@@ -263,24 +263,24 @@ public class AngularSpectrumTest {
             = new DistanceUnitValue(700, DistanceUnits.Nano);
         AngularSpectrum test = new AngularSpectrum();
 
-        process_beginning(test, M_odd_hologram, wavelength500,
+        processBeginning(test, M_oddHologram, wavelength500,
                                M_width, M_height);
         test.propagate(null, z10, field, M_z0);
-        double arg2 = field.fourier().get_arg()[2][2];
+        double arg2 = field.fourier().getArg()[2][2];
 
-        field = make_odd_field();
+        field = makeOddField();
         test = new AngularSpectrum();
-        process_beginning(test, M_odd_hologram, wavelength600,
+        processBeginning(test, M_oddHologram, wavelength600,
                                M_width, M_height);
         test.propagate(null, z10, field, M_z0);
-        double arg3 = field.fourier().get_arg()[2][2];
+        double arg3 = field.fourier().getArg()[2][2];
 
-        field = make_odd_field();
+        field = makeOddField();
         test = new AngularSpectrum();
-        process_beginning(test, M_odd_hologram, wavelength700,
+        processBeginning(test, M_oddHologram, wavelength700,
                                M_width, M_height);
         test.propagate(null, z10, field, M_z0);
-        double arg4 = field.fourier().get_arg()[2][2];
+        double arg4 = field.fourier().getArg()[2][2];
 
         double dif1 = arg2 - arg1;
         double dif2 = arg3 - arg1;
@@ -307,7 +307,7 @@ public class AngularSpectrumTest {
     // Test that in the outer parts of the image, changing the wavelength with
     // a corresponding change in z to compensate for the linear change yields
     // a sqrt(1-aλ^2) change
-    @Test public void test_wavelength_outer()
+    @Test public void testWavelengthOuter()
     {
         // Here's what we do:
         // Given two different wavelengths λ₁ and λ₂ such that λ₂ = aλ₁, then
@@ -318,8 +318,8 @@ public class AngularSpectrumTest {
         // (Δϕ₁² - Δϕ₂²)/(a² - 1) = b²(cλ₁)², a constant.  So, the test computes
         // the left-hand side of the equation and checks if it's constant for
         // various values of λ.
-        ReconstructionFieldImpl field = make_odd_field();
-        double[][] arg1_array = field.fourier().get_arg();
+        ReconstructionFieldImpl field = makeOddField();
+        double[][] arg1_array = field.fourier().getArg();
         DistanceUnitValue z5  = new DistanceUnitValue(5,  DistanceUnits.Nano);
         DistanceUnitValue z10 = new DistanceUnitValue(10, DistanceUnits.Nano);
         DistanceUnitValue z20 = new DistanceUnitValue(20, DistanceUnits.Nano);
@@ -331,24 +331,24 @@ public class AngularSpectrumTest {
             = new DistanceUnitValue(2000, DistanceUnits.Nano);
         AngularSpectrum test = new AngularSpectrum();
 
-        process_beginning(test, M_odd_hologram, wavelength500,
+        processBeginning(test, M_oddHologram, wavelength500,
                                M_width, M_height);
         test.propagate(null, z5, field, M_z0);
-        double[][] arg2_array = field.fourier().get_arg();
+        double[][] arg2_array = field.fourier().getArg();
 
-        field = make_odd_field();
+        field = makeOddField();
         test = new AngularSpectrum();
-        process_beginning(test, M_odd_hologram, wavelength1000,
+        processBeginning(test, M_oddHologram, wavelength1000,
                                M_width, M_height);
         test.propagate(null, z10, field, M_z0);
-        double[][] arg3_array = field.fourier().get_arg();
+        double[][] arg3_array = field.fourier().getArg();
 
-        field = make_odd_field();
+        field = makeOddField();
         test = new AngularSpectrum();
-        process_beginning(test, M_odd_hologram, wavelength2000,
+        processBeginning(test, M_oddHologram, wavelength2000,
                                M_width, M_height);
         test.propagate(null, z20, field, M_z0);
-        double[][] arg4_array = field.fourier().get_arg();
+        double[][] arg4_array = field.fourier().getArg();
 
         for (int x = 0; x < 5; ++x) {
             for (int y = 0; y < 5; ++y) {
@@ -382,9 +382,9 @@ public class AngularSpectrumTest {
         }
     }
     // Test that Δx and Δy cause a sqrt(1-a/(Δx)^2) change
-    @Test public void test_dimensions()
+    @Test public void testDimensions()
     {
-        // The idea here is kind of similar to test_wavelength_outer, but more
+        // The idea here is kind of similar to testWavelengthOuter, but more
         // complicated.  To be more general, let f(x) and g(y) be functions.
         // The phase difference for given values of x and y is
         // Δϕ = a*sqrt(1 - bf(x) - cg(y)) for some constants a, b and c.  The
@@ -399,27 +399,27 @@ public class AngularSpectrumTest {
         // In our case, x = Δx and f(Δx) = 1/Δx², and likewise for y.  We
         // calculate Δf and Δg, calculate d, and then check if all of the values
         // for a given d are constant.
-        double[][][] arg_array = new double[16][][];
-        int[] width_array = new int[16];
-        int[] height_array = new int[16];
-        ReconstructionFieldImpl field = make_odd_field();
-        double[][] arg0_array = field.fourier().get_arg();
+        double[][][] argArray = new double[16][][];
+        int[] widthArray = new int[16];
+        int[] heightArray = new int[16];
+        ReconstructionFieldImpl field = makeOddField();
+        double[][] arg0_array = field.fourier().getArg();
         DistanceUnitValue z10 = new DistanceUnitValue(10, DistanceUnits.Nano);
         AngularSpectrum test;
 
         int i = 0;
         for (int width = 100; width < 500; width += 100) {
             for (int height = 100; height < 500; height += 100) {
-                field = make_odd_field();
+                field = makeOddField();
                 test = new AngularSpectrum();
-                process_beginning(test,
-                    M_odd_hologram, M_wavelength,
+                processBeginning(test,
+                    M_oddHologram, M_wavelength,
                     new DistanceUnitValue(width, DistanceUnits.Micro),
                     new DistanceUnitValue(height, DistanceUnits.Micro));
                 test.propagate(null, z10, field, M_z0);
-                arg_array[i] = field.fourier().get_arg();
-                width_array[i] = width;
-                height_array[i] = height;
+                argArray[i] = field.fourier().getArg();
+                widthArray[i] = width;
+                heightArray[i] = height;
                 ++i;
             }
         }
@@ -428,26 +428,26 @@ public class AngularSpectrumTest {
             for (int j = 0; j < 16; ++j) {
                 if (i == j) continue;
 
-                double df = 1.0 / (width_array[j]  * width_array[j])
-                          - 1.0 / (width_array[i]  * width_array[i]);
-                double dg = 1.0 / (height_array[j] * height_array[j])
-                          - 1.0 / (height_array[i] * height_array[i]);
+                double df = 1.0 / (widthArray[j]  * widthArray[j])
+                          - 1.0 / (widthArray[i]  * widthArray[i]);
+                double dg = 1.0 / (heightArray[j] * heightArray[j])
+                          - 1.0 / (heightArray[i] * heightArray[i]);
                 int d = (int)Math.round(dg / df * 1000);
                 boolean df0 = Math.abs(df) < 1e-6;
                 if (df0) d = Integer.MAX_VALUE;
 
-                double[][] current_vals = vals.get(d);
-                boolean first = current_vals == null;
+                double[][] currentVals = vals.get(d);
+                boolean first = currentVals == null;
                 if (first) {
-                    current_vals = new double[5][5];
-                    vals.put(d, current_vals);
+                    currentVals = new double[5][5];
+                    vals.put(d, currentVals);
                 }
 
                 for (int x = 0; x < 5; ++x) {
                     for (int y = 0; y < 5; ++y) {
 
-                        double arg1 = arg_array[i][x][y];
-                        double arg2 = arg_array[j][x][y];
+                        double arg1 = argArray[i][x][y];
+                        double arg2 = argArray[j][x][y];
                         double dif1 = arg1 - arg0_array[x][y];
                         double dif2 = arg2 - arg0_array[x][y];
                         if (dif1 < 0) dif1 += 2*Math.PI;
@@ -456,9 +456,9 @@ public class AngularSpectrumTest {
                         if (df0) val /= dg;
                         else val /= df;
 
-                        if (first) current_vals[x][y] = val;
+                        if (first) currentVals[x][y] = val;
                         else {
-                            assertEquals(current_vals[x][y], val, 1e-6,
+                            assertEquals(currentVals[x][y], val, 1e-6,
                                   "\ni       = " + i
                                 + "\nj       = " + j
                                 + "\nx       = " + x
@@ -469,10 +469,10 @@ public class AngularSpectrumTest {
                                 + "\narg2    = " + arg2
                                 + "\ndif1    = " + dif1
                                 + "\ndif2    = " + dif2
-                                + "\nwidth1  = " + width_array[i]
-                                + "\nwidth2  = " + width_array[j]
-                                + "\nheight1 = " + height_array[i]
-                                + "\nheight2 = " + height_array[j]
+                                + "\nwidth1  = " + widthArray[i]
+                                + "\nwidth2  = " + widthArray[j]
+                                + "\nheight1 = " + heightArray[i]
+                                + "\nheight2 = " + heightArray[j]
                             );
                         }
                     }
@@ -480,20 +480,20 @@ public class AngularSpectrumTest {
             }
         }
     }
-    // Test that fₓ and f_y decrease the change in phase further out on the
+    // Test that fₓ and fY decrease the change in phase further out on the
     // Fourier transform all at the same rate
-    @Test public void test_fx()
+    @Test public void testFx()
     {
-        // Sadly, because fₓ and f_y are allowed to be off by tiny amounts, no
+        // Sadly, because fₓ and fY are allowed to be off by tiny amounts, no
         // exact answer can be calculated here.  The best we can do is check
         // that the phase changes slower on the outside than on the inside.
         DistanceUnitValue z10 = new DistanceUnitValue(10, DistanceUnits.Nano);
-        ReconstructionFieldImpl field = make_odd_field();
-        double[][] arg1_array = field.fourier().get_arg();
+        ReconstructionFieldImpl field = makeOddField();
+        double[][] arg1_array = field.fourier().getArg();
         AngularSpectrum test = new AngularSpectrum();
-        process_beginning(test, M_odd_hologram, M_wavelength, M_width, M_z200);
+        processBeginning(test, M_oddHologram, M_wavelength, M_width, M_z200);
         test.propagate(null, z10, field, M_z0);
-        double[][] arg2_array = field.fourier().get_arg();
+        double[][] arg2_array = field.fourier().getArg();
 
         double[][] difs = new double[5][5];
         for (int x = 0; x < 5; ++x) {
@@ -564,35 +564,35 @@ public class AngularSpectrumTest {
         }
     }
     // Test that the algorithm deals with the negative square root correctly
-    @Test public void test_square_root()
+    @Test public void testSquareRoot()
     {
-        ReconstructionFieldImpl field = make_odd_field();
-        double arg1 = field.fourier().get_arg()[0][0];
+        ReconstructionFieldImpl field = makeOddField();
+        double arg1 = field.fourier().getArg()[0][0];
         AngularSpectrum test = new AngularSpectrum();
         // Yes, the size and the wavelength are supposed to be swapped.  It
         // makes the square root negative.
-        process_beginning(test, M_odd_hologram, M_width,
+        processBeginning(test, M_oddHologram, M_width,
                                M_wavelength, M_wavelength);
         test.propagate(null, M_z100, field, M_z0);
-        double arg2 = field.fourier().get_arg()[0][0];
+        double arg2 = field.fourier().getArg()[0][0];
         assertEquals(arg1, arg2);
     }
 
-    private static void process_beginning(AngularSpectrum test,
+    private static void processBeginning(AngularSpectrum test,
                                           ImagePlus hologram,
                                           DistanceUnitValue wavelength,
                                           DistanceUnitValue width,
                                           DistanceUnitValue height)
     {
-        test.process_hologram_param(hologram);
-        test.process_wavelength_param(wavelength);
-        test.process_dimensions_param(width, height);
-        test.process_beginning();
+        test.processHologramParam(hologram);
+        test.processWavelengthParam(wavelength);
+        test.processDimensionsParam(width, height);
+        test.processBeginning();
     }
 
-    private static ImagePlus M_even_hologram
+    private static ImagePlus M_evenHologram
         = new ImagePlus("", new FloatProcessor(new float[4][4]));
-    private static ImagePlus M_odd_hologram
+    private static ImagePlus M_oddHologram
         = new ImagePlus("", new FloatProcessor(new float[5][5]));
     private static DistanceUnitValue M_wavelength
         = new DistanceUnitValue(500, DistanceUnits.Nano);
@@ -606,38 +606,38 @@ public class AngularSpectrumTest {
         = new DistanceUnitValue(100, DistanceUnits.Micro);
     private static DistanceUnitValue M_z200
         = new DistanceUnitValue(200, DistanceUnits.Micro);
-    private static double[][] M_even_real = new double[][] {
+    private static double[][] M_evenReal = new double[][] {
         {0.7491333299, 0.5542820629, 0.1879272540, 0.8584170661},
         {0.0305604090, 0.7808111477, 0.6247602260, 0.6811765293},
         {0.6611121864, 0.3942249921, 0.1238077507, 0.1966343374},
         {0.5457368629, 0.9026601034, 0.7550818323, 0.5276090343}
     };
-    private static double[][] M_even_imag = new double[][] {
+    private static double[][] M_evenImag = new double[][] {
         {0.6906533149, 0.1062510323, 0.5731869642, 0.2101399789},
         {0.6916196061, 0.2327204311, 0.9912915487, 0.5350163478},
         {0.2655718145, 0.1526346228, 0.2690232265, 0.7611883011},
         {0.7277631769, 0.6861068860, 0.9135765966, 0.0137632145}
     };
-    private static double[][] M_odd_real = new double[][] {
+    private static double[][] M_oddReal = new double[][] {
         {0.728168521, 0.886166144, 0.854714648, 0.840785173, 0.358469178},
         {0.708248611, 0.142697564, 0.632468376, 0.757623067, 0.775829661},
         {0.475437958, 0.887524302, 0.787616284, 0.042850949, 0.940263144},
         {0.994871946, 0.561355935, 0.658125355, 0.722114895, 0.027024077},
         {0.636014248, 0.207731296, 0.212560867, 0.439091794, 0.550814607}
     };
-    private static double[][] M_odd_imag = new double[][] {
+    private static double[][] M_oddImag = new double[][] {
         {0.605117650, 0.711108696, 0.455784125, 0.870364407, 0.044710641},
         {0.538116496, 0.848686224, 0.895711212, 0.290614150, 0.727374234},
         {0.989027023, 0.097340723, 0.098410347, 0.966053456, 0.085034564},
         {0.524764103, 0.462075268, 0.156010638, 0.880572436, 0.056135696},
         {0.148962797, 0.486935852, 0.015705864, 0.824656030, 0.282585016}
     };
-    private static ReconstructionFieldImpl make_even_field()
+    private static ReconstructionFieldImpl makeEvenField()
     {
-        return new ReconstructionFieldImpl(M_even_real, M_even_imag);
+        return new ReconstructionFieldImpl(M_evenReal, M_evenImag);
     }
-    private static ReconstructionFieldImpl make_odd_field()
+    private static ReconstructionFieldImpl makeOddField()
     {
-        return new ReconstructionFieldImpl(M_odd_real, M_odd_imag);
+        return new ReconstructionFieldImpl(M_oddReal, M_oddImag);
     }
 }

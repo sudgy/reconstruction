@@ -46,88 +46,88 @@ import edu.pdx.imagej.reconstruction.plugin.ReconstructionPlugin;
 import edu.pdx.imagej.reconstruction.filter.Filter;
 
 public class ReferenceTest {
-    @Test public void test_use_same_roi() {
-        Filter normal_filter = new Filter();
-        normal_filter.set_filter(new PointRoi(0, 0));
-        Filter other_filter = new Filter();
-        other_filter.set_filter(new PointRoi(new int[]{1, 1, 2, 2},
+    @Test public void testUseSameRoi() {
+        Filter normalFilter = new Filter();
+        normalFilter.setFilter(new PointRoi(0, 0));
+        Filter otherFilter = new Filter();
+        otherFilter.setFilter(new PointRoi(new int[]{1, 1, 2, 2},
                                              new int[]{1, 2, 1, 2}, 4));
         Reference test = new Reference(new TestPlugin(), true, false);
         ArrayList<ReconstructionPlugin> plugins = new ArrayList<>();
-        plugins.add(normal_filter);
-        test.read_plugins(plugins);
+        plugins.add(normalFilter);
+        test.readPlugins(plugins);
 
-        ReconstructionField normal_field
+        ReconstructionField normalField
             = new ReconstructionFieldImpl(real, imag);
-        ReconstructionField other_field = normal_field.copy();
-        normal_filter.filter_field(normal_field);
-        other_filter.filter_field(other_field);
-        ReconstructionField processed_normal_field = normal_field.copy();
-        ReconstructionField processed_other_field = other_field.copy();
+        ReconstructionField otherField = normalField.copy();
+        normalFilter.filterField(normalField);
+        otherFilter.filterField(otherField);
+        ReconstructionField processedNormalField = normalField.copy();
+        ReconstructionField processedOtherField = otherField.copy();
         // Setup is finally complete!
 
-        test.process_filtered_field(processed_normal_field, 0);
-        test = new Reference(new TestPlugin(), true, false, other_filter);
-        test.read_plugins(plugins);
-        test.process_filtered_field(processed_other_field, 0);
+        test.processFilteredField(processedNormalField, 0);
+        test = new Reference(new TestPlugin(), true, false, otherFilter);
+        test.readPlugins(plugins);
+        test.processFilteredField(processedOtherField, 0);
 
         for (int x = 0; x < 3; ++x) {
             for (int y = 0; y < 3; ++y) {
-                double normal_amp = normal_field.field().get_amp()[x][y];
-                double other_amp = other_field.field().get_amp()[x][y];
-                double processed_normal_amp
-                    = processed_normal_field.field().get_amp()[x][y];
-                double processed_normal_arg
-                    = processed_normal_field.field().get_arg()[x][y];
-                double processed_other_amp
-                    = processed_other_field.field().get_amp()[x][y];
-                double processed_other_arg
-                    = processed_other_field.field().get_arg()[x][y];
+                double normalAmp = normalField.field().getAmp()[x][y];
+                double otherAmp = otherField.field().getAmp()[x][y];
+                double processedNormalAmp
+                    = processedNormalField.field().getAmp()[x][y];
+                double processedNormalArg
+                    = processedNormalField.field().getArg()[x][y];
+                double processedOtherAmp
+                    = processedOtherField.field().getAmp()[x][y];
+                double processedOtherArg
+                    = processedOtherField.field().getArg()[x][y];
                 String coord = "at (" + x + ", " + y + ")";
-                assertEquals(normal_amp, processed_normal_amp, 1e-6, coord);
-                assertEquals(other_amp, processed_other_amp, 1e-6, coord);
-                assertEquals(processed_normal_arg, 0, 1e-6, coord);
-                assertEquals(processed_other_arg, 0, 1e-6, coord);
+                assertEquals(normalAmp, processedNormalAmp, 1e-6, coord);
+                assertEquals(otherAmp, processedOtherAmp, 1e-6, coord);
+                assertEquals(processedNormalArg, 0, 1e-6, coord);
+                assertEquals(processedOtherArg, 0, 1e-6, coord);
             }
         }
     }
-    @Test public void test_live()
+    @Test public void testLive()
     {
         Context context = new Context(PluginService.class, PrefService.class);
         Reference test = new Reference();
         context.inject(test.param());
         TestDialog dialog = new TestDialog();
         test.param().initialize();
-        test.param().add_to_dialog(dialog);
-        dialog.get_string(0).value = "Self";
-        test.param().read_from_dialog();
+        test.param().addToDialog(dialog);
+        dialog.getString(0).value = "Self";
+        test.param().readFromDialog();
         dialog = new TestDialog();
-        test.param().add_to_dialog(dialog);
-        dialog.get_boolean(0).value = true; // Set phase to true
-        dialog.get_boolean(1).value = false; // Set amplitude to false
+        test.param().addToDialog(dialog);
+        dialog.getBoolean(0).value = true; // Set phase to true
+        dialog.getBoolean(1).value = false; // Set amplitude to false
         // Use same roi does nothing
-        test.param().read_from_dialog();
+        test.param().readFromDialog();
 
         Filter filter = new Filter();
-        filter.set_filter(new PointRoi(new int[]{1, 1, 2, 2},
+        filter.setFilter(new PointRoi(new int[]{1, 1, 2, 2},
                                        new int[]{1, 2, 1, 2}, 4));
         ReconstructionField field = new ReconstructionFieldImpl(real, imag);
-        filter.filter_field(field);
-        ReconstructionField orig_field = field.copy();
+        filter.filterField(field);
+        ReconstructionField origField = field.copy();
         filter = new Filter();
-        filter.set_filter(new PointRoi(new int[]{0, 0, 0, 1, 1, 1, 2, 2, 2},
+        filter.setFilter(new PointRoi(new int[]{0, 0, 0, 1, 1, 1, 2, 2, 2},
                                        new int[]{0, 1, 2, 0, 1, 2, 0, 1, 2},9));
-        test.M_not_same_filter = filter;
+        test.M_notSameFilter = filter;
         // Setup is finally complete!
 
-        test.process_filtered_field(field, 0);
+        test.processFilteredField(field, 0);
 
         for (int x = 0; x < 3; ++x) {
             for (int y = 0; y < 3; ++y) {
-                double amp1 = orig_field.field().get_amp()[x][y];
-                double amp2 = field.field().get_amp()[x][y];
-                double arg1 = orig_field.field().get_arg()[x][y];
-                double arg2 = field.field().get_arg()[x][y];
+                double amp1 = origField.field().getAmp()[x][y];
+                double amp2 = field.field().getAmp()[x][y];
+                double arg1 = origField.field().getArg()[x][y];
+                double arg2 = field.field().getArg()[x][y];
                 String coord = "at (" + x + ", " + y + ")";
                 assertEquals(amp1, amp2, 1e-6, coord);
                 assertTrue(Math.abs(0 - arg1) > 1e-6, coord);
@@ -135,9 +135,9 @@ public class ReferenceTest {
             }
         }
     }
-    // Test that process_filtered_field always produces the same result.  This
+    // Test that processFilteredField always produces the same result.  This
     // was a bug.
-    @Test public void test_constant()
+    @Test public void testConstant()
     {
         float[][] ref1 = {
             {0.8447616701F, 0.4280179246F, 0.6236040991F},
@@ -149,34 +149,34 @@ public class ReferenceTest {
             {0.6662169492F, 0.0381267463F, 0.9366164646F},
             {0.9904258024F, 0.0142653695F, 0.1162896629F}
         };
-        ImageStack ref_stack = new ImageStack(3, 3);
-        ref_stack.addSlice(new FloatProcessor(ref1));
-        ref_stack.addSlice(new FloatProcessor(ref2));
-        ImagePlus ref_image = new ImagePlus("", ref_stack);
+        ImageStack refStack = new ImageStack(3, 3);
+        refStack.addSlice(new FloatProcessor(ref1));
+        refStack.addSlice(new FloatProcessor(ref2));
+        ImagePlus refImage = new ImagePlus("", refStack);
         Filter filter = new Filter();
-        filter.set_filter(new PointRoi(new int[]{1, 1, 2, 2},
+        filter.setFilter(new PointRoi(new int[]{1, 1, 2, 2},
                                        new int[]{1, 2, 1, 2}, 4));
-        Reference test = new Reference(new TestPlugin2(ref_image), true, false);
+        Reference test = new Reference(new TestPlugin2(refImage), true, false);
         ArrayList<ReconstructionPlugin> plugins = new ArrayList<>();
         plugins.add(filter);
-        test.read_plugins(plugins);
+        test.readPlugins(plugins);
         ReconstructionField field1 = new ReconstructionFieldImpl(real, imag);
         ReconstructionField field2 = field1.copy();
         ReconstructionField field3 = field1.copy();
         ReconstructionField field4 = field1.copy();
 
-        test.process_filtered_field(field1, 1);
-        test.process_filtered_field(field2, 1);
-        test.process_filtered_field(field3, 2);
-        test.process_filtered_field(field4, 2);
+        test.processFilteredField(field1, 1);
+        test.processFilteredField(field2, 1);
+        test.processFilteredField(field3, 2);
+        test.processFilteredField(field4, 2);
 
         for (int x = 0; x < 3; ++x) {
             for (int y = 0; y < 3; ++y) {
                 String coord = "(" + x + ", " + y + ")";
-                double[][] f1 = field1.field().get_field();
-                double[][] f2 = field2.field().get_field();
-                double[][] f3 = field3.field().get_field();
-                double[][] f4 = field4.field().get_field();
+                double[][] f1 = field1.field().getField();
+                double[][] f2 = field2.field().getField();
+                double[][] f3 = field3.field().getField();
+                double[][] f4 = field4.field().getField();
                 assertEquals(f1[x][2*y], f2[x][2*y], coord);
                 assertEquals(f1[x][2*y+1], f2[x][2*y+1], coord);
                 assertEquals(f3[x][2*y], f4[x][2*y], coord);
@@ -188,30 +188,38 @@ public class ReferenceTest {
     }
     public static class TestPlugin extends AbstractReferencePlugin {
         @Override
-        public ReconstructionField get_reference_holo(
+        public ReconstructionField getReferenceHolo(
             ConstReconstructionField field, int t)
         {
             return new ReconstructionFieldImpl(real, imag);
         }
+        @Override public TestPlugin duplicate() {return new TestPlugin();}
     }
     public static class TestPlugin2 extends AbstractReferencePlugin {
-        public TestPlugin2(ImagePlus ref_image)
+        public TestPlugin2(ImagePlus refImage)
         {
-            M_1 = create(ref_image, 1);
-            M_2 = create(ref_image, 2);
+            M_1 = create(refImage, 1);
+            M_2 = create(refImage, 2);
         }
         @Override
-        public ReconstructionField get_reference_holo(
+        public ReconstructionField getReferenceHolo(
             ConstReconstructionField field, int t)
         {
             if (t == 1) return M_1;
             else return M_2;
         }
+        private TestPlugin2(ReconstructionField m1, ReconstructionField m2)
+        {
+            M_1 = m1;
+            M_2 = m2;
+        }
+        @Override public TestPlugin2 duplicate()
+            {return new TestPlugin2(M_1, M_2);}
         private ReconstructionField M_1;
         private ReconstructionField M_2;
-        private ReconstructionField create(ImagePlus ref_image, int t)
+        private ReconstructionField create(ImagePlus refImage, int t)
         {
-            float[][] arr = ref_image.getStack()
+            float[][] arr = refImage.getStack()
                                      .getProcessor(t)
                                      .getFloatArray();
             double[][] real = new double[arr.length][arr[0].length];

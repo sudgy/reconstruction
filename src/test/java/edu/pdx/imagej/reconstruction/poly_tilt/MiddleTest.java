@@ -29,35 +29,35 @@ import ij.ImagePlus;
 import ij.process.FloatProcessor;
 
 public class MiddleTest {
-    @Test public void test_lines()
+    @Test public void testLines()
     {
         ImagePlus imp = new ImagePlus("", new FloatProcessor(8, 8));
         Middle test = new Middle();
-        test.process_hologram_param(imp);
+        test.processHologramParam(imp);
         int i = 0;
-        for (Point p : test.get_h_line()) {
+        for (Point p : test.getHLine()) {
             assertEquals(++i, p.x);
             assertEquals(4, p.y); // In the middle
         }
         assertEquals(6, i, "It should end at 7/8 through the image.");
         i = 0;
-        for (Point p : test.get_v_line()) {
+        for (Point p : test.getVLine()) {
             assertEquals(4, p.x); // In the middle
             assertEquals(++i, p.y);
         }
         assertEquals(6, i, "It should end at 7/8 through the image.");
     }
     // This should never be done, but we don't want it to crash
-    @Test public void test_tiny()
+    @Test public void testTiny()
     {
         ImagePlus imp = new ImagePlus("", new FloatProcessor(1, 1));
         Middle test = new Middle();
-        test.process_hologram_param(imp);
-        for (Point p : test.get_h_line()) {
+        test.processHologramParam(imp);
+        for (Point p : test.getHLine()) {
             assertEquals(0, p.x);
             assertEquals(0, p.y);
         }
-        for (Point p : test.get_v_line()) {
+        for (Point p : test.getVLine()) {
             assertEquals(0, p.x);
             assertEquals(0, p.y);
         }

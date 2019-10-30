@@ -47,42 +47,53 @@ public class Manual extends AbstractPolyTiltPlugin {
     /** Constructor intended for programmatic use of this plugin.  It gets the
      * lines through these parameters.
      *
-     * @param h_val The y pixel value for the horizontal line to be at.
-     * @param h_start The x pixel value for the horizontal line to start at.
-     * @param h_end The x pixel value for the horizontal line to end at.
-     * @param v_val The x pixel value for the vertical line to be at.
-     * @param v_start The y pixel value for the vertical line to start at.
-     * @param v_end The y pixel value for the vertical line to end at.
+     * @param hVal The y pixel value for the horizontal line to be at.
+     * @param hStart The x pixel value for the horizontal line to start at.
+     * @param hEnd The x pixel value for the horizontal line to end at.
+     * @param vVal The x pixel value for the vertical line to be at.
+     * @param vStart The y pixel value for the vertical line to start at.
+     * @param vEnd The y pixel value for the vertical line to end at.
      */
-    public Manual(int h_val, int h_start, int h_end,
-                  int v_val, int v_start, int v_end)
+    public Manual(int hVal, int hStart, int hEnd,
+                  int vVal, int vStart, int vEnd)
     {
-        Line[] lines = create_lines(h_val, h_start, h_end,
-                                    v_val, v_start, v_end);
-        M_h_line = lines[0];
-        M_v_line = lines[1];
+        Line[] lines = createLines(hVal, hStart, hEnd,
+                                    vVal, vStart, vEnd);
+        M_hLine = lines[0];
+        M_vLine = lines[1];
+    }
+    private Manual(Line hline, Line vline)
+    {
+        M_hLine = hline;
+        M_vLine = vline;
+    }
+    @Override
+    public Manual duplicate()
+    {
+        // Not cloning the lines, but they won't change
+        return new Manual(getHLine(), getVLine());
     }
     /** {@inheritDoc} */
     @Override
-    public Iterable<Point> get_h_line()
+    public Line getHLine()
     {
-        if (M_h_line == null) {
-            Line[] lines = M_param.get_value();
-            M_h_line = lines[0];
-            M_v_line = lines[1];
+        if (M_hLine == null) {
+            Line[] lines = M_param.getValue();
+            M_hLine = lines[0];
+            M_vLine = lines[1];
         }
-        return M_h_line;
+        return M_hLine;
     }
     /** {@inheritDoc} */
     @Override
-    public Iterable<Point> get_v_line()
+    public Line getVLine()
     {
-        if (M_v_line == null) {
-            Line[] lines = M_param.get_value();
-            M_h_line = lines[0];
-            M_v_line = lines[1];
+        if (M_vLine == null) {
+            Line[] lines = M_param.getValue();
+            M_hLine = lines[0];
+            M_vLine = lines[1];
         }
-        return M_v_line;
+        return M_vLine;
     }
     /** {@inheritDoc} */
     @Override public ManualParameter param()
@@ -90,20 +101,20 @@ public class Manual extends AbstractPolyTiltPlugin {
         return M_param;
     }
 
-    private Line M_h_line;
-    private Line M_v_line;
+    private Line M_hLine;
+    private Line M_vLine;
     private ManualParameter M_param;
 
-    private static Line[] create_lines(int h_val, int h1, int h2,
-                                       int v_val, int v1, int v2)
+    private static Line[] createLines(int hVal, int h1, int h2,
+                                       int vVal, int v1, int v2)
     {
-        int h_start = Math.min(h1, h2);
-        int h_end = Math.max(h1, h2);
-        int v_start = Math.min(v1, v2);
-        int v_end = Math.max(v1, v2);
+        int hStart = Math.min(h1, h2);
+        int hEnd = Math.max(h1, h2);
+        int vStart = Math.min(v1, v2);
+        int vEnd = Math.max(v1, v2);
         Line[] result = new Line[2];
-        result[0] = new Line(h_start, h_val, h_end, h_val);
-        result[1] = new Line(v_val, v_start, v_val, v_end);
+        result[0] = new Line(hStart, hVal, hEnd, hVal);
+        result[1] = new Line(vVal, vStart, vVal, vEnd);
         return result;
     }
 
@@ -112,90 +123,90 @@ public class Manual extends AbstractPolyTiltPlugin {
     {
         public ManualParameter() {super("ManualCenterParams");}
         @Override
-        public void set_hologram(ImageParameter hologram)
+        public void setHologram(ImageParameter hologram)
         {
             M_holo = hologram;
-            set_dimensions1();
-            if (M_h_val == null) {
-                M_h_val = add_parameter(IntParameter.class, M_height / 2,
-                                        "Pixel_value_for_horizontal_line");
-                M_h_start = add_parameter(IntParameter.class, 0,
-                                          "Horizontal_line_start");
-                M_h_end = add_parameter(IntParameter.class, M_width - 1,
-                                        "Horizontal_line_end");
-                M_v_val = add_parameter(IntParameter.class, M_width / 2,
-                                        "Pixel_value_for_vertical_line");
-                M_v_start = add_parameter(IntParameter.class, 0,
-                                          "Vertical_line_start");
-                M_v_end = add_parameter(IntParameter.class, M_height - 1,
-                                        "Vertical_line_end");
+            setDimensions1();
+            if (M_hVal == null) {
+                M_hVal = addParameter(new IntParameter(M_height / 2,
+                                        "Pixel_value_for_horizontal_line"));
+                M_hStart = addParameter(new IntParameter(0,
+                                          "Horizontal_line_start"));
+                M_hEnd = addParameter(new IntParameter(M_width - 1,
+                                        "Horizontal_line_end"));
+                M_vVal = addParameter(new IntParameter(M_width / 2,
+                                        "Pixel_value_for_vertical_line"));
+                M_vStart = addParameter(new IntParameter(0,
+                                          "Vertical_line_start"));
+                M_vEnd = addParameter(new IntParameter(M_height - 1,
+                                        "Vertical_line_end"));
             }
-            set_dimensions2();
+            setDimensions2();
         }
         @Override
-        public void read_from_dialog()
+        public void readFromDialog()
         {
             if (M_holo != null) {
-                int[] dimensions = M_holo.get_value().getDimensions();
+                int[] dimensions = M_holo.getValue().getDimensions();
                 if (M_width != dimensions[0] || M_height != dimensions[1]) {
-                    set_dimensions();
+                    setDimensions();
                 }
             }
-            super.read_from_dialog();
+            super.readFromDialog();
         }
         @Override
-        public void read_from_prefs(Class<?> c, String name)
+        public void readFromPrefs(Class<?> c, String name)
         {
-            if (M_holo != null) set_dimensions();
-            super.read_from_prefs(c, name);
+            if (M_holo != null) setDimensions();
+            super.readFromPrefs(c, name);
         }
         @Override
-        public Line[] get_value()
+        public Line[] getValue()
         {
-            int h_val = M_h_val.get_value();
-            int h1 = M_h_start.get_value();
-            int h2 = M_h_end.get_value();
-            int h_start = Math.min(h1, h2);
-            int h_end = Math.max(h1, h2);
-            int v_val = M_v_val.get_value();
-            int v1 = M_v_start.get_value();
-            int v2 = M_v_end.get_value();
-            int v_start = Math.min(v1, v2);
-            int v_end = Math.max(v1, v2);
+            int hVal = M_hVal.getValue();
+            int h1 = M_hStart.getValue();
+            int h2 = M_hEnd.getValue();
+            int hStart = Math.min(h1, h2);
+            int hEnd = Math.max(h1, h2);
+            int vVal = M_vVal.getValue();
+            int v1 = M_vStart.getValue();
+            int v2 = M_vEnd.getValue();
+            int vStart = Math.min(v1, v2);
+            int vEnd = Math.max(v1, v2);
             Line[] result = new Line[2];
-            result[0] = new Line(h_start, h_val, h_end, h_val);
-            result[1] = new Line(v_val, v_start, v_val, v_end);
-            return create_lines(
-                M_h_val.get_value(), M_h_start.get_value(), M_h_end.get_value(),
-                M_v_val.get_value(), M_v_start.get_value(), M_v_end.get_value()
+            result[0] = new Line(hStart, hVal, hEnd, hVal);
+            result[1] = new Line(vVal, vStart, vVal, vEnd);
+            return createLines(
+                M_hVal.getValue(), M_hStart.getValue(), M_hEnd.getValue(),
+                M_vVal.getValue(), M_vStart.getValue(), M_vEnd.getValue()
             );
         }
-        private void set_dimensions()
+        private void setDimensions()
         {
-            set_dimensions1();
-            set_dimensions2();
+            setDimensions1();
+            setDimensions2();
         }
-        private void set_dimensions1()
+        private void setDimensions1()
         {
-            int[] dimensions = M_holo.get_value().getDimensions();
+            int[] dimensions = M_holo.getValue().getDimensions();
             M_width = dimensions[0];
             M_height = dimensions[1];
         }
-        private void set_dimensions2()
+        private void setDimensions2()
         {
-            M_h_val  .set_bounds(0, M_height - 1);
-            M_h_start.set_bounds(0, M_width  - 1);
-            M_h_end  .set_bounds(0, M_width  - 1);
-            M_v_val  .set_bounds(0, M_width  - 1);
-            M_v_start.set_bounds(0, M_height - 1);
-            M_v_end  .set_bounds(0, M_height - 1);
+            M_hVal  .setBounds(0, M_height - 1);
+            M_hStart.setBounds(0, M_width  - 1);
+            M_hEnd  .setBounds(0, M_width  - 1);
+            M_vVal  .setBounds(0, M_width  - 1);
+            M_vStart.setBounds(0, M_height - 1);
+            M_vEnd  .setBounds(0, M_height - 1);
         }
-        private IntParameter M_h_val;
-        private IntParameter M_h_start;
-        private IntParameter M_h_end;
-        private IntParameter M_v_val;
-        private IntParameter M_v_start;
-        private IntParameter M_v_end;
+        private IntParameter M_hVal;
+        private IntParameter M_hStart;
+        private IntParameter M_hEnd;
+        private IntParameter M_vVal;
+        private IntParameter M_vStart;
+        private IntParameter M_vEnd;
         private int          M_width;
         private int          M_height;
 

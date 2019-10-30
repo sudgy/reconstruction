@@ -38,7 +38,7 @@ import edu.pdx.imagej.dynamic_parameters.DParameter;
 public class AllPluginsParameter extends HoldingParameter<
         List<MainReconstructionPlugin>
     > {
-    @Parameter private ReconstructionPluginService P_plugin_service;
+    @Parameter private ReconstructionPluginService P_pluginService;
 
     /** Normal constructor.
      *
@@ -51,17 +51,17 @@ public class AllPluginsParameter extends HoldingParameter<
     }
 
     /** Adds all parameters, and calls {@link
-     * HologramPluginParameter#set_hologram set_hologram} on all that need it.
+     * HologramPluginParameter#setHologram setHologram} on all that need it.
      */
     @Override
     public void initialize()
     {
-        M_plugins = P_plugin_service.get_plugins();
+        M_plugins = P_pluginService.getMainPlugins();
         for (MainReconstructionPlugin plugin : M_plugins) {
             DParameter param = plugin.param();
-            if (param != null) add_premade_parameter(param);
+            if (param != null) addParameter(param);
             if (param instanceof HologramPluginParameter) {
-                ((HologramPluginParameter)param).set_hologram(M_hologram);
+                ((HologramPluginParameter)param).setHologram(M_hologram);
             }
         }
     }
@@ -71,7 +71,7 @@ public class AllPluginsParameter extends HoldingParameter<
      * @return All of the plugins.
      */
     @Override
-    public List<MainReconstructionPlugin> get_value()
+    public List<MainReconstructionPlugin> getValue()
     {
         return M_plugins;
     }

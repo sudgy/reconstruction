@@ -40,7 +40,7 @@ import edu.pdx.imagej.reconstruction.units.DistanceUnits;
 import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
 
 public class ResultTest {
-    @Test public void test_normal()
+    @Test public void testNormal()
     {
         Result test = new Result();
         FloatProcessor proc = new FloatProcessor(new float[][]{{1, 2}, {3, 4}});
@@ -53,11 +53,11 @@ public class ResultTest {
         ArrayList<DistanceUnitValue> zs = new ArrayList<>();
         zs.add(unit0);
 
-        test.process_hologram_param(imp);
-        test.process_dimensions_param(unit2, unit3);
-        test.process_ts_param(ts);
-        test.process_zs_param(zs);
-        test.process_beginning();
+        test.processHologramParam(imp);
+        test.processDimensionsParam(unit2, unit3);
+        test.processTsParam(ts);
+        test.processZsParam(zs);
+        test.processBeginning();
         double[][] real = {
             {1, 0},
             {3, 0}
@@ -67,13 +67,13 @@ public class ResultTest {
             {4, 1}
         };
         ReconstructionField field = new ReconstructionFieldImpl(real, imag);
-        test.process_propagated_field(field, 1, unit0);
-        test.almost_process_ending();
+        test.processPropagatedField(field, 1, unit0);
+        test.almostProcessEnding();
 
-        assertTrue(test.M_phase_imp == null);
-        assertTrue(test.M_imaginary_imp == null);
-        float[][] amp2 = test.M_amplitude_imp.getProcessor().getFloatArray();
-        float[][] real2 = test.M_real_imp.getProcessor().getFloatArray();
+        assertTrue(test.M_phaseImp == null);
+        assertTrue(test.M_imaginaryImp == null);
+        float[][] amp2 = test.M_amplitudeImp.getProcessor().getFloatArray();
+        float[][] real2 = test.M_realImp.getProcessor().getFloatArray();
         assertEquals(amp2[0][0], 1);
         assertEquals(amp2[0][1], 0);
         assertEquals(amp2[1][0], 5);
@@ -82,16 +82,16 @@ public class ResultTest {
         assertEquals(real2[0][1], 0);
         assertEquals(real2[1][0], 3);
         assertEquals(real2[1][1], 0);
-        assertEquals(test.M_real_imp.getCalibration().pixelHeight, 1.5);
-        assertEquals(test.M_real_imp.getCalibration().pixelWidth, 1);
-        assertEquals(test.M_amplitude_imp.getTitle(), "Amplitude");
-        assertEquals(test.M_real_imp.getStack().getSliceLabel(1),
+        assertEquals(test.M_realImp.getCalibration().pixelHeight, 1.5);
+        assertEquals(test.M_realImp.getCalibration().pixelWidth, 1);
+        assertEquals(test.M_amplitudeImp.getTitle(), "Amplitude");
+        assertEquals(test.M_realImp.getStack().getSliceLabel(1),
                      "A, z = 0.000");
     }
-    @Test public void test_stack()
+    @Test public void testStack()
     {
         Result test = new Result();
-        ImagePlus stack = create_the_stack();
+        ImagePlus stack = createTheStack();
         test.M_options = new ResultOptions();
         test.M_options.real = true;
         ArrayList<Integer> ts = new ArrayList<>();
@@ -99,25 +99,25 @@ public class ResultTest {
         ArrayList<DistanceUnitValue> zs = new ArrayList<>();
         zs.add(unit0); zs.add(unit1);
 
-        test.process_hologram_param(stack);
-        test.process_dimensions_param(unit2, unit3);
-        test.process_ts_param(ts);
-        test.process_zs_param(zs);
-        test.process_beginning();
+        test.processHologramParam(stack);
+        test.processDimensionsParam(unit2, unit3);
+        test.processTsParam(ts);
+        test.processZsParam(zs);
+        test.processBeginning();
 
         double[][] real = {{0, 0}, {0, 0}};
         double[][] imag = {{0, 0}, {0, 0}};
         ReconstructionField field = new ReconstructionFieldImpl(real, imag);
-        test.process_propagated_field(field, 1, unit0);
-        field.field().get_field()[0][0] = 1;
-        test.process_propagated_field(field, 1, unit1);
-        field.field().get_field()[0][0] = 2;
-        test.process_propagated_field(field, 3, unit0);
-        field.field().get_field()[0][0] = 3;
-        test.process_propagated_field(field, 3, unit1);
-        test.almost_process_ending();
+        test.processPropagatedField(field, 1, unit0);
+        field.field().getField()[0][0] = 1;
+        test.processPropagatedField(field, 1, unit1);
+        field.field().getField()[0][0] = 2;
+        test.processPropagatedField(field, 3, unit0);
+        field.field().getField()[0][0] = 3;
+        test.processPropagatedField(field, 3, unit1);
+        test.almostProcessEnding();
 
-        ImagePlus imp = test.M_real_imp;
+        ImagePlus imp = test.M_realImp;
         ImageStack s = imp.getStack();
         int real10_index = imp.getStackIndex(1, 1, 1);
         int real11_index = imp.getStackIndex(1, 2, 1);
@@ -141,26 +141,26 @@ public class ResultTest {
         assertEquals(real30_label, "A, z = 0.000");
         assertEquals(real31_label, "A, z = 1.000");
     }
-    @Test public void test_save_to_file() throws java.io.IOException
+    @Test public void testSaveToFile() throws java.io.IOException
     {
-        String dir = "./reconstruction_result_sandbox";
+        String dir = "./reconstructionResultSandbox";
         try {
             Result test = new Result();
-            ImagePlus stack = create_the_stack();
+            ImagePlus stack = createTheStack();
             test.M_options = new ResultOptions();
             test.M_options.real = true;
-            test.M_options.save_to_file = true;
-            test.M_options.save_directory = dir;
+            test.M_options.saveToFile = true;
+            test.M_options.saveDirectory = dir;
             ArrayList<Integer> ts = new ArrayList<>();
             ts.add(1); ts.add(3);
             ArrayList<DistanceUnitValue> zs = new ArrayList<>();
             zs.add(unit0); zs.add(unit1);
 
-            test.process_hologram_param(stack);
-            test.process_dimensions_param(unit2, unit3);
-            test.process_ts_param(ts);
-            test.process_zs_param(zs);
-            test.process_beginning();
+            test.processHologramParam(stack);
+            test.processDimensionsParam(unit2, unit3);
+            test.processTsParam(ts);
+            test.processZsParam(zs);
+            test.processBeginning();
 
             assertTrue(new File(Paths.get(dir, "Real", "0.000").toString())
                                .exists());
@@ -170,16 +170,16 @@ public class ResultTest {
             double[][] real = {{0, 0}, {0, 0}};
             double[][] imag = {{0, 0}, {0, 0}};
             ReconstructionField field = new ReconstructionFieldImpl(real, imag);
-            test.process_propagated_field(field, 1, unit0);
-            field.field().get_field()[0][0] = 1;
-            test.process_propagated_field(field, 1, unit1);
-            field.field().get_field()[0][0] = 2;
-            test.process_propagated_field(field, 3, unit0);
-            field.field().get_field()[0][0] = 3;
-            test.process_propagated_field(field, 3, unit1);
-            test.almost_process_ending();
+            test.processPropagatedField(field, 1, unit0);
+            field.field().getField()[0][0] = 1;
+            test.processPropagatedField(field, 1, unit1);
+            field.field().getField()[0][0] = 2;
+            test.processPropagatedField(field, 3, unit0);
+            field.field().getField()[0][0] = 3;
+            test.processPropagatedField(field, 3, unit1);
+            test.almostProcessEnding();
 
-            assertTrue(test.M_real_imp == null, "There should be no result in "
+            assertTrue(test.M_realImp == null, "There should be no result in "
                 + "memory when saving to file.");
             String real10_path
                 = Paths.get(dir, "Real", "0.000", "00001.tif").toString();
@@ -221,7 +221,7 @@ public class ResultTest {
         }
     }
 
-    private static ImagePlus create_the_stack()
+    private static ImagePlus createTheStack()
     {
         ImageStack stack = new ImageStack(2, 2);
         stack.addSlice("1", new FloatProcessor(new float[][]{{0, 0}, {0, 0}}));

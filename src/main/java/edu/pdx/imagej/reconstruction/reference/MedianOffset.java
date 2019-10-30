@@ -57,27 +57,32 @@ public class MedianOffset extends AbstractReferencePlugin {
     }
     /** Constructor intended for programmatic use of the plugin.
      *
-     * @param median_img The image stack to get the median from.
+     * @param medianImg The image stack to get the median from.
      * @param ts The time slices used in calculating the median.
      * @param offset The time offset to use on <code>ts</code>.
      */
-    public MedianOffset(ImagePlus median_img, List<Integer> ts, int offset)
+    public MedianOffset(ImagePlus medianImg, List<Integer> ts, int offset)
     {
-        M_median_img = median_img;
+        M_medianImg = medianImg;
         M_ts = ts;
         M_offset = offset;
     }
+    @Override
+    public MedianOffset duplicate()
+    {
+        return new MedianOffset(M_medianImg, M_ts, M_offset);
+    }
     /** Get the reference hologram. */
     @Override
-    public ReconstructionField get_reference_holo(
+    public ReconstructionField getReferenceHolo(
         ConstReconstructionField field, int t)
     {
         if (M_param != null) {
-            M_median_img = M_param.get_value().imp;
-            M_ts = M_param.get_value().ts;
-            M_offset = M_param.get_value().offset;
+            M_medianImg = M_param.getValue().imp;
+            M_ts = M_param.getValue().ts;
+            M_offset = M_param.getValue().offset;
         }
-        return get_reference_holo(t, M_median_img, M_ts, M_offset);
+        return getReferenceHolo(t, M_medianImg, M_ts, M_offset);
     }
     /** Get the reference hologram.  This is what actually gets the reference
      * hologram, because this is whtat this class cares about more.
@@ -89,24 +94,24 @@ public class MedianOffset extends AbstractReferencePlugin {
      * @return The median of the images, starting at the specified offset from
      *         <code>t</code>.
      */
-    public ReconstructionField get_reference_holo(int t, ImagePlus imp,
+    public ReconstructionField getReferenceHolo(int t, ImagePlus imp,
                                                   List<Integer> ts,
                                                   int offset)
     {
         // Like offset, should this be cached?
 
-        int min_t = ts.get(0), max_t = ts.get(0);
+        int minT = ts.get(0), maxT = ts.get(0);
         for (int t2 : ts) {
-            if (t2 < min_t) min_t = t2;
-            if (t2 > max_t) max_t = t2;
+            if (t2 < minT) minT = t2;
+            if (t2 > maxT) maxT = t2;
         }
-        int new_offset = OffsetUtil.get_multi_offset(offset, t, 1,
+        int newOffset = OffsetUtil.getMultiOffset(offset, t, 1,
                                                      imp.getImageStackSize(),
-                                                     min_t, max_t);
-        double[][] real = MedianUtil.calculate_median(imp,
+                                                     minT, maxT);
+        double[][] real = MedianUtil.calculateMedian(imp,
             new AbstractList<Integer>() {
                 @Override public Integer get(int index)
-                    {return ts.get(index) + new_offset + t - 1;}
+                    {return ts.get(index) + newOffset + t - 1;}
                 @Override public int size() {return ts.size();}
             });
         double[][] imag = new double[real.length][real[0].length];
@@ -119,7 +124,7 @@ public class MedianOffset extends AbstractReferencePlugin {
     }
 
     private MedianOffsetParameter M_param = new MedianOffsetParameter();
-    private ImagePlus M_median_img;
+    private ImagePlus M_medianImg;
     private List<Integer> M_ts;
     private int M_offset;
 
@@ -143,27 +148,27 @@ public class MedianOffset extends AbstractReferencePlugin {
         public void initialize()
         {
             if (M_images == null) {
-                M_img = add_parameter(ImageParameter.class,
-                                      "Reference Hologram Stack");
+                M_img = addParameter(new ImageParameter(
+                                      "Reference Hologram Stack"));
             }
             else {
-                M_img = add_parameter(ImageParameter.class,
+                M_img = addParameter(new ImageParameter(
                                       "Reference Hologram Stack",
-                                      M_images);
+                                      M_images));
             }
-            M_ts = add_parameter(TParameter.class, M_img,
+            M_ts = addParameter(new TParameter(M_img,
                                  TParameter.PossibleTypes.SomeMulti,
-                                 "MedianOffsetRef");
-            M_offset = add_parameter(IntParameter.class, 0,
-                                     "Time offset", "frames");
+                                 "MedianOffsetRef"));
+            M_offset = addParameter(new IntParameter( 0,
+                                     "Time offset", "frames"));
         }
         @Override
-        public MedianOffsetParams get_value()
+        public MedianOffsetParams getValue()
         {
             MedianOffsetParams result = new MedianOffsetParams();
-            result.imp = M_img.get_value();
-            result.ts = M_ts.get_value();
-            result.offset = M_offset.get_value();
+            result.imp = M_img.getValue();
+            result.ts = M_ts.getValue();
+            result.offset = M_offset.getValue();
             return result;
         }
         private ImageParameter M_img;

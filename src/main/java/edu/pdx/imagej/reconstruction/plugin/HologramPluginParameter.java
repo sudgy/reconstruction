@@ -31,5 +31,5 @@ public interface HologramPluginParameter {
      *
      * @param hologram The hologram parameter.
      */
-    public void set_hologram(ImageParameter hologram);
+    public void setHologram(ImageParameter hologram);
 }

@@ -33,620 +33,620 @@ import edu.pdx.imagej.dynamic_parameters.ImageParameter;
 import edu.pdx.imagej.dynamic_parameters.TestDialog;
 
 public class TParameterTest {
-    @Test public void test_single_init()
+    @Test public void testSingleInit()
     {
-        TParameter param = get_test_param(1);
+        TParameter param = getTestParam(1);
         TParameter.SingleT test = param.new SingleT();
         test.initialize();
-        List<Integer> list = test.get_value();
+        List<Integer> list = test.getValue();
         assertEquals(1, list.size());
         assertEquals(1, list.get(0).intValue());
     }
-    @Test public void test_single_change()
+    @Test public void testSingleChange()
     {
-        TParameter param = get_test_param(1);
+        TParameter param = getTestParam(1);
         TParameter.SingleT test = param.new SingleT();
         test.initialize();
         TestDialog dialog = new TestDialog();
-        test.add_to_dialog(dialog);
-        dialog.get_integer(0).value = 2;
-        test.read_from_dialog();
-        List<Integer> list = test.get_value();
+        test.addToDialog(dialog);
+        dialog.getInteger(0).value = 2;
+        test.readFromDialog();
+        List<Integer> list = test.getValue();
         assertEquals(1, list.size());
         assertEquals(2, list.get(0).intValue());
     }
-    @Test public void test_single_error()
+    @Test public void testSingleError()
     {
-        TParameter param = get_test_param(2);
-        param.update_max_t();
+        TParameter param = getTestParam(2);
+        param.updateMaxT();
         TParameter.SingleT test = param.new SingleT();
         test.initialize();
         TestDialog dialog = new TestDialog();
-        test.add_to_dialog(dialog);
+        test.addToDialog(dialog);
 
-        assertTrue(test.get_error() == null);
+        assertTrue(test.getError() == null);
 
-        dialog.get_integer(0).value = 3;
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
+        dialog.getInteger(0).value = 3;
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
 
-        dialog.get_integer(0).value = 2;
-        test.read_from_dialog();
-        assertTrue(test.get_error() == null);
+        dialog.getInteger(0).value = 2;
+        test.readFromDialog();
+        assertTrue(test.getError() == null);
     }
-    @Test public void test_single_error_change()
+    @Test public void testSingleErrorChange()
     {
-        ImageParameter images = get_image_param(2, 3);
-        TParameter param = get_test_param(images);
-        param.update_max_t();
+        ImageParameter images = getImageParam(2, 3);
+        TParameter param = getTestParam(images);
+        param.updateMaxT();
         TParameter.SingleT test = param.new SingleT();
         test.initialize();
         TestDialog dialog = new TestDialog();
-        images.add_to_dialog(dialog);
-        test.add_to_dialog(dialog);
+        images.addToDialog(dialog);
+        test.addToDialog(dialog);
 
-        dialog.get_integer(0).value = 3;
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
+        dialog.getInteger(0).value = 3;
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
 
-        dialog.get_string_index(0).value = 1;
-        images.read_from_dialog();
-        param.update_max_t();
-        test.read_from_dialog();
-        assertTrue(test.get_error() == null);
+        dialog.getStringIndex(0).value = 1;
+        images.readFromDialog();
+        param.updateMaxT();
+        test.readFromDialog();
+        assertTrue(test.getError() == null);
 
-        dialog.get_string_index(0).value = 0;
-        images.read_from_dialog();
-        param.update_max_t();
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
+        dialog.getStringIndex(0).value = 0;
+        images.readFromDialog();
+        param.updateMaxT();
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
     }
 
-    @Test public void test_current_init()
+    @Test public void testCurrentInit()
     {
-        TParameter param = get_test_param(2);
+        TParameter param = getTestParam(2);
         TParameter.CurrentT test = param.new CurrentT();
         test.initialize();
-        List<Integer> list = test.get_value();
+        List<Integer> list = test.getValue();
         assertEquals(1, list.size());
         assertEquals(1, list.get(0).intValue());
     }
-    @Test public void test_current_change()
+    @Test public void testCurrentChange()
     {
-        ImageParameter image = get_image_param(2);
-        TParameter param = get_test_param(image);
+        ImageParameter image = getImageParam(2);
+        TParameter param = getTestParam(image);
         TParameter.CurrentT test = param.new CurrentT();
         test.initialize();
-        image.get_value().setPosition(2);
-        List<Integer> list = test.get_value();
+        image.getValue().setPosition(2);
+        List<Integer> list = test.getValue();
         assertEquals(1, list.size());
         assertEquals(2, list.get(0).intValue());
     }
 
-    @Test public void test_all()
+    @Test public void testAll()
     {
-        ImageParameter image = get_image_param(2, 3);
-        TParameter param = get_test_param(image);
-        param.update_max_t();
+        ImageParameter image = getImageParam(2, 3);
+        TParameter param = getTestParam(image);
+        param.updateMaxT();
         TParameter.AllT test = param.new AllT();
         test.initialize();
 
-        List<Integer> list = test.get_value();
+        List<Integer> list = test.getValue();
         assertEquals(2, list.size());
         assertEquals(1, list.get(0).intValue());
         assertEquals(2, list.get(1).intValue());
 
         TestDialog dialog = new TestDialog();
-        image.add_to_dialog(dialog);
-        dialog.get_string_index(0).value = 1;
-        image.read_from_dialog();
-        param.update_max_t();
+        image.addToDialog(dialog);
+        dialog.getStringIndex(0).value = 1;
+        image.readFromDialog();
+        param.updateMaxT();
 
-        list = test.get_value();
+        list = test.getValue();
         assertEquals(3, list.size());
         assertEquals(1, list.get(0).intValue());
         assertEquals(2, list.get(1).intValue());
         assertEquals(3, list.get(2).intValue());
     }
 
-    @Test public void test_list_init()
+    @Test public void testListInit()
     {
-        TParameter param = get_test_param(1);
+        TParameter param = getTestParam(1);
         TParameter.ListT test = param.new ListT();
         test.initialize();
-        assertTrue(test.get_error() != null);
+        assertTrue(test.getError() != null);
     }
-    @Test public void test_list_single()
+    @Test public void testListSingle()
     {
-        TParameter param = get_test_param(1);
+        TParameter param = getTestParam(1);
         TParameter.ListT test = param.new ListT();
         test.initialize();
         TestDialog dialog = new TestDialog();
-        test.add_to_dialog(dialog);
-        dialog.get_string(0).value = "3";
-        test.read_from_dialog();
+        test.addToDialog(dialog);
+        dialog.getString(0).value = "3";
+        test.readFromDialog();
 
-        List<Integer> list = test.get_value();
+        List<Integer> list = test.getValue();
         assertEquals(1, list.size());
         assertEquals(3, list.get(0).intValue());
     }
-    @Test public void test_list_single_bounds()
+    @Test public void testListSingleBounds()
     {
-        TParameter param = get_test_param(2);
-        param.update_max_t();
+        TParameter param = getTestParam(2);
+        param.updateMaxT();
         TParameter.ListT test = param.new ListT();
         test.initialize();
         TestDialog dialog = new TestDialog();
-        test.add_to_dialog(dialog);
+        test.addToDialog(dialog);
 
-        dialog.get_string(0).value = "1";
-        test.read_from_dialog();
-        assertTrue(test.get_error() == null);
+        dialog.getString(0).value = "1";
+        test.readFromDialog();
+        assertTrue(test.getError() == null);
 
-        dialog.get_string(0).value = "3";
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
+        dialog.getString(0).value = "3";
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
 
-        dialog.get_string(0).value = "2";
-        test.read_from_dialog();
-        assertTrue(test.get_error() == null);
+        dialog.getString(0).value = "2";
+        test.readFromDialog();
+        assertTrue(test.getError() == null);
     }
-    @Test public void test_list_multi()
+    @Test public void testListMulti()
     {
-        TParameter param = get_test_param(1);
+        TParameter param = getTestParam(1);
         TParameter.ListT test = param.new ListT();
         test.initialize();
         TestDialog dialog = new TestDialog();
-        test.add_to_dialog(dialog);
-        dialog.get_string(0).value = "3, \t 2,5";
-        test.read_from_dialog();
+        test.addToDialog(dialog);
+        dialog.getString(0).value = "3, \t 2,5";
+        test.readFromDialog();
 
-        List<Integer> list = test.get_value();
+        List<Integer> list = test.getValue();
         assertEquals(3, list.size());
         assertEquals(3, list.get(0).intValue());
         assertEquals(2, list.get(1).intValue());
         assertEquals(5, list.get(2).intValue());
     }
-    @Test public void test_list_multi_bounds()
+    @Test public void testListMultiBounds()
     {
-        TParameter param = get_test_param(2);
-        param.update_max_t();
+        TParameter param = getTestParam(2);
+        param.updateMaxT();
         TParameter.ListT test = param.new ListT();
         test.initialize();
         TestDialog dialog = new TestDialog();
-        test.add_to_dialog(dialog);
+        test.addToDialog(dialog);
 
-        dialog.get_string(0).value = "1, 2";
-        test.read_from_dialog();
-        assertTrue(test.get_error() == null);
+        dialog.getString(0).value = "1, 2";
+        test.readFromDialog();
+        assertTrue(test.getError() == null);
 
-        dialog.get_string(0).value = "1, 3";
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
+        dialog.getString(0).value = "1, 3";
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
 
-        dialog.get_string(0).value = "1, 2";
-        test.read_from_dialog();
-        assertTrue(test.get_error() == null);
+        dialog.getString(0).value = "1, 2";
+        test.readFromDialog();
+        assertTrue(test.getError() == null);
     }
-    @Test public void test_list_change_bounds()
+    @Test public void testListChangeBounds()
     {
-        ImageParameter image = get_image_param(2, 3);
-        TParameter param = get_test_param(image);
-        param.update_max_t();
+        ImageParameter image = getImageParam(2, 3);
+        TParameter param = getTestParam(image);
+        param.updateMaxT();
         TParameter.ListT test = param.new ListT();
         test.initialize();
         TestDialog dialog = new TestDialog();
-        image.add_to_dialog(dialog);
-        test.add_to_dialog(dialog);
+        image.addToDialog(dialog);
+        test.addToDialog(dialog);
 
-        dialog.get_string(0).value = "1, 3";
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
+        dialog.getString(0).value = "1, 3";
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
 
-        dialog.get_string_index(0).value = 1;
-        image.read_from_dialog();
-        param.update_max_t();
-        test.read_from_dialog();
-        assertTrue(test.get_error() == null);
+        dialog.getStringIndex(0).value = 1;
+        image.readFromDialog();
+        param.updateMaxT();
+        test.readFromDialog();
+        assertTrue(test.getError() == null);
     }
-    @Test public void test_list_parse()
+    @Test public void testListParse()
     {
-        TParameter param = get_test_param(1);
-        param.update_max_t();
+        TParameter param = getTestParam(1);
+        param.updateMaxT();
         TParameter.ListT test = param.new ListT();
         test.initialize();
         TestDialog dialog = new TestDialog();
-        test.add_to_dialog(dialog);
+        test.addToDialog(dialog);
 
-        dialog.get_string(0).value = "";
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
+        dialog.getString(0).value = "";
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
 
-        dialog.get_string(0).value = "1";
-        test.read_from_dialog();
-        assertTrue(test.get_error() == null);
+        dialog.getString(0).value = "1";
+        test.readFromDialog();
+        assertTrue(test.getError() == null);
 
-        dialog.get_string(0).value = ".";
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
+        dialog.getString(0).value = ".";
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
 
-        dialog.get_string(0).value = "a";
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
+        dialog.getString(0).value = "a";
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
 
-        dialog.get_string(0).value = "1a";
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
+        dialog.getString(0).value = "1a";
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
 
-        dialog.get_string(0).value = "1,.";
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
+        dialog.getString(0).value = "1,.";
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
 
-        dialog.get_string(0).value = "1,,1";
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
+        dialog.getString(0).value = "1,,1";
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
 
-        dialog.get_string(0).value = "1.5";
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
+        dialog.getString(0).value = "1.5";
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
     }
 
-    @Test public void test_range_init()
+    @Test public void testRangeInit()
     {
-        TParameter param = get_test_param();
+        TParameter param = getTestParam();
         TParameter.RangeT test = param.new RangeT();
         test.initialize();
-        List<Integer> list = test.get_value();
+        List<Integer> list = test.getValue();
         assertEquals(1, list.size());
         assertEquals(1, list.get(0).intValue());
     }
-    @Test public void test_range_up()
+    @Test public void testRangeUp()
     {
-        TParameter param = get_test_param();
+        TParameter param = getTestParam();
         TParameter.RangeT test = param.new RangeT();
         test.initialize();
         TestDialog dialog = new TestDialog();
-        test.add_to_dialog(dialog);
-        dialog.get_integer(0).value = 3;
-        dialog.get_integer(1).value = 7;
-        dialog.get_integer(2).value = 2;
-        test.read_from_dialog();
+        test.addToDialog(dialog);
+        dialog.getInteger(0).value = 3;
+        dialog.getInteger(1).value = 7;
+        dialog.getInteger(2).value = 2;
+        test.readFromDialog();
 
-        List<Integer> list = test.get_value();
+        List<Integer> list = test.getValue();
         assertEquals(3, list.size());
         assertEquals(3, list.get(0).intValue());
         assertEquals(5, list.get(1).intValue());
         assertEquals(7, list.get(2).intValue());
     }
-    @Test public void test_range_down()
+    @Test public void testRangeDown()
     {
-        TParameter param = get_test_param();
+        TParameter param = getTestParam();
         TParameter.RangeT test = param.new RangeT();
         test.initialize();
         TestDialog dialog = new TestDialog();
-        test.add_to_dialog(dialog);
-        dialog.get_integer(0).value = 8;
-        dialog.get_integer(1).value = 2;
-        dialog.get_integer(2).value = -3;
-        test.read_from_dialog();
+        test.addToDialog(dialog);
+        dialog.getInteger(0).value = 8;
+        dialog.getInteger(1).value = 2;
+        dialog.getInteger(2).value = -3;
+        test.readFromDialog();
 
-        List<Integer> list = test.get_value();
+        List<Integer> list = test.getValue();
         assertEquals(3, list.size());
         assertEquals(8, list.get(0).intValue());
         assertEquals(5, list.get(1).intValue());
         assertEquals(2, list.get(2).intValue());
     }
-    @Test public void test_range_error_step()
+    @Test public void testRangeErrorStep()
     {
-        TParameter param = get_test_param(1);
-        param.update_max_t();
+        TParameter param = getTestParam(1);
+        param.updateMaxT();
         TParameter.RangeT test = param.new RangeT();
         test.initialize();
         TestDialog dialog = new TestDialog();
-        test.add_to_dialog(dialog);
+        test.addToDialog(dialog);
 
-        assertTrue(test.get_error() == null);
+        assertTrue(test.getError() == null);
 
-        dialog.get_integer(2).value = 0;
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
-        dialog.get_integer(2).value = 1;
-        test.read_from_dialog();
-        assertTrue(test.get_error() == null);
+        dialog.getInteger(2).value = 0;
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
+        dialog.getInteger(2).value = 1;
+        test.readFromDialog();
+        assertTrue(test.getError() == null);
     }
-    @Test public void test_range_error_sign()
+    @Test public void testRangeErrorSign()
     {
-        TParameter param = get_test_param(2);
-        param.update_max_t();
+        TParameter param = getTestParam(2);
+        param.updateMaxT();
         TParameter.RangeT test = param.new RangeT();
         test.initialize();
         TestDialog dialog = new TestDialog();
-        test.add_to_dialog(dialog);
+        test.addToDialog(dialog);
 
         // Test that nothing weird happens when begin == end
-        dialog.get_integer(2).value = -1;
-        test.read_from_dialog();
-        assertTrue(test.get_error() == null);
+        dialog.getInteger(2).value = -1;
+        test.readFromDialog();
+        assertTrue(test.getError() == null);
 
         // Test that it's okay to go up
-        dialog.get_integer(1).value = 2;
-        dialog.get_integer(2).value = 1;
-        test.read_from_dialog();
-        assertTrue(test.get_error() == null);
+        dialog.getInteger(1).value = 2;
+        dialog.getInteger(2).value = 1;
+        test.readFromDialog();
+        assertTrue(test.getError() == null);
 
         // Test that going down with a positive step is bad
-        dialog.get_integer(0).value = 2;
-        dialog.get_integer(1).value = 1;
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
-        dialog.get_integer(0).value = 1;
-        dialog.get_integer(1).value = 2;
-        test.read_from_dialog();
-        assertTrue(test.get_error() == null);
+        dialog.getInteger(0).value = 2;
+        dialog.getInteger(1).value = 1;
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
+        dialog.getInteger(0).value = 1;
+        dialog.getInteger(1).value = 2;
+        test.readFromDialog();
+        assertTrue(test.getError() == null);
 
         // Test that going up with a negative step is bad
-        dialog.get_integer(2).value = -1;
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
+        dialog.getInteger(2).value = -1;
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
 
         // Test that going down with a negative step is okay
-        dialog.get_integer(0).value = 2;
-        dialog.get_integer(1).value = 1;
-        test.read_from_dialog();
-        assertTrue(test.get_error() == null);
+        dialog.getInteger(0).value = 2;
+        dialog.getInteger(1).value = 1;
+        test.readFromDialog();
+        assertTrue(test.getError() == null);
     }
-    @Test public void test_range_bounds()
+    @Test public void testRangeBounds()
     {
-        TParameter param = get_test_param(2);
-        param.update_max_t();
+        TParameter param = getTestParam(2);
+        param.updateMaxT();
         TParameter.RangeT test = param.new RangeT();
         test.initialize();
         TestDialog dialog = new TestDialog();
-        test.add_to_dialog(dialog);
+        test.addToDialog(dialog);
 
-        dialog.get_integer(1).value = 3;
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
+        dialog.getInteger(1).value = 3;
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
 
-        dialog.get_integer(0).value = 3;
-        dialog.get_integer(1).value = 4;
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
+        dialog.getInteger(0).value = 3;
+        dialog.getInteger(1).value = 4;
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
 
-        dialog.get_integer(0).value = 3;
-        dialog.get_integer(1).value = 1;
-        dialog.get_integer(2).value = -1;
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
+        dialog.getInteger(0).value = 3;
+        dialog.getInteger(1).value = 1;
+        dialog.getInteger(2).value = -1;
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
 
-        dialog.get_integer(0).value = 1;
-        dialog.get_integer(1).value = 2;
-        dialog.get_integer(2).value = 1;
-        test.read_from_dialog();
-        assertTrue(test.get_error() == null);
+        dialog.getInteger(0).value = 1;
+        dialog.getInteger(1).value = 2;
+        dialog.getInteger(2).value = 1;
+        test.readFromDialog();
+        assertTrue(test.getError() == null);
 
-        dialog.get_integer(0).value = 3;
-        dialog.get_integer(1).value = 1;
-        dialog.get_integer(2).value = -1;
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
+        dialog.getInteger(0).value = 3;
+        dialog.getInteger(1).value = 1;
+        dialog.getInteger(2).value = -1;
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
 
-        dialog.get_integer(0).value = 4;
-        dialog.get_integer(1).value = 3;
-        dialog.get_integer(2).value = -1;
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
+        dialog.getInteger(0).value = 4;
+        dialog.getInteger(1).value = 3;
+        dialog.getInteger(2).value = -1;
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
 
-        dialog.get_integer(0).value = 3;
-        dialog.get_integer(1).value = 1;
-        dialog.get_integer(2).value = -1;
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
+        dialog.getInteger(0).value = 3;
+        dialog.getInteger(1).value = 1;
+        dialog.getInteger(2).value = -1;
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
 
-        dialog.get_integer(0).value = 2;
-        dialog.get_integer(1).value = 1;
-        dialog.get_integer(2).value = -1;
-        test.read_from_dialog();
-        assertTrue(test.get_error() == null);
+        dialog.getInteger(0).value = 2;
+        dialog.getInteger(1).value = 1;
+        dialog.getInteger(2).value = -1;
+        test.readFromDialog();
+        assertTrue(test.getError() == null);
     }
-    @Test public void test_range_changing_bound()
+    @Test public void testRangeChangingBound()
     {
-        ImageParameter image = get_image_param(2, 3);
-        TParameter param = get_test_param(image);
-        param.update_max_t();
+        ImageParameter image = getImageParam(2, 3);
+        TParameter param = getTestParam(image);
+        param.updateMaxT();
         TParameter.RangeT test = param.new RangeT();
         test.initialize();
         TestDialog dialog = new TestDialog();
-        image.add_to_dialog(dialog);
-        test.add_to_dialog(dialog);
+        image.addToDialog(dialog);
+        test.addToDialog(dialog);
 
-        dialog.get_integer(1).value = 3;
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
+        dialog.getInteger(1).value = 3;
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
 
-        dialog.get_string_index(0).value = 1;
-        image.read_from_dialog();
-        param.update_max_t();
-        test.read_from_dialog();
-        assertTrue(test.get_error() == null);
+        dialog.getStringIndex(0).value = 1;
+        image.readFromDialog();
+        param.updateMaxT();
+        test.readFromDialog();
+        assertTrue(test.getError() == null);
 
-        dialog.get_string_index(0).value = 0;
-        image.read_from_dialog();
-        param.update_max_t();
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
+        dialog.getStringIndex(0).value = 0;
+        image.readFromDialog();
+        param.updateMaxT();
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
 
-        dialog.get_integer(0).value = 3;
-        dialog.get_integer(1).value = 1;
-        dialog.get_integer(2).value = -1;
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
+        dialog.getInteger(0).value = 3;
+        dialog.getInteger(1).value = 1;
+        dialog.getInteger(2).value = -1;
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
 
-        dialog.get_string_index(0).value = 1;
-        image.read_from_dialog();
-        param.update_max_t();
-        test.read_from_dialog();
-        assertTrue(test.get_error() == null);
+        dialog.getStringIndex(0).value = 1;
+        image.readFromDialog();
+        param.updateMaxT();
+        test.readFromDialog();
+        assertTrue(test.getError() == null);
 
-        dialog.get_string_index(0).value = 0;
-        image.read_from_dialog();
-        param.update_max_t();
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
+        dialog.getStringIndex(0).value = 0;
+        image.readFromDialog();
+        param.updateMaxT();
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
     }
 
-    @Test public void test_continuous_init()
+    @Test public void testContinuousInit()
     {
-        TParameter param = get_test_param(1);
+        TParameter param = getTestParam(1);
         TParameter.ContinuousT test = param.new ContinuousT();
         test.initialize();
 
-        List<Integer> list = test.get_value();
+        List<Integer> list = test.getValue();
         assertEquals(1, list.size());
         assertEquals(1, list.get(0).intValue());
     }
-    @Test public void test_continuous_up()
+    @Test public void testContinuousUp()
     {
-        TParameter param = get_test_param(1);
+        TParameter param = getTestParam(1);
         TParameter.ContinuousT test = param.new ContinuousT();
         test.initialize();
         TestDialog dialog = new TestDialog();
-        test.add_to_dialog(dialog);
-        dialog.get_integer(0).value = 2;
-        dialog.get_integer(1).value = 5;
-        test.read_from_dialog();
+        test.addToDialog(dialog);
+        dialog.getInteger(0).value = 2;
+        dialog.getInteger(1).value = 5;
+        test.readFromDialog();
 
-        List<Integer> list = test.get_value();
+        List<Integer> list = test.getValue();
         assertEquals(4, list.size());
         assertEquals(2, list.get(0).intValue());
         assertEquals(3, list.get(1).intValue());
         assertEquals(4, list.get(2).intValue());
         assertEquals(5, list.get(3).intValue());
     }
-    @Test public void test_continuous_down()
+    @Test public void testContinuousDown()
     {
-        TParameter param = get_test_param(1);
+        TParameter param = getTestParam(1);
         TParameter.ContinuousT test = param.new ContinuousT();
         test.initialize();
         TestDialog dialog = new TestDialog();
-        test.add_to_dialog(dialog);
-        dialog.get_integer(0).value = 6;
-        dialog.get_integer(1).value = 4;
-        test.read_from_dialog();
+        test.addToDialog(dialog);
+        dialog.getInteger(0).value = 6;
+        dialog.getInteger(1).value = 4;
+        test.readFromDialog();
 
-        List<Integer> list = test.get_value();
+        List<Integer> list = test.getValue();
         assertEquals(3, list.size());
         assertEquals(6, list.get(0).intValue());
         assertEquals(5, list.get(1).intValue());
         assertEquals(4, list.get(2).intValue());
     }
-    @Test public void test_continuous_bounds()
+    @Test public void testContinuousBounds()
     {
-        TParameter param = get_test_param(2);
-        param.update_max_t();
+        TParameter param = getTestParam(2);
+        param.updateMaxT();
         TParameter.ContinuousT test = param.new ContinuousT();
         test.initialize();
         TestDialog dialog = new TestDialog();
-        test.add_to_dialog(dialog);
+        test.addToDialog(dialog);
 
-        assertTrue(test.get_error() == null);
+        assertTrue(test.getError() == null);
 
-        dialog.get_integer(0).value = 3;
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
+        dialog.getInteger(0).value = 3;
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
 
-        dialog.get_integer(1).value = 3;
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
+        dialog.getInteger(1).value = 3;
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
 
-        dialog.get_integer(1).value = 2;
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
+        dialog.getInteger(1).value = 2;
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
 
-        dialog.get_integer(0).value = 2;
-        test.read_from_dialog();
-        assertTrue(test.get_error() == null);
+        dialog.getInteger(0).value = 2;
+        test.readFromDialog();
+        assertTrue(test.getError() == null);
 
-        dialog.get_integer(1).value = 3;
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
+        dialog.getInteger(1).value = 3;
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
 
-        dialog.get_integer(0).value = 3;
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
+        dialog.getInteger(0).value = 3;
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
 
-        dialog.get_integer(0).value = 2;
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
+        dialog.getInteger(0).value = 2;
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
 
-        dialog.get_integer(1).value = 2;
-        test.read_from_dialog();
-        assertTrue(test.get_error() == null);
+        dialog.getInteger(1).value = 2;
+        test.readFromDialog();
+        assertTrue(test.getError() == null);
     }
-    @Test public void test_continuous_bounds_change()
+    @Test public void testContinuousBoundsChange()
     {
-        ImageParameter image = get_image_param(2, 3);
-        TParameter param = get_test_param(image);
-        param.update_max_t();
+        ImageParameter image = getImageParam(2, 3);
+        TParameter param = getTestParam(image);
+        param.updateMaxT();
         TParameter.ContinuousT test = param.new ContinuousT();
         test.initialize();
         TestDialog dialog = new TestDialog();
-        image.add_to_dialog(dialog);
-        test.add_to_dialog(dialog);
+        image.addToDialog(dialog);
+        test.addToDialog(dialog);
 
-        dialog.get_integer(0).value = 3;
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
+        dialog.getInteger(0).value = 3;
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
 
-        dialog.get_string_index(0).value = 1;
-        image.read_from_dialog();
-        param.update_max_t();
-        test.read_from_dialog();
-        assertTrue(test.get_error() == null);
+        dialog.getStringIndex(0).value = 1;
+        image.readFromDialog();
+        param.updateMaxT();
+        test.readFromDialog();
+        assertTrue(test.getError() == null);
 
-        dialog.get_string_index(0).value = 0;
-        image.read_from_dialog();
-        param.update_max_t();
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
+        dialog.getStringIndex(0).value = 0;
+        image.readFromDialog();
+        param.updateMaxT();
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
 
-        dialog.get_integer(0).value = 1;
-        dialog.get_integer(1).value = 3;
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
+        dialog.getInteger(0).value = 1;
+        dialog.getInteger(1).value = 3;
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
 
-        dialog.get_string_index(0).value = 1;
-        image.read_from_dialog();
-        param.update_max_t();
-        test.read_from_dialog();
-        assertTrue(test.get_error() == null);
+        dialog.getStringIndex(0).value = 1;
+        image.readFromDialog();
+        param.updateMaxT();
+        test.readFromDialog();
+        assertTrue(test.getError() == null);
 
-        dialog.get_string_index(0).value = 0;
-        image.read_from_dialog();
-        param.update_max_t();
-        test.read_from_dialog();
-        assertTrue(test.get_error() != null);
+        dialog.getStringIndex(0).value = 0;
+        image.readFromDialog();
+        param.updateMaxT();
+        test.readFromDialog();
+        assertTrue(test.getError() != null);
     }
 
-    private ImageParameter get_image_param(Integer... num_slices)
+    private ImageParameter getImageParam(Integer... numSlices)
     {
-        ImagePlus[] imgs = new ImagePlus[num_slices.length];
-        for (int i = 0; i < num_slices.length; ++i) {
-            int num_slice = num_slices[i];
+        ImagePlus[] imgs = new ImagePlus[numSlices.length];
+        for (int i = 0; i < numSlices.length; ++i) {
+            int numSlice = numSlices[i];
             ImageStack stack = new ImageStack(1, 1);
-            for (int j = 0; j < num_slice; ++j) {
+            for (int j = 0; j < numSlice; ++j) {
                 stack.addSlice(new FloatProcessor(1, 1));
             }
             imgs[i] = new ImagePlus("", stack);
         }
         return new ImageParameter("", imgs);
     }
-    private TParameter get_test_param(ImageParameter param)
+    private TParameter getTestParam(ImageParameter param)
     {
         return new TParameter(param, TParameter.PossibleTypes.All, "");
     }
-    private TParameter get_test_param(Integer... num_slices)
+    private TParameter getTestParam(Integer... numSlices)
     {
-        return get_test_param(get_image_param(num_slices));
+        return getTestParam(getImageParam(numSlices));
     }
 }

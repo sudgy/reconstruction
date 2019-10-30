@@ -37,22 +37,24 @@ public class Middle extends AbstractPolyTiltPlugin {
      * @param hologram The original hologram.
      */
     @Override
-    public void process_hologram_param(ImagePlus hologram)
+    public void processHologramParam(ImagePlus hologram)
     {
         int[] dimensions = hologram.getDimensions();
         int width = dimensions[0];
         int height = dimensions[1];
-        int max_x = Math.max(width * 7 / 8 - 1, width / 8);
-        int max_y = Math.max(height * 7 / 8 - 1, height / 8);
-        M_h_line = new Line(width / 8, height / 2, max_x, height / 2);
-        M_v_line = new Line(width / 2, height / 8, width / 2, max_y);
+        int maxX = Math.max(width * 7 / 8 - 1, width / 8);
+        int maxY = Math.max(height * 7 / 8 - 1, height / 8);
+        M_hLine = new Line(width / 8, height / 2, maxX, height / 2);
+        M_vLine = new Line(width / 2, height / 8, width / 2, maxY);
     }
+    @Override
+    public Middle duplicate() {return new Middle();}
     /** {@inheritDoc} */
     @Override
-    public Iterable<Point> get_h_line() {return M_h_line;}
+    public Iterable<Point> getHLine() {return M_hLine;}
     /** {@inheritDoc} */
     @Override
-    public Iterable<Point> get_v_line() {return M_v_line;}
-    private Line M_h_line;
-    private Line M_v_line;
+    public Iterable<Point> getVLine() {return M_vLine;}
+    private Line M_hLine;
+    private Line M_vLine;
 }

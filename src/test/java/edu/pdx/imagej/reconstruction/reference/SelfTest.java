@@ -24,10 +24,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 public class SelfTest {
-    @Test public void test_dont()
+    @Test public void testDont()
     {
         Self test = new Self();
         // You laugh, but this was a bug
-        assertTrue(test.dont_use_same_roi());
+        assertTrue(test.dontUseSameRoi());
     }
 }

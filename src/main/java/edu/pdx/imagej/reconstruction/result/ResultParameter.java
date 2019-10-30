@@ -26,23 +26,23 @@ class ResultParameter extends HoldingParameter<ResultOptions> {
     @Override
     public void initialize()
     {
-        M_amplitude = add_parameter(BoolParameter.class, "Amplitude", false);
-        M_phase = add_parameter(BoolParameter.class, "Phase", false);
-        M_real = add_parameter(BoolParameter.class, "Real", false);
-        M_imaginary = add_parameter(BoolParameter.class, "Imaginary", false);
+        M_amplitude = addParameter(new BoolParameter("Amplitude", false));
+        M_phase = addParameter(new BoolParameter("Phase", false));
+        M_real = addParameter(new BoolParameter("Real", false));
+        M_imaginary = addParameter(new BoolParameter("Imaginary", false));
         String[] choices = {"8-bit", "16-bit", "32-bit"};
-        M_result_type = add_parameter(ChoiceParameter.class, "Output Image Type", choices);
-        M_save = add_parameter(SaveParameter.class);
+        M_resultType = addParameter(new ChoiceParameter("Output Image Type", choices));
+        M_save = addParameter(new SaveParameter());
     }
     @Override
-    public ResultOptions get_value()
+    public ResultOptions getValue()
     {
         ResultOptions result = new ResultOptions();
-        result.amplitude = M_amplitude.get_value();
-        result.phase = M_phase.get_value();
-        result.real = M_real.get_value();
-        result.imaginary = M_imaginary.get_value();
-        String type = M_result_type.get_value();
+        result.amplitude = M_amplitude.getValue();
+        result.phase = M_phase.getValue();
+        result.real = M_real.getValue();
+        result.imaginary = M_imaginary.getValue();
+        String type = M_resultType.getValue();
         if (type.equals("8-bit")) {
             result.type = ResultOptions.Type.Type8Bit;
         }
@@ -52,8 +52,8 @@ class ResultParameter extends HoldingParameter<ResultOptions> {
         else {
             result.type = ResultOptions.Type.Type32Bit;
         }
-        result.save_to_file = M_save.get_value();
-        result.save_directory = M_save.get_directory();
+        result.saveToFile = M_save.getValue();
+        result.saveDirectory = M_save.getDirectory();
         return result;
     }
 
@@ -61,6 +61,6 @@ class ResultParameter extends HoldingParameter<ResultOptions> {
     private BoolParameter   M_phase;
     private BoolParameter   M_real;
     private BoolParameter   M_imaginary;
-    private ChoiceParameter M_result_type;
+    private ChoiceParameter M_resultType;
     private SaveParameter   M_save;
 }

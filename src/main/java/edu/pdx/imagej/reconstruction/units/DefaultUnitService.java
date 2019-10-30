@@ -33,39 +33,39 @@ public class DefaultUnitService extends AbstractService implements UnitService {
     @Override
     public DistanceUnits wavelength()
     {
-        return DistanceUnits.value_of(P_prefs.get(UnitService.class,
+        return DistanceUnits.valueOf2(P_prefs.get(UnitService.class,
                                                   "wavelength", "Nanometers"));
     }
     /** {@inheritDoc} */
     @Override
     public DistanceUnits image()
     {
-        return DistanceUnits.value_of(P_prefs.get(UnitService.class, "image",
+        return DistanceUnits.valueOf2(P_prefs.get(UnitService.class, "image",
                                                   "Micrometers"));
     }
     /** {@inheritDoc} */
     @Override
     public DistanceUnits z()
     {
-        return DistanceUnits.value_of(P_prefs.get(UnitService.class, "z",
+        return DistanceUnits.valueOf2(P_prefs.get(UnitService.class, "z",
                                                   "Micrometers"));
     }
 
     /** {@inheritDoc} */
     @Override
-    public void set_wavelength(String val)
+    public void setWavelength(String val)
     {
         P_prefs.put(UnitService.class, "wavelength", val);
     }
     /** {@inheritDoc} */
     @Override
-    public void set_image(String val)
+    public void setImage(String val)
     {
         P_prefs.put(UnitService.class, "image", val);
     }
     /** {@inheritDoc} */
     @Override
-    public void set_z(String val)
+    public void setZ(String val)
     {
         P_prefs.put(UnitService.class, "z", val);
     }

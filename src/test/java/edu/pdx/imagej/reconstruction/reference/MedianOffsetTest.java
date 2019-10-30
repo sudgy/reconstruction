@@ -36,7 +36,7 @@ import edu.pdx.imagej.dynamic_parameters.TestDialog;
 import edu.pdx.imagej.reconstruction.ReconstructionField;
 
 public class MedianOffsetTest {
-    @Test public void test_median_offset()
+    @Test public void testMedianOffset()
     {
         ImageStack stack = new ImageStack(2, 2);
         stack.addSlice(new FloatProcessor(new float[][] {{1, 0}, {0, 0}}));
@@ -53,18 +53,18 @@ public class MedianOffsetTest {
             @Override public int size() {return 2;}
         };
 
-        ReconstructionField result = test.get_reference_holo(1, imp, ts, -1);
-        assertEquals(3.5, result.field().get_real(0, 0));
-        result = test.get_reference_holo(2, imp, ts, -1);
-        assertEquals(3.5, result.field().get_real(0, 0));
-        result = test.get_reference_holo(3, imp, ts, -1);
-        assertEquals(6.5, result.field().get_real(0, 0));
-        result = test.get_reference_holo(4, imp, ts, -1);
-        assertEquals(10.5, result.field().get_real(0, 0));
-        result = test.get_reference_holo(5, imp, ts, -1);
-        assertEquals(10.5, result.field().get_real(0, 0));
+        ReconstructionField result = test.getReferenceHolo(1, imp, ts, -1);
+        assertEquals(3.5, result.field().getReal(0, 0));
+        result = test.getReferenceHolo(2, imp, ts, -1);
+        assertEquals(3.5, result.field().getReal(0, 0));
+        result = test.getReferenceHolo(3, imp, ts, -1);
+        assertEquals(6.5, result.field().getReal(0, 0));
+        result = test.getReferenceHolo(4, imp, ts, -1);
+        assertEquals(10.5, result.field().getReal(0, 0));
+        result = test.getReferenceHolo(5, imp, ts, -1);
+        assertEquals(10.5, result.field().getReal(0, 0));
     }
-    @Test public void test_live()
+    @Test public void testLive()
     {
         ImageStack stack = new ImageStack(2, 2);
         stack.addSlice(new FloatProcessor(new float[][] {{1, 0}, {0, 0}}));
@@ -77,29 +77,29 @@ public class MedianOffsetTest {
         Context context = new Context(true);
         context.inject(test.param());
         test.param().initialize();
-        test.param().refresh_visibility();
+        test.param().refreshVisibility();
         TestDialog dialog = new TestDialog();
-        test.param().add_to_dialog(dialog);
-        dialog.get_string(0).value = "List";
-        dialog.get_string_index(0).value = 0;
-        test.param().read_from_dialog();
-        test.param().refresh_visibility();
+        test.param().addToDialog(dialog);
+        dialog.getString(0).value = "List";
+        dialog.getStringIndex(0).value = 0;
+        test.param().readFromDialog();
+        test.param().refreshVisibility();
         dialog = new TestDialog();
-        test.param().add_to_dialog(dialog);
-        dialog.get_string(1).value = "1,3";
-        dialog.get_string_index(0).value = 0;
-        dialog.get_integer(0).value = -1;
-        test.param().read_from_dialog();
+        test.param().addToDialog(dialog);
+        dialog.getString(1).value = "1,3";
+        dialog.getStringIndex(0).value = 0;
+        dialog.getInteger(0).value = -1;
+        test.param().readFromDialog();
 
-        ReconstructionField result = test.get_reference_holo(null, 1);
-        assertEquals(3.5, result.field().get_real(0, 0));
-        result = test.get_reference_holo(null, 2);
-        assertEquals(3.5, result.field().get_real(0, 0));
-        result = test.get_reference_holo(null, 3);
-        assertEquals(6.5, result.field().get_real(0, 0));
-        result = test.get_reference_holo(null, 4);
-        assertEquals(10.5, result.field().get_real(0, 0));
-        result = test.get_reference_holo(null, 5);
-        assertEquals(10.5, result.field().get_real(0, 0));
+        ReconstructionField result = test.getReferenceHolo(null, 1);
+        assertEquals(3.5, result.field().getReal(0, 0));
+        result = test.getReferenceHolo(null, 2);
+        assertEquals(3.5, result.field().getReal(0, 0));
+        result = test.getReferenceHolo(null, 3);
+        assertEquals(6.5, result.field().getReal(0, 0));
+        result = test.getReferenceHolo(null, 4);
+        assertEquals(10.5, result.field().getReal(0, 0));
+        result = test.getReferenceHolo(null, 5);
+        assertEquals(10.5, result.field().getReal(0, 0));
     }
 }

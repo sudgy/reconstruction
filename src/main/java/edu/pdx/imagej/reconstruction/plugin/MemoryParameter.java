@@ -41,23 +41,23 @@ public class MemoryParameter extends HoldingParameter<Long> {
      * the starting values seen by the user, no exceptions.
      *
      * @param label The internal label used to identify this parameter.
-     * @param do_cache Whether or not to start out with caching enabled.
-     * @param initial_percent If you want to have the default setting be a
+     * @param doCache Whether or not to start out with caching enabled.
+     * @param initialPercent If you want to have the default setting be a
      *                        percentage of the maximum memory.
-     * @param percent_value The value to be used for the initial percent (0 &le;
+     * @param percentValue The value to be used for the initial percent (0 &le;
      *                      x &le; 100).
-     * @param flat_value The value, in megabytes, to be used for the initial
+     * @param flatValue The value, in megabytes, to be used for the initial
      *                   flat value (x &gt; 0).
      */
-    public MemoryParameter(String label, boolean do_cache,
-                           boolean initial_percent, double percent_value,
-                           int flat_value)
+    public MemoryParameter(String label, boolean doCache,
+                           boolean initialPercent, double percentValue,
+                           int flatValue)
     {
         super(label);
-        M_do_cache = do_cache;
-        M_initial_percent = initial_percent;
-        M_percent_value = percent_value;
-        M_flat_value = flat_value;
+        M_doCache = doCache;
+        M_initialPercent = initialPercent;
+        M_percentValue = percentValue;
+        M_flatValue = flatValue;
     }
     /** Initialize the parameters.
      */
@@ -65,34 +65,33 @@ public class MemoryParameter extends HoldingParameter<Long> {
     public void initialize()
     {
         String[] choices = {"Percent", "Flat"};
-        M_do = add_parameter(BoolParameter.class, "Cache partial results?",
-                             M_do_cache);
+        M_do = addParameter(new BoolParameter("Cache partial results?",
+                             M_doCache));
         M_choice = new RadioParameter("Memory limit", choices,
-                                      M_initial_percent ? "Percent" : "Flat",
+                                      M_initialPercent ? "Percent" : "Flat",
                                       1, 2);
-        add_premade_parameter(M_choice);
-        M_percent = add_parameter(DoubleParameter.class, M_percent_value,
-                                  "Percent of Maximum", "%");
-        M_flat = add_parameter(IntParameter.class, M_flat_value, "Flat Value",
-                               "MB");
-        M_percent.set_bounds(0.0, 100.0);
-        M_flat.set_bounds(0, Integer.MAX_VALUE);
-        set_visibilities();
-        check_for_errors();
+        addParameter(M_choice);
+        M_percent = addParameter(new DoubleParameter(M_percentValue,
+                                  "Percent of Maximum", "%"));
+        M_flat = addParameter(new IntParameter(M_flatValue, "Flat Value","MB"));
+        M_percent.setBounds(0.0, 100.0);
+        M_flat.setBounds(0, Integer.MAX_VALUE);
+        setVisibilities();
+        checkForErrors();
     }
     @Override
-    public void read_from_dialog()
+    public void readFromDialog()
     {
-        super.read_from_dialog();
-        set_visibilities();
-        check_for_errors();
+        super.readFromDialog();
+        setVisibilities();
+        checkForErrors();
     }
     /** <strong>Does nothing</strong>.  Because options should be read from
      * prefs somewhere else, this method does nothing.  We expect you to pass
      * the correct, current value in the constructor.
      */
     @Override
-    public void read_from_prefs(Class<?> cls, String name) {}
+    public void readFromPrefs(Class<?> cls, String name) {}
     /** Get the number of bytes the parameter says to use.  If caching has been
      * disabled, it will return <code>null</code>.
      *
@@ -100,61 +99,61 @@ public class MemoryParameter extends HoldingParameter<Long> {
      *         </code> if caching has been disabled.
      */
     @Override
-    public Long get_value()
+    public Long getValue()
     {
-        if (!M_do.get_value()) return null;
-        if (M_choice.get_value().equals("Percent")) {
-            return (long)(IJ.maxMemory() * M_percent.get_value() * 0.01);
+        if (!M_do.getValue()) return null;
+        if (M_choice.getValue().equals("Percent")) {
+            return (long)(IJ.maxMemory() * M_percent.getValue() * 0.01);
         }
         else {
-            return M_flat.get_value() * (1024L * 1024L);
+            return M_flat.getValue() * (1024L * 1024L);
         }
     }
     /** Get whether or not it was set to be a percent rather than a flat value.
      *
      * @return Whether or not it was set to be a percent.
      */
-    public boolean percent() {return M_choice.get_value().equals("Percent");}
+    public boolean percent() {return M_choice.getValue().equals("Percent");}
     /** Get the percent value selected.
      *
      * @return The percent value.  Make sure to multiply by 0.01.
      */
-    public double percent_value() {return M_percent.get_value();}
+    public double percentValue() {return M_percent.getValue();}
     /** Get the flat value, in megabytes.
      *
      * @return The flat value.
      */
-    public int flat_value() {return M_flat.get_value();}
+    public int flatValue() {return M_flat.getValue();}
 
-    private void set_visibilities()
+    private void setVisibilities()
     {
-        if (M_do.get_value()) {
-            M_choice.set_new_visibility(true);
-            boolean percent = M_choice.get_value().equals("Percent");
-            M_percent.set_new_visibility(percent);
-            M_flat.set_new_visibility(!percent);
+        if (M_do.getValue()) {
+            M_choice.setNewVisibility(true);
+            boolean percent = M_choice.getValue().equals("Percent");
+            M_percent.setNewVisibility(percent);
+            M_flat.setNewVisibility(!percent);
         }
         else {
-            M_choice.set_new_visibility(false);
-            M_percent.set_new_visibility(false);
-            M_flat.set_new_visibility(false);
+            M_choice.setNewVisibility(false);
+            M_percent.setNewVisibility(false);
+            M_flat.setNewVisibility(false);
         }
     }
-    private void check_for_errors()
+    private void checkForErrors()
     {
-        int flat_mb = M_flat.get_value();
-        int ij_mb = (int)(IJ.maxMemory() / (1024*1024));
-        if (!M_choice.get_value().equals("Percent") && flat_mb > ij_mb) {
-            set_warning("Warning: Flat value " + flat_mb + " is greater than "
-                + "ImageJ's maximum allowed memory, " + ij_mb + ".");
+        int flatMb = M_flat.getValue();
+        int ijMb = (int)(IJ.maxMemory() / (1024*1024));
+        if (!M_choice.getValue().equals("Percent") && flatMb > ijMb) {
+            setWarning("Warning: Flat value " + flatMb + " is greater than "
+                + "ImageJ's maximum allowed memory, " + ijMb + ".");
         }
-        else set_warning(null);
+        else setWarning(null);
     }
 
-    private boolean M_do_cache;
-    private boolean M_initial_percent;
-    private double M_percent_value;
-    private int M_flat_value;
+    private boolean M_doCache;
+    private boolean M_initialPercent;
+    private double M_percentValue;
+    private int M_flatValue;
     private BoolParameter M_do;
     private RadioParameter M_choice;
     private DoubleParameter M_percent;

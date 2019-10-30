@@ -42,36 +42,37 @@ public class Status extends AbstractReconstructionPlugin
                     implements MainReconstructionPlugin {
     /** Get the hologram, to get the name of the slices.
      */
-    @Override public void process_hologram_param(ImagePlus hologram)
+    @Override public void processHologramParam(ImagePlus hologram)
         {M_hologram = hologram;}
     /** Get the number of time slices we are reconstructing.
      */
-    @Override public void process_ts_param(List<Integer> ts)
-        {M_t_size = ts.size();}
+    @Override public void processTsParam(List<Integer> ts)
+        {M_tSize = ts.size();}
     /** Get the number of z slices we are propagating to.
      */
-    @Override public void process_zs_param(List<DistanceUnitValue> zs)
-        {M_z_size = zs.size();}
+    @Override public void processZsParam(List<DistanceUnitValue> zs)
+        {M_zSize = zs.size();}
     /** Calculate the total number of image that will be created.
      */
-    @Override public void process_beginning()
-        {M_total_size = M_t_size * M_z_size;}
+    @Override public void processBeginning()
+        {M_totalSize = M_tSize * M_zSize;}
     /** Show the progress of the plugin.
      */
-    @Override public void process_propagated_field(ReconstructionField field,
+    @Override public void processPropagatedField(ReconstructionField field,
                                                    int t, DistanceUnitValue z)
     {
         String label = M_hologram.getStack().getSliceLabel(t);
         if (label == null) label = M_hologram.getTitle();
-        P_status.showStatus(M_current, M_total_size, "Processing " + label
+        P_status.showStatus(M_current, M_totalSize, "Processing " + label
             + " at z = " + String.format("%.3f", z.value()));
         ++M_current;
     }
+    @Override public Status duplicate() {return new Status();}
 
     private ImagePlus M_hologram;
-    private int M_t_size;
-    private int M_z_size;
-    private int M_total_size;
+    private int M_tSize;
+    private int M_zSize;
+    private int M_totalSize;
     private int M_current;
     @Parameter private StatusService P_status;
 }

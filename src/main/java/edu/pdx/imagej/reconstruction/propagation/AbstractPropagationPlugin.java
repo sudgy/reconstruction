@@ -37,9 +37,9 @@ public abstract class AbstractPropagationPlugin
      * try to override it anyway.
      */
     @Override
-    final public void process_propagated_field(ReconstructionField field,
+    final public void processPropagatedField(ReconstructionField field,
                                                int t, DistanceUnitValue z)
     {
-        PropagationPlugin.super.process_propagated_field(field, t, z);
+        PropagationPlugin.super.processPropagatedField(field, t, z);
     }
 }

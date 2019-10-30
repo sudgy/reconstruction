@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 public class DistanceUnitsTest {
-    @Test public void test_convert()
+    @Test public void testConvert()
     {
         double val = 2;
         double converted = DistanceUnits.convert(val, DistanceUnits.Milli,

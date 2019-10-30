@@ -33,9 +33,10 @@ import edu.pdx.imagej.dynamic_parameters.TestDialog;
 import edu.pdx.imagej.reconstruction.ReconstructionField;
 import edu.pdx.imagej.reconstruction.ConstReconstructionField;
 import edu.pdx.imagej.reconstruction.plugin.ReconstructionPluginParameter;
+import edu.pdx.imagej.reconstruction.plugin.ReconstructionPlugin;
 
 public class ReferenceParameterTest {
-    @Test public void test_visibilities()
+    @Test public void testVisibilities()
     {
         Context context = new Context(PluginService.class);
         TestDialog dialog = new TestDialog();
@@ -43,27 +44,27 @@ public class ReferenceParameterTest {
         context.inject(test);
         test.initialize();
 
-        test.add_to_dialog(dialog);
-        dialog.get_string(0).value = "None";
-        test.read_from_dialog();
-        test.refresh_visibility();
+        test.addToDialog(dialog);
+        dialog.getString(0).value = "None";
+        test.readFromDialog();
+        test.refreshVisibility();
 
         assertTrue(!test.M_phase       .visible(), "Reference hologram options "
             + "should not be visible when not using a reference hologram.");
         assertTrue(!test.M_amplitude   .visible(), "Reference hologram options "
             + "should not be visible when not using a reference hologram.");
-        assertTrue(!test.M_use_same_roi.visible(), "Reference hologram options "
+        assertTrue(!test.M_useSameRoi.visible(), "Reference hologram options "
             + "should not be visible when not using a reference hologram.");
 
-        dialog.get_string(0).value = "A";
-        test.read_from_dialog();
-        test.refresh_visibility();
+        dialog.getString(0).value = "A";
+        test.readFromDialog();
+        test.refreshVisibility();
 
         assertTrue(test.M_phase       .visible(), "Reference hologram options "
             + "should be visible when using a reference hologram.");
         assertTrue(test.M_amplitude   .visible(), "Reference hologram options "
             + "should be visible when using a reference hologram.");
-        assertTrue(test.M_use_same_roi.visible(), "Reference hologram options "
+        assertTrue(test.M_useSameRoi.visible(), "Reference hologram options "
             + "should be visible when using a reference hologram.");
     }
 
@@ -74,16 +75,18 @@ public class ReferenceParameterTest {
         public void initialize()
         {
             String[] choices = {"None", "A"};
-            M_choice = add_parameter(ChoiceParameter.class, "", choices);
+            M_choice = addParameter(new ChoiceParameter("", choices));
         }
         @Override
-        public ReferencePlugin get_value()
+        public ReferencePlugin getValue()
         {
-            if (M_choice.get_value().equals("None")) return new None();
+            if (M_choice.getValue().equals("None")) return new None();
             else return new AbstractReferencePlugin() {
                 @Override
-                public ReconstructionField get_reference_holo(
+                public ReconstructionField getReferenceHolo(
                     ConstReconstructionField field, int t) {return null;}
+                @Override
+                public ReconstructionPlugin duplicate() {return null;}
             };
         }
         private ChoiceParameter M_choice;

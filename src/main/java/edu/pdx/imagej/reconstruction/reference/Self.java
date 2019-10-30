@@ -39,15 +39,20 @@ public class Self extends AbstractReferencePlugin {
      * @param t Unused.
      */
     @Override
-    public ReconstructionField get_reference_holo(
+    public ReconstructionField getReferenceHolo(
         ConstReconstructionField field, int t)
     {
         return field.copy();
+    }
+    @Override
+    public Self duplicate()
+    {
+        return new Self();
     }
     /** Returns <code>true</code>.
      *
      * @return <code>true</code>.
      */
     @Override
-    public boolean dont_use_same_roi() {return true;}
+    public boolean dontUseSameRoi() {return true;}
 }

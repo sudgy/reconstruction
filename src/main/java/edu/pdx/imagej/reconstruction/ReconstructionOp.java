@@ -106,59 +106,59 @@ public class ReconstructionOp extends AbstractOp {
         }
         // Beginning
         for (ReconstructionPlugin plugin : P_plugins) {
-            plugin.set_beginning_priority();
+            plugin.setBeginningPriority();
         }
         Collections.sort(P_plugins);
         for (ReconstructionPlugin plugin : P_plugins) {
-            plugin.read_plugins(P_plugins);
-            plugin.process_before_param();
-            plugin.process_hologram_param(P_hologram);
-            plugin.process_wavelength_param(P_wavelength);
-            plugin.process_dimensions_param(P_width, P_height);
-            plugin.process_ts_param(P_ts);
-            plugin.process_zs_param(P_zs);
-            plugin.process_beginning();
-            if (plugin.has_error()) return;
+            plugin.readPlugins(P_plugins);
+            plugin.processBeforeParam();
+            plugin.processHologramParam(P_hologram);
+            plugin.processWavelengthParam(P_wavelength);
+            plugin.processDimensionsParam(P_width, P_height);
+            plugin.processTsParam(P_ts);
+            plugin.processZsParam(P_zs);
+            plugin.processBeginning();
+            if (plugin.hasError()) return;
         }
 
         // Original Hologram
         for (ReconstructionPlugin plugin : P_plugins) {
-            plugin.set_original_hologram_priority();
+            plugin.setOriginalHologramPriority();
         }
         Collections.sort(P_plugins);
-        ReconstructionField field = create_field(P_hologram.getProcessor());
+        ReconstructionField field = createField(P_hologram.getProcessor());
         for (ReconstructionPlugin plugin : P_plugins) {
-            plugin.process_original_hologram(
+            plugin.processOriginalHologram(
                 new ConstReconstructionField(field));
-            if (plugin.has_error()) return;
+            if (plugin.hasError()) return;
         }
 
         for (int t : P_ts) {
             // Hologram
             for (ReconstructionPlugin plugin : P_plugins) {
-                plugin.set_hologram_priority();
+                plugin.setHologramPriority();
             }
             Collections.sort(P_plugins);
-            field = create_field(
+            field = createField(
                 P_hologram.getStack().getProcessor(t));
             for (ReconstructionPlugin plugin : P_plugins) {
-                plugin.process_hologram(field, t);
-                if (plugin.has_error()) return;
+                plugin.processHologram(field, t);
+                if (plugin.hasError()) return;
             }
 
             // Filtered Field
             for (ReconstructionPlugin plugin : P_plugins) {
-                plugin.set_filtered_field_priority();
+                plugin.setFilteredFieldPriority();
             }
             Collections.sort(P_plugins);
             for (ReconstructionPlugin plugin : P_plugins) {
-                plugin.process_filtered_field(field, t);
-                if (plugin.has_error()) return;
+                plugin.processFilteredField(field, t);
+                if (plugin.hasError()) return;
             }
 
             // Propagated Field
             for (ReconstructionPlugin plugin : P_plugins) {
-                plugin.set_propagated_field_priority();
+                plugin.setPropagatedFieldPriority();
             }
             Collections.sort(P_plugins);
             for (DistanceUnitValue z : P_zs) {
@@ -167,30 +167,30 @@ public class ReconstructionOp extends AbstractOp {
                     return;
                 }
                 for (ReconstructionPlugin plugin : P_plugins) {
-                    plugin.process_propagated_field(field, t, z);
-                    if (plugin.has_error()) return;
+                    plugin.processPropagatedField(field, t, z);
+                    if (plugin.hasError()) return;
                 }
             }
         }
 
         // Ending
         for (ReconstructionPlugin plugin : P_plugins) {
-            plugin.set_ending_priority();
+            plugin.setEndingPriority();
         }
         Collections.sort(P_plugins);
         for (ReconstructionPlugin plugin : P_plugins) {
-            plugin.process_ending();
-            if (plugin.has_error()) return;
+            plugin.processEnding();
+            if (plugin.hasError()) return;
         }
     }
-    private static ReconstructionField create_field(ImageProcessor image)
+    private static ReconstructionField createField(ImageProcessor image)
     {
-        float[][] float_array = image.getFloatArray();
-        double[][] real = new double[float_array.length][float_array[0].length];
+        float[][] floatArray = image.getFloatArray();
+        double[][] real = new double[floatArray.length][floatArray[0].length];
         double[][] imag = new double[real.length][real[0].length];
         for (int x = 0; x < real.length; ++x) {
             for (int y = 0; y < real[0].length; ++y) {
-                real[x][y] = float_array[x][y];
+                real[x][y] = floatArray[x][y];
             }
         }
         return new ReconstructionFieldImpl(real, imag);

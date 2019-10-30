@@ -38,51 +38,51 @@ class ReferenceParameter
     @Override
     public void initialize()
     {
-        add_premade_parameter(M_param);
-        M_phase = add_parameter(BoolParameter.class,
+        addParameter(M_param);
+        M_phase = addParameter(new BoolParameter(
                                 "Reference Hologram Phase",
-                                true);
-        M_amplitude = add_parameter(BoolParameter.class,
+                                true));
+        M_amplitude = addParameter(new BoolParameter(
                                     "Reference Hologram Amplitude",
-                                    false);
-        M_use_same_roi = add_parameter(BoolParameter.class,
+                                    false));
+        M_useSameRoi = addParameter(new BoolParameter(
                                        "Use same ROI for reference hologram?",
-                                       true);
+                                       true));
     }
     @Override
-    public ReferencePlugin get_value() {return M_param.get_value();}
+    public ReferencePlugin getValue() {return M_param.getValue();}
     @Override
-    public void read_from_dialog()
+    public void readFromDialog()
     {
-        super.read_from_dialog();
-        set_visibilities();
+        super.readFromDialog();
+        setVisibilities();
     }
     @Override
-    public void read_from_prefs(Class<?> c, String name)
+    public void readFromPrefs(Class<?> c, String name)
     {
-        super.read_from_prefs(c, name);
-        set_visibilities();
+        super.readFromPrefs(c, name);
+        setVisibilities();
     }
 
-    public boolean phase() {return M_phase.get_value();}
-    public boolean amplitude() {return M_amplitude.get_value();}
-    public boolean use_same_roi() {return M_use_same_roi.get_value();}
+    public boolean phase() {return M_phase.getValue();}
+    public boolean amplitude() {return M_amplitude.getValue();}
+    public boolean useSameRoi() {return M_useSameRoi.getValue();}
 
-    private void set_visibilities()
+    private void setVisibilities()
     {
-        if (M_param.get_value() instanceof None) {
-            M_phase       .set_new_visibility(false);
-            M_amplitude   .set_new_visibility(false);
-            M_use_same_roi.set_new_visibility(false);
+        if (M_param.getValue() instanceof None) {
+            M_phase       .setNewVisibility(false);
+            M_amplitude   .setNewVisibility(false);
+            M_useSameRoi.setNewVisibility(false);
         }
         else {
-            M_phase       .set_new_visibility(true);
-            M_amplitude   .set_new_visibility(true);
-            if (M_param.get_value().dont_use_same_roi()) {
-                M_use_same_roi.set_new_visibility(false);
+            M_phase       .setNewVisibility(true);
+            M_amplitude   .setNewVisibility(true);
+            if (M_param.getValue().dontUseSameRoi()) {
+                M_useSameRoi.setNewVisibility(false);
             }
             else {
-                M_use_same_roi.set_new_visibility(true);
+                M_useSameRoi.setNewVisibility(true);
             }
         }
     }
@@ -90,5 +90,5 @@ class ReferenceParameter
     private DParameter<ReferencePlugin> M_param;
     BoolParameter M_phase;
     BoolParameter M_amplitude;
-    BoolParameter M_use_same_roi;
+    BoolParameter M_useSameRoi;
 }

@@ -31,6 +31,11 @@ import edu.pdx.imagej.reconstruction.ReconstructionField;
         name = "None",
         priority = Priority.FIRST)
 public class None extends AbstractReferencePlugin {
+    @Override
+    public None duplicate()
+    {
+        return new None();
+    }
     /** Returns <code>null</code>.  <code>null</code> is used by {@link
      * Reference} to say that no reference hologram should be applied.
      *
@@ -39,7 +44,7 @@ public class None extends AbstractReferencePlugin {
      * @return <code>null</code>.
      */
     @Override
-    public ReconstructionField get_reference_holo(
+    public ReconstructionField getReferenceHolo(
         ConstReconstructionField field, int t)
     {
         return null;

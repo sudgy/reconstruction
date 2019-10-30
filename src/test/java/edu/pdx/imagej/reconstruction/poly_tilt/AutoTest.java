@@ -29,29 +29,29 @@ import java.util.ArrayList;
 import edu.pdx.imagej.reconstruction.plugin.ReconstructionPlugin;
 
 public class AutoTest {
-    @Test public void test_small()
+    @Test public void testSmall()
     {
         Auto test = new Auto();
-        test.read_plugins(S_plugins);
+        test.readPlugins(S_plugins);
         S_pt.M_phase = new double[2][2];
         S_pt.M_degree = 1;
-        Iterable<Point> line = test.get_h_line();
+        Iterable<Point> line = test.getHLine();
         int i = 0;
         for (Point p : line) ++i;
         assertTrue(i != 0, "Auto should never create no line.");
 
         test = new Auto();
-        test.read_plugins(S_plugins);
+        test.readPlugins(S_plugins);
         S_pt.M_phase = new double[6][6];
-        line = test.get_h_line();
+        line = test.getHLine();
         i = 0;
         for (Point p : line) ++i;
         assertEquals(4, i);
     }
-    @Test public void test_perfect_linear()
+    @Test public void testPerfectLinear()
     {
         Auto test = new Auto();
-        test.read_plugins(S_plugins);
+        test.readPlugins(S_plugins);
         S_pt.M_phase = new double[][]{
             {0, 1, 0, 1, 0},
             {0, 1, 0, 1, 0},
@@ -60,7 +60,7 @@ public class AutoTest {
             {0, 1, 0, 1, 0},
         };
         S_pt.M_degree = 1;
-        Iterable<Point> line = test.get_v_line();
+        Iterable<Point> line = test.getVLine();
         int i = 1;
         for (Point p : line) {
             assertEquals(i++, p.y);
@@ -68,10 +68,10 @@ public class AutoTest {
         }
         assertEquals(4, i);
     }
-    @Test public void test_perfect_quadratic()
+    @Test public void testPerfectQuadratic()
     {
         Auto test = new Auto();
-        test.read_plugins(S_plugins);
+        test.readPlugins(S_plugins);
         S_pt.M_phase = new double[][]{
             {0, 1  , 2  , 0  , 1  , 2},
             {0, 1  , 2  , 0  , 1  , 2},
@@ -81,7 +81,7 @@ public class AutoTest {
             {0, 1  , 2  , 0  , 1  , 2},
         };
         S_pt.M_degree = 2;
-        Iterable<Point> line = test.get_v_line();
+        Iterable<Point> line = test.getVLine();
         int i = 1;
         for (Point p : line) {
             assertEquals(i++, p.y);
@@ -89,10 +89,10 @@ public class AutoTest {
         }
         assertEquals(5, i);
     }
-    @Test public void test_nonperfect()
+    @Test public void testNonperfect()
     {
         Auto test = new Auto();
-        test.read_plugins(S_plugins);
+        test.readPlugins(S_plugins);
         S_pt.M_phase = new double[][]{
             {0, 1  , 2  , 0, 1  , 2},
             {0, 1  , 2  , 0, 1  , 2},
@@ -102,7 +102,7 @@ public class AutoTest {
             {0, 1  , 2  , 0, 1  , 2},
         };
         S_pt.M_degree = 2;
-        Iterable<Point> line = test.get_v_line();
+        Iterable<Point> line = test.getVLine();
         int i = 1;
         for (Point p : line) {
             assertEquals(i++, p.y);
@@ -110,10 +110,10 @@ public class AutoTest {
         }
         assertEquals(5, i);
     }
-    @Test public void test_phase()
+    @Test public void testPhase()
     {
         Auto test = new Auto();
-        test.read_plugins(S_plugins);
+        test.readPlugins(S_plugins);
         S_pt.M_phase = new double[][]{
             {0, 1  , 2  , 0  ,  1  , 2},
             {0, 1  , 2  , 0  ,  1  , 2},
@@ -123,7 +123,7 @@ public class AutoTest {
             {0, 1  , 2  , 0  ,  1  , 2},
         };
         S_pt.M_degree = 2;
-        Iterable<Point> line = test.get_v_line();
+        Iterable<Point> line = test.getVLine();
         int i = 1;
         for (Point p : line) {
             assertEquals(i++, p.y);
@@ -132,8 +132,8 @@ public class AutoTest {
         assertEquals(5, i);
     }
     private static PolyTilt S_pt = new PolyTilt();
-    private static ArrayList<ReconstructionPlugin> S_plugins = get_plugins();
-    private static ArrayList<ReconstructionPlugin> get_plugins()
+    private static ArrayList<ReconstructionPlugin> S_plugins = getPlugins();
+    private static ArrayList<ReconstructionPlugin> getPlugins()
     {
         ArrayList<ReconstructionPlugin> plugins = new ArrayList<>();
         plugins.add(S_pt);

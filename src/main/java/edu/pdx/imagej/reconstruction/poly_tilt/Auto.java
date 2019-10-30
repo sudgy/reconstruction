@@ -43,88 +43,93 @@ public class Auto extends AbstractPolyTiltPlugin {
      * fitting for our purposes.
      */
     @Override
-    public void read_plugins(List<ReconstructionPlugin> plugins)
+    public void readPlugins(List<ReconstructionPlugin> plugins)
     {
         for (ReconstructionPlugin plugin : plugins) {
-            if (plugin instanceof PolyTilt) M_poly_tilt = (PolyTilt)plugin;
+            if (plugin instanceof PolyTilt) M_polyTilt = (PolyTilt)plugin;
         }
     }
-    /** {@inheritDoc} */
     @Override
-    public Iterable<Point> get_h_line()
+    public Auto duplicate()
     {
-        if (M_h_line == null) calculate_lines();
-        return M_h_line;
+        return new Auto();
     }
     /** {@inheritDoc} */
     @Override
-    public Iterable<Point> get_v_line()
+    public Iterable<Point> getHLine()
     {
-        if (M_v_line == null) calculate_lines();
-        return M_v_line;
+        if (M_hLine == null) calculateLines();
+        return M_hLine;
+    }
+    /** {@inheritDoc} */
+    @Override
+    public Iterable<Point> getVLine()
+    {
+        if (M_vLine == null) calculateLines();
+        return M_vLine;
     }
 
-    private void calculate_lines()
+    private void calculateLines()
     {
-        calculate_h();
-        calculate_v();
+        calculateH();
+        calculateV();
     }
-    private void calculate_h()
+    private void calculateH()
     {
-        final int width = M_poly_tilt.width();
-        final int height = M_poly_tilt.height();
+        final int width = M_polyTilt.width();
+        final int height = M_polyTilt.height();
         final int start = (width >= 8) ? (width / 8) : 1;
         final int end = width - start - 1;
-        final int num_lines = Math.max(1, Math.min(10, height - 2));
-        final int vert_space = height / (num_lines + 1);
-        Line[] lines = new Line[num_lines];
-        for (int y = 0; y < num_lines; ++y) {
-            final int this_y = (y + 1) * vert_space;
-            lines[y] = new Line(start, this_y, end, this_y);
+        final int numLines = Math.max(1, Math.min(10, height - 2));
+        final int vertSpace = height / (numLines + 1);
+        Line[] lines = new Line[numLines];
+        for (int y = 0; y < numLines; ++y) {
+            final int thisY = (y + 1) * vertSpace;
+            lines[y] = new Line(start, thisY, end, thisY);
         }
-        M_h_line = best_fit(lines);
+        M_hLine = bestFit(lines);
     }
-    private void calculate_v()
+    private void calculateV()
     {
-        final int width = M_poly_tilt.width();
-        final int height = M_poly_tilt.height();
+        final int width = M_polyTilt.width();
+        final int height = M_polyTilt.height();
         final int start = (height >= 8) ? (height / 8) : 1;
         final int end = height - start - 1;
-        final int num_lines = Math.max(1, Math.min(10, height - 2));
-        final int hor_space = width / (num_lines + 1);
-        Line[] lines = new Line[num_lines];
-        for (int x = 0; x < num_lines; ++x) {
-            final int this_x = (x + 1) * hor_space;
-            lines[x] = new Line(this_x, start, this_x, end);
+        final int numLines = Math.max(1, Math.min(10, height - 2));
+        final int horSpace = width / (numLines + 1);
+        Line[] lines = new Line[numLines];
+        for (int x = 0; x < numLines; ++x) {
+            final int thisX = (x + 1) * horSpace;
+            lines[x] = new Line(thisX, start, thisX, end);
         }
-        M_v_line = best_fit(lines);
+        M_vLine = bestFit(lines);
     }
-    private Line best_fit(Line[] lines)
+    private Line bestFit(Line[] lines)
     {
         double[][] fits = new double[lines.length][];
         double[] squares = new double[lines.length];
         for (int i = 0; i < lines.length; ++i) {
-            fits[i] = M_poly_tilt.fit_along_including_constant(lines[i]);
+            fits[i] = M_polyTilt.fitAlongIncludingConstant(lines[i]);
             int x = 0;
             for (Point p : lines[i]) {
-                double poly_val = M_poly_tilt.poly_eval(fits[i], x);
-                double val = poly_val - M_poly_tilt.get_last_phase()[x];
+                double polyVal = M_polyTilt.polyEval(fits[i], x);
+                double val = polyVal - M_polyTilt.getLastPhase()[x];
                 squares[i] += val*val;
                 ++x;
             }
         }
-        int least_index = 0;
+        int leastIndex = 0;
         double least = Double.MAX_VALUE;
         for (int i = 0; i < lines.length; ++i) {
             if (squares[i] < least) {
                 least = squares[i];
-                least_index = i;
+                leastIndex = i;
             }
         }
-        return lines[least_index];
+        return lines[leastIndex];
     }
 
-    private Line M_h_line;
-    private Line M_v_line;
-    private PolyTilt M_poly_tilt;
+    private Line M_hLine;
+    private Line M_vLine;
+    private PolyTilt M_polyTilt;
 }

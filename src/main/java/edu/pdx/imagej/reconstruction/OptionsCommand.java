@@ -48,7 +48,7 @@ public class OptionsCommand implements Command, Initializable {
     @Override
     public void initialize()
     {
-        PluginOptionsParameter.S_all_parameters.clear();
+        PluginOptionsParameter.S_allParameters.clear();
         M_param = new OptionsParameter();
     }
     @Override
@@ -62,7 +62,7 @@ public class OptionsCommand implements Command, Initializable {
 
 /* This parameter holds all options.  The first few things aren't in
  * OptionsCommand directly because I want messages too.  I should add messages
- * to dynamic_parameters.
+ * to dynamicParameters.
  */
 class OptionsParameter extends HoldingParameter<Void> {
     public OptionsParameter()
@@ -72,45 +72,44 @@ class OptionsParameter extends HoldingParameter<Void> {
     @Override
     public void initialize()
     {
-        M_wavelength = create_unit_param("Wavelength", P_units.wavelength());
-        M_image = create_unit_param("Image Dimensions", P_units.image());
-        M_z = create_unit_param("Z", P_units.z());
-        // Not using add_parameter because there's an unchecked conversion
+        M_wavelength = createUnitParam("Wavelength", P_units.wavelength());
+        M_image = createUnitParam("Image Dimensions", P_units.image());
+        M_z = createUnitParam("Z", P_units.z());
         M_plugins = new PluginOptionsParameter<MainReconstructionPlugin>(
                                   MainReconstructionPlugin.class);
-        add_premade_parameter(M_plugins);
+        addParameter(M_plugins);
     }
     @Override
-    public void add_to_dialog(DPDialog dialog)
+    public void addToDialog(DPDialog dialog)
     {
-        dialog.add_message("Unit Options");
-        M_wavelength.add_to_dialog(dialog);
-        M_image.add_to_dialog(dialog);
-        M_z.add_to_dialog(dialog);
-        dialog.add_message("Plugin Options");
-        M_plugins.add_to_dialog(dialog);
+        dialog.addMessage("Unit Options");
+        M_wavelength.addToDialog(dialog);
+        M_image.addToDialog(dialog);
+        M_z.addToDialog(dialog);
+        dialog.addMessage("Plugin Options");
+        M_plugins.addToDialog(dialog);
     }
-    @Override public Void get_value() {return null;}
+    @Override public Void getValue() {return null;}
     public void execute()
     {
-        P_units.set_wavelength(M_wavelength.get_value());
-        P_units.set_image(M_image.get_value());
-        P_units.set_z(M_z.get_value());
+        P_units.setWavelength(M_wavelength.getValue());
+        P_units.setImage(M_image.getValue());
+        P_units.setZ(M_z.getValue());
         M_plugins.execute();
     }
 
-    private ChoiceParameter create_unit_param(String name,
-                                              DistanceUnits default_unit)
+    private ChoiceParameter createUnitParam(String name,
+                                              DistanceUnits defaultUnit)
     {
-        String default_string = null;
-        switch (default_unit) {
-            case Nano: default_string = "Nanometers"; break;
-            case Micro: default_string = "Micrometers"; break;
-            case Milli: default_string = "Millimeters"; break;
-            case Centi: default_string = "Centimeters"; break;
-            case Meter: default_string = "Meters"; break;
+        String defaultString = null;
+        switch (defaultUnit) {
+            case Nano: defaultString = "Nanometers"; break;
+            case Micro: defaultString = "Micrometers"; break;
+            case Milli: defaultString = "Millimeters"; break;
+            case Centi: defaultString = "Centimeters"; break;
+            case Meter: defaultString = "Meters"; break;
         }
-        return add_parameter(ChoiceParameter.class,name, units, default_string);
+        return addParameter(new ChoiceParameter(name, units, defaultString));
     }
 
     private ChoiceParameter M_wavelength;
@@ -144,55 +143,53 @@ class PluginOptionsParameter<T extends ReconstructionPlugin>
     @Override
     public void initialize()
     {
-        M_plugins = P_plugins.get_all_plugins(M_class);
+        M_plugins = P_plugins.getAllPlugins(M_class);
         M_parameters = new HashMap<>();
         ArrayList<String> choices = new ArrayList<>();
         for (T plugin : M_plugins) {
-            choices.add(plugin.get_name());
+            choices.add(plugin.getName());
         }
-        String[] choices_ar = new String[choices.size()];
-        choices_ar = choices.toArray(choices_ar);
-        M_choice = add_parameter(ChoiceParameter.class, "Plugin", choices_ar);
+        String[] choicesAr = new String[choices.size()];
+        choicesAr = choices.toArray(choicesAr);
+        M_choice = addParameter(new ChoiceParameter("Plugin", choicesAr));
         for (int i = 0; i < M_plugins.size(); ++i) {
             String name = choices.get(i);
             T plugin = M_plugins.get(i);
-            // We create this here instead of in add_parameter to stop an
-            // unchecked conversion
             SinglePluginOptionsParameter<T> param
                 = new SinglePluginOptionsParameter<>(plugin);
             M_parameters.put(name, param);
-            S_all_parameters.add(param);
-            add_premade_parameter(param);
+            S_allParameters.add(param);
+            addParameter(param);
         }
-        set_visibilities();
+        setVisibilities();
     }
     @Override
-    public void read_from_dialog()
+    public void readFromDialog()
     {
-        super.read_from_dialog();
-        set_visibilities();
+        super.readFromDialog();
+        setVisibilities();
     }
     @Override
-    public void read_from_prefs(Class<?> cls, String name)
+    public void readFromPrefs(Class<?> cls, String name)
     {
-        super.read_from_prefs(cls, name);
-        set_visibilities();
+        super.readFromPrefs(cls, name);
+        setVisibilities();
     }
     // We want all errors, even for invisible parameters.
     @Override
-    public String get_error()
+    public String getError()
     {
-        String result = super.get_error();
+        String result = super.getError();
         if (result == null) {
             for (SinglePluginOptionsParameter<T> param : M_parameters.values()){
-                param.check_for_errors();
-                result = param.get_error();
+                param.checkForErrors();
+                result = param.getError();
                 if (result != null) break;
             }
         }
         return result;
     }
-    @Override public Void get_value() {return null;}
+    @Override public Void getValue() {return null;}
     public void execute()
     {
         for (SinglePluginOptionsParameter<T> param : M_parameters.values()) {
@@ -200,12 +197,12 @@ class PluginOptionsParameter<T extends ReconstructionPlugin>
         }
     }
 
-    private void set_visibilities()
+    private void setVisibilities()
     {
         for (SinglePluginOptionsParameter<T> param : M_parameters.values()) {
-            param.set_new_visibility(false);
+            param.setNewVisibility(false);
         }
-        M_parameters.get(M_choice.get_value()).set_new_visibility(true);
+        M_parameters.get(M_choice.getValue()).setNewVisibility(true);
     }
 
     @Parameter private ReconstructionPluginService P_plugins;
@@ -214,7 +211,7 @@ class PluginOptionsParameter<T extends ReconstructionPlugin>
     private List<T> M_plugins;
     private ChoiceParameter M_choice;
     private HashMap<String, SinglePluginOptionsParameter<T>> M_parameters;
-    static ArrayList<SinglePluginOptionsParameter<?>> S_all_parameters
+    static ArrayList<SinglePluginOptionsParameter<?>> S_allParameters
         = new ArrayList<>();
 }
 
@@ -232,49 +229,49 @@ class SinglePluginOptionsParameter<T extends ReconstructionPlugin>
     @Override
     public void initialize()
     {
-        boolean enabled = P_plugins.is_enabled(M_plugin.getClass());
-        M_enabled = add_parameter(BoolParameter.class, "Enabled", enabled);
-        DParameter<?> param = M_plugin.options_param();
+        boolean enabled = P_plugins.isEnabled(M_plugin.getClass());
+        M_enabled = addParameter(new BoolParameter("Enabled", enabled));
+        DParameter<?> param = M_plugin.optionsParam();
         if (param != null) {
-            add_premade_parameter(param);
+            addParameter(param);
         }
-        List<Class<? extends ReconstructionPlugin>> sub_classes
-            = M_plugin.sub_plugins();
-        if (sub_classes != null) {
-            for (Class<? extends ReconstructionPlugin> cls : sub_classes) {
+        List<Class<? extends ReconstructionPlugin>> subClasses
+            = M_plugin.subPlugins();
+        if (subClasses != null) {
+            for (Class<? extends ReconstructionPlugin> cls : subClasses) {
                 PluginOptionsParameter<? extends ReconstructionPlugin> sub
                     = PluginOptionsParameter.create(cls);
                 M_subs.add(sub);
-                add_premade_parameter(sub);
+                addParameter(sub);
             }
         }
-        check_for_errors();
+        checkForErrors();
     }
-    @Override public void read_from_dialog()
+    @Override public void readFromDialog()
     {
-        super.read_from_dialog();
-        check_for_errors();
+        super.readFromDialog();
+        checkForErrors();
     }
     // Disable reading from prefs, because a programmer could have changed the
     // options somewhere else.
-    @Override public void read_from_prefs(Class<?> cls, String name) {}
-    @Override public T get_value() {return M_plugin;}
+    @Override public void readFromPrefs(Class<?> cls, String name) {}
+    @Override public T getValue() {return M_plugin;}
     public void execute()
     {
-        if (M_enabled.get_value()) P_plugins.enable(M_plugin.getClass());
+        if (M_enabled.getValue()) P_plugins.enable(M_plugin.getClass());
         else P_plugins.disable(M_plugin.getClass());
         for (PluginOptionsParameter<?> sub : M_subs) {
             sub.execute();
         }
-        M_plugin.read_options();
+        M_plugin.readOptions();
     }
-    public void check_for_errors()
+    public void checkForErrors()
     {
         String error = null;
-        if (!M_enabled.get_value()) {
+        if (!M_enabled.getValue()) {
             for (SinglePluginOptionsParameter<?> param
-                    : PluginOptionsParameter.S_all_parameters) {
-                if (param.M_enabled.get_value()) {
+                    : PluginOptionsParameter.S_allParameters) {
+                if (param.M_enabled.getValue()) {
                     List<Class<? extends ReconstructionPlugin>> dependencies
                         = param.M_plugin.dependencies();
                     if (dependencies != null) {
@@ -282,8 +279,8 @@ class SinglePluginOptionsParameter<T extends ReconstructionPlugin>
                                 : dependencies) {
                             if (cls == M_plugin.getClass()) {
                                 error = "The plugin " + param.M_plugin
-                                    .get_name() + " is enabled but depends on "
-                                    + M_plugin.get_name() + ", which is "
+                                    .getName() + " is enabled but depends on "
+                                    + M_plugin.getName() + ", which is "
                                     + "disabled.";
                             }
                         }
@@ -291,7 +288,7 @@ class SinglePluginOptionsParameter<T extends ReconstructionPlugin>
                 }
             }
         }
-        set_error(error);
+        setError(error);
     }
 
     @Parameter private ReconstructionPluginService P_plugins;

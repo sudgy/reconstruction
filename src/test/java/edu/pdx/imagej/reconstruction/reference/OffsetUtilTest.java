@@ -24,18 +24,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 public class OffsetUtilTest {
-    @Test public void test_base_offset()
+    @Test public void testBaseOffset()
     {
-        assertEquals(-2, OffsetUtil.get_offset(-2, 4, 1, 5), "get_offset should work when no adjusting is involved.");
-        assertEquals(-1, OffsetUtil.get_offset(-2, 3, 2, 5), "get_offset should work when the offset must be adjusted up because it became too low.");
-        assertEquals(-4, OffsetUtil.get_offset(-2, 9, 2, 5), "get_offset should work when the offset must be adjusted down because it was always too high.");
-        assertEquals(1, OffsetUtil.get_offset(2, 4, 2, 5), "get_offset should work when the offset must be adjusted down because it became too high.");
+        assertEquals(-2, OffsetUtil.getOffset(-2, 4, 1, 5), "getOffset should work when no adjusting is involved.");
+        assertEquals(-1, OffsetUtil.getOffset(-2, 3, 2, 5), "getOffset should work when the offset must be adjusted up because it became too low.");
+        assertEquals(-4, OffsetUtil.getOffset(-2, 9, 2, 5), "getOffset should work when the offset must be adjusted down because it was always too high.");
+        assertEquals(1, OffsetUtil.getOffset(2, 4, 2, 5), "getOffset should work when the offset must be adjusted down because it became too high.");
     }
-    @Test public void test_multiple_offset()
+    @Test public void testMultipleOffset()
     {
-        assertEquals(-2, OffsetUtil.get_multi_offset(-2, 4, 1, 5, 1, 3), "get_multi_offset should work when no adjusting is involved.");
-        assertEquals(-1, OffsetUtil.get_multi_offset(-2, 3, 2, 5, 1, 3), "get_multi_offset should work when the offset must be adjusted up because it got below min_out.");
-        assertEquals(-3, OffsetUtil.get_multi_offset(-2, 4, 1, 5, 3, 5), "get_multi_offset should work when the offset must be adjusted down because max_in + offset was too high.");
-        assertEquals(-6, OffsetUtil.get_multi_offset(-2, 9, 1, 5, 1, 3), "get_multi_offset should work when the offset must be adjusted down because both min_in + offset and max_in + offset was too high.");
+        assertEquals(-2, OffsetUtil.getMultiOffset(-2, 4, 1, 5, 1, 3), "getMultiOffset should work when no adjusting is involved.");
+        assertEquals(-1, OffsetUtil.getMultiOffset(-2, 3, 2, 5, 1, 3), "getMultiOffset should work when the offset must be adjusted up because it got below minOut.");
+        assertEquals(-3, OffsetUtil.getMultiOffset(-2, 4, 1, 5, 3, 5), "getMultiOffset should work when the offset must be adjusted down because maxIn + offset was too high.");
+        assertEquals(-6, OffsetUtil.getMultiOffset(-2, 9, 1, 5, 1, 3), "getMultiOffset should work when the offset must be adjusted down because both minIn + offset and maxIn + offset was too high.");
     }
 }

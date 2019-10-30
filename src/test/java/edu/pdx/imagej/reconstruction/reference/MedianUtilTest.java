@@ -30,7 +30,7 @@ import ij.ImageStack;
 import ij.process.FloatProcessor;
 
 public class MedianUtilTest {
-    @Test public void test_odd()
+    @Test public void testOdd()
     {
         ImageStack stack = new ImageStack(1, 1);
         stack.addSlice(new FloatProcessor(new float[][] {{0}}));
@@ -38,7 +38,7 @@ public class MedianUtilTest {
         stack.addSlice(new FloatProcessor(new float[][] {{2}}));
         ImagePlus imp = new ImagePlus("", stack);
 
-        double result = MedianUtil.calculate_median(imp,
+        double result = MedianUtil.calculateMedian(imp,
             new AbstractList<Integer>() {
                 @Override
                 public Integer get(int index) {return index + 1;}
@@ -48,7 +48,7 @@ public class MedianUtilTest {
 
         assertEquals(result, 1);
     }
-    @Test public void test_even()
+    @Test public void testEven()
     {
         ImageStack stack = new ImageStack(1, 1);
         stack.addSlice(new FloatProcessor(new float[][] {{0}}));
@@ -57,7 +57,7 @@ public class MedianUtilTest {
         stack.addSlice(new FloatProcessor(new float[][] {{3}}));
         ImagePlus imp = new ImagePlus("", stack);
 
-        double result = MedianUtil.calculate_median(imp,
+        double result = MedianUtil.calculateMedian(imp,
             new AbstractList<Integer>() {
                 @Override
                 public Integer get(int index) {return index + 1;}
@@ -67,7 +67,7 @@ public class MedianUtilTest {
 
         assertEquals(result, 1.5);
     }
-    @Test public void test_times()
+    @Test public void testTimes()
     {
         ImageStack stack = new ImageStack(1, 1);
         stack.addSlice(new FloatProcessor(new float[][] {{0}}));
@@ -76,7 +76,7 @@ public class MedianUtilTest {
         stack.addSlice(new FloatProcessor(new float[][] {{99}}));
         ImagePlus imp = new ImagePlus("", stack);
 
-        double result = MedianUtil.calculate_median(imp,
+        double result = MedianUtil.calculateMedian(imp,
             new AbstractList<Integer>() {
                 @Override
                 public Integer get(int index) {return index * 2 + 1;}

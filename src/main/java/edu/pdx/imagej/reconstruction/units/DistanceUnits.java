@@ -61,7 +61,7 @@ public enum DistanceUnits {
      *          "Meters".
      * @return The unit that corresponds with the string.
      */
-    public static DistanceUnits value_of(String s)
+    public static DistanceUnits valueOf2(String s)
     {
         if (s == null) return null;
         switch (s) {
@@ -74,7 +74,7 @@ public enum DistanceUnits {
         return null;
     }
     /** Convert this to a string, using abbreviations.  Because it uses
-     * abbreviations, <code>value_of(unit.toString())</code> will return <code>
+     * abbreviations, <code>valueOf2(unit.toString())</code> will return <code>
      * null</code>, not the unit again.
      *
      * @return The abbreviation for this unit.

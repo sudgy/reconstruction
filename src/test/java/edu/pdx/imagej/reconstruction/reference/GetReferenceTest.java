@@ -26,72 +26,72 @@ import org.junit.jupiter.api.Test;
 import edu.pdx.imagej.reconstruction.ReconstructionFieldImpl;
 
 public class GetReferenceTest {
-    @Test public void test_nothing()
+    @Test public void testNothing()
     {
-        ReconstructionFieldImpl field = make_field();
+        ReconstructionFieldImpl field = makeField();
         Reference test = new Reference(null, false, false);
-        test.get_reference(field);
+        test.getReference(field);
         for (int x = 0; x < 4; ++x) {
             for (int y = 0; y < 4; ++y) {
                 String coord = "(" + x + ", " + y + ")";
-                assertEquals(1, field.field().get_real(x, y), "at " + coord);
-                assertEquals(0, field.field().get_imag(x, y), "at " + coord);
+                assertEquals(1, field.field().getReal(x, y), "at " + coord);
+                assertEquals(0, field.field().getImag(x, y), "at " + coord);
             }
         }
     }
-    @Test public void test_phase()
+    @Test public void testPhase()
     {
-        ReconstructionFieldImpl field = make_field();
+        ReconstructionFieldImpl field = makeField();
         ReconstructionFieldImpl reference = field.copy();
         Reference test = new Reference(null, true, false);
-        test.get_reference(reference);
+        test.getReference(reference);
         for (int x = 0; x < 4; ++x) {
             for (int y = 0; y < 4; ++y) {
-                double field_arg = field.field().get_arg()[x][y];
-                double reference_arg = reference.field().get_arg()[x][y];
-                double reference_amp = reference.field().get_amp()[x][y];
+                double fieldArg = field.field().getArg()[x][y];
+                double referenceArg = reference.field().getArg()[x][y];
+                double referenceAmp = reference.field().getAmp()[x][y];
                 String coord = "(" + x + ", " + y + ")";
-                assertEquals(-field_arg, reference_arg, 1e-6, "at " + coord);
-                assertEquals(1, reference_amp, 1e-6, "at " + coord);
+                assertEquals(-fieldArg, referenceArg, 1e-6, "at " + coord);
+                assertEquals(1, referenceAmp, 1e-6, "at " + coord);
             }
         }
     }
-    @Test public void test_amplitude()
+    @Test public void testAmplitude()
     {
-        ReconstructionFieldImpl field = make_field();
+        ReconstructionFieldImpl field = makeField();
         ReconstructionFieldImpl reference = field.copy();
         Reference test = new Reference(null, false, true);
-        test.get_reference(reference);
+        test.getReference(reference);
         for (int x = 0; x < 4; ++x) {
             for (int y = 0; y < 4; ++y) {
-                double field_amp = field.field().get_amp()[x][y];
-                double reference_arg = reference.field().get_arg()[x][y];
-                double reference_amp = reference.field().get_amp()[x][y];
+                double fieldAmp = field.field().getAmp()[x][y];
+                double referenceArg = reference.field().getArg()[x][y];
+                double referenceAmp = reference.field().getAmp()[x][y];
                 String coord = "(" + x + ", " + y + ")";
-                assertEquals(0, reference_arg, "at " + coord);
+                assertEquals(0, referenceArg, "at " + coord);
                 // Amplitude reference holo does funny stuff to the oustides
                 if (x == 0 || y == 0 || x == 3 || y == 3) continue;
-                assertEquals(1, reference_amp * field_amp, 1e-6, "at " + coord
-                    + ", field_amp was " + field_amp + " and reference_amp was "
-                    + reference_amp + ".");
+                assertEquals(1, referenceAmp * fieldAmp, 1e-6, "at " + coord
+                    + ", fieldAmp was " + fieldAmp + " and referenceAmp was "
+                    + referenceAmp + ".");
             }
         }
     }
-    @Test public void test_both()
+    @Test public void testBoth()
     {
-        ReconstructionFieldImpl field = make_field();
+        ReconstructionFieldImpl field = makeField();
         ReconstructionFieldImpl reference = field.copy();
         Reference test = new Reference(null, true, true);
-        test.get_reference(reference);
-        field.field().multiply_in_place(reference.field());
+        test.getReference(reference);
+        field.field().multiplyInPlace(reference.field());
         for (int x = 0; x < 4; ++x) {
             for (int y = 0; y < 4; ++y) {
                 String coord = "(" + x + ", " + y + ")";
-                assertEquals(0, field.field().get_imag(x, y), 1e-6,
+                assertEquals(0, field.field().getImag(x, y), 1e-6,
                              "at " + coord);
                 // Amplitude reference holo does funny stuff to the oustides
                 if (x == 0 || y == 0 || x == 3 || y == 3) continue;
-                assertEquals(1, field.field().get_real(x, y), 1e-6,
+                assertEquals(1, field.field().getReal(x, y), 1e-6,
                              "at " + coord);
             }
         }
@@ -109,7 +109,7 @@ public class GetReferenceTest {
         {0.2655718145, 0.1526346228, 0.2690232265, 0.7611883011},
         {0.7277631769, 0.6861068860, 0.9135765966, 0.0137632145}
     };
-    private static ReconstructionFieldImpl make_field()
+    private static ReconstructionFieldImpl makeField()
     {
         return new ReconstructionFieldImpl(M_real, M_imag);
     }

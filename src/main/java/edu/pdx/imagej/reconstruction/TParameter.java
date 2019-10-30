@@ -65,7 +65,7 @@ public class TParameter extends HoldingParameter<List<Integer>> {
          * times.
          */
         SomeMulti;
-        Choices get_default_choice()
+        Choices getDefaultChoice()
         {
             switch (this) {
                 case All: return Choices.Current;
@@ -74,134 +74,134 @@ public class TParameter extends HoldingParameter<List<Integer>> {
             }
             return null;
         }
-        String[] get_choices()
+        String[] getChoices()
         {
             switch (this) {
                 case All: return S_choices;
-                case AllMulti: return S_all_multi_choices;
-                case SomeMulti: return S_some_multi_choices;
+                case AllMulti: return S_allMultiChoices;
+                case SomeMulti: return S_someMultiChoices;
             }
             return null;
         }
     }
     /** Constructor.
      *
-     * @param holo_p The image that you are choosing your time values from.
+     * @param holoP The image that you are choosing your time values from.
      *               Time values outside the number of time slices this image
      *               has will be rejected.
      * @param possible Which methods of choosing time values will be used.
      * @param label The label used on the dialog.
      */
-    public TParameter(ImageParameter holo_p, PossibleTypes possible,
+    public TParameter(ImageParameter holoP, PossibleTypes possible,
                       String label)
     {
         super(label + "Ts");
-        M_holo_p = holo_p;
+        M_holoP = holoP;
         M_possible = possible;
     }
     @Override
     public void initialize()
     {
-        ImagePlus i = M_holo_p.get_value();
+        ImagePlus i = M_holoP.getValue();
         if (i == null) return;
-        M_max_t = i.getImageStackSize();
-        M_choice_all = add_parameter(ChoiceParameter.class,
+        M_maxT = i.getImageStackSize();
+        M_choiceAll = addParameter(new ChoiceParameter(
                                      "t_slice_selection",
                                      S_choices,
-                                     Choices.Current.toString());
-        M_choice_all_multi = add_parameter(ChoiceParameter.class,
+                                     Choices.Current.toString()));
+        M_choiceAllMulti = addParameter(new ChoiceParameter(
                                            "t_slice_selection_",
-                                           S_all_multi_choices,
-                                           Choices.All.toString());
-        M_choice_some_multi = add_parameter(ChoiceParameter.class,
+                                           S_allMultiChoices,
+                                           Choices.All.toString()));
+        M_choiceSomeMulti = addParameter(new ChoiceParameter(
                                             "t_slice_selection__",
-                                            S_some_multi_choices,
-                                            Choices.Range.toString());
-        M_choice_all.set_new_visibility(false);
-        M_choice_all_multi.set_new_visibility(false);
-        M_choice_some_multi.set_new_visibility(false);
-        if (M_max_t > 1) {
+                                            S_someMultiChoices,
+                                            Choices.Range.toString()));
+        M_choiceAll.setNewVisibility(false);
+        M_choiceAllMulti.setNewVisibility(false);
+        M_choiceSomeMulti.setNewVisibility(false);
+        if (M_maxT > 1) {
             switch (M_possible) {
-                case All: M_choice_all.set_new_visibility(true); break;
+                case All: M_choiceAll.setNewVisibility(true); break;
                 case AllMulti:
-                    M_choice_all_multi.set_new_visibility(true); break;
+                    M_choiceAllMulti.setNewVisibility(true); break;
                 case SomeMulti:
-                    M_choice_some_multi.set_new_visibility(true); break;
+                    M_choiceSomeMulti.setNewVisibility(true); break;
             }
         }
 
-        M_param_single = add_parameter(SingleT.class, this);
-        M_param_current = new CurrentT();
-        M_param_all = new AllT();
-        M_param_list = add_parameter(ListT.class, this);
-        M_param_range = add_parameter(RangeT.class, this);
-        M_param_continuous = add_parameter(ContinuousT.class, this);
+        M_paramSingle = addParameter(new SingleT());
+        M_paramCurrent = new CurrentT();
+        M_paramAll = new AllT();
+        M_paramList = addParameter(new ListT());
+        M_paramRange = addParameter(new RangeT());
+        M_paramContinuous = addParameter(new ContinuousT());
     }
     @Override
-    public void read_from_dialog()
+    public void readFromDialog()
     {
-        update_max_t();
-        super.read_from_dialog();
-        set_visibilities();
+        updateMaxT();
+        super.readFromDialog();
+        setVisibilities();
     }
     @Override
-    public void read_from_prefs(Class<?> c, String name)
+    public void readFromPrefs(Class<?> c, String name)
     {
-        super.read_from_prefs(c, name);
-        set_visibilities();
+        super.readFromPrefs(c, name);
+        setVisibilities();
     }
-    private void set_visibilities()
+    private void setVisibilities()
     {
-        update_max_t();
-        if (M_holo_p.get_value() == null) return;
-        M_param_single.set_new_visibility(false);
-        M_param_list.set_new_visibility(false);
-        M_param_range.set_new_visibility(false);
-        M_param_continuous.set_new_visibility(false);
-        current_choices().set_new_visibility(false);
-        if (M_max_t > 1) {
-            current_choices().set_new_visibility(true);
-            switch (Choices.value_of(current_choices().get_value())) {
-                case Single: M_param_single.set_new_visibility(true); break;
-                case List: M_param_list.set_new_visibility(true); break;
-                case Range: M_param_range.set_new_visibility(true); break;
+        updateMaxT();
+        if (M_holoP.getValue() == null) return;
+        M_paramSingle.setNewVisibility(false);
+        M_paramList.setNewVisibility(false);
+        M_paramRange.setNewVisibility(false);
+        M_paramContinuous.setNewVisibility(false);
+        currentChoices().setNewVisibility(false);
+        if (M_maxT > 1) {
+            currentChoices().setNewVisibility(true);
+            switch (Choices.valueOf2(currentChoices().getValue())) {
+                case Single: M_paramSingle.setNewVisibility(true); break;
+                case List: M_paramList.setNewVisibility(true); break;
+                case Range: M_paramRange.setNewVisibility(true); break;
                 case Continuous:
-                    M_param_continuous.set_new_visibility(true); break;
+                    M_paramContinuous.setNewVisibility(true); break;
             }
         }
     }
     @Override
-    public List<Integer> get_value() {return current_param().get_value();}
-    void update_max_t() // Package private for testing
+    public List<Integer> getValue() {return currentParam().getValue();}
+    void updateMaxT() // Package private for testing
     {
-        ImagePlus img = M_holo_p.get_value();
+        ImagePlus img = M_holoP.getValue();
         if (img == null) return;
-        M_max_t = img.getImageStackSize();
+        M_maxT = img.getImageStackSize();
     }
 
-    private ChoiceParameter current_choices()
+    private ChoiceParameter currentChoices()
     {
         switch (M_possible) {
-            case All: return M_choice_all;
-            case AllMulti: return M_choice_all_multi;
-            case SomeMulti: return M_choice_some_multi;
+            case All: return M_choiceAll;
+            case AllMulti: return M_choiceAllMulti;
+            case SomeMulti: return M_choiceSomeMulti;
         }
         return null;
     }
-    private DParameter<List<Integer>> current_param()
+    private DParameter<List<Integer>> currentParam()
     {
-        if (M_max_t > 1) {
-            switch (Choices.value_of(current_choices().get_value())) {
-                case Single: return M_param_single;
-                case Current: return M_param_current;
-                case All: return M_param_all;
-                case List: return M_param_list;
-                case Range: return M_param_range;
-                case Continuous: return M_param_continuous;
+        if (M_maxT > 1) {
+            switch (Choices.valueOf2(currentChoices().getValue())) {
+                case Single: return M_paramSingle;
+                case Current: return M_paramCurrent;
+                case All: return M_paramAll;
+                case List: return M_paramList;
+                case Range: return M_paramRange;
+                case Continuous: return M_paramContinuous;
             }
             return null;
         }
-        else return M_param_single;
+        else return M_paramSingle;
     }
     private enum Choices {
         Single, Current, All, List, Range, Continuous;
@@ -211,7 +211,7 @@ public class TParameter extends HoldingParameter<List<Integer>> {
             else if (this == Continuous) return "Continuous Range";
             else return name();
         }
-        public static Choices value_of(String s)
+        public static Choices valueOf2(String s)
         {
             if (s.equals("Current Frame")) return Current;
             else if (s.equals("Continuous Range")) return Continuous;
@@ -226,32 +226,32 @@ public class TParameter extends HoldingParameter<List<Integer>> {
         Choices.Range.toString(),
         Choices.Continuous.toString()
     };
-    private static String[] S_all_multi_choices = {
+    private static String[] S_allMultiChoices = {
         Choices.All.toString(),
         Choices.List.toString(),
         Choices.Range.toString(),
         Choices.Continuous.toString()
     };
-    private static String[] S_some_multi_choices = {
+    private static String[] S_someMultiChoices = {
         Choices.List.toString(),
         Choices.Range.toString(),
         Choices.Continuous.toString()
     };
 
-    private ChoiceParameter M_choice_all;
-    private ChoiceParameter M_choice_all_multi;
-    private ChoiceParameter M_choice_some_multi;
+    private ChoiceParameter M_choiceAll;
+    private ChoiceParameter M_choiceAllMulti;
+    private ChoiceParameter M_choiceSomeMulti;
 
-    private SingleT M_param_single;
-    private CurrentT M_param_current;
-    private AllT M_param_all;
-    private ListT M_param_list;
-    private RangeT M_param_range;
-    private ContinuousT M_param_continuous;
+    private SingleT M_paramSingle;
+    private CurrentT M_paramCurrent;
+    private AllT M_paramAll;
+    private ListT M_paramList;
+    private RangeT M_paramRange;
+    private ContinuousT M_paramContinuous;
 
-    private ImageParameter M_holo_p;
+    private ImageParameter M_holoP;
 
-    private int M_max_t;
+    private int M_maxT;
     private PossibleTypes M_possible;
 
 
@@ -262,49 +262,49 @@ public class TParameter extends HoldingParameter<List<Integer>> {
         @Override
         public void initialize()
         {
-            M_t = add_parameter(IntParameter.class, 1, "t_value");
-            M_current_max_t = M_max_t;
-            M_t.set_bounds(1, M_max_t);
+            M_t = addParameter(new IntParameter(1, "t_value"));
+            M_currentMaxT = M_maxT;
+            M_t.setBounds(1, M_maxT);
         }
         @Override
-        public void add_to_dialog(DPDialog dialog)
+        public void addToDialog(DPDialog dialog)
         {
-            super.add_to_dialog(dialog);
-            if (M_current_max_t != M_max_t) {
-                M_current_max_t = M_max_t;
-                M_t.set_bounds(1, M_max_t);
+            super.addToDialog(dialog);
+            if (M_currentMaxT != M_maxT) {
+                M_currentMaxT = M_maxT;
+                M_t.setBounds(1, M_maxT);
             }
         }
         @Override
-        public void read_from_dialog()
+        public void readFromDialog()
         {
-            super.read_from_dialog();
-            if (M_current_max_t != M_max_t) {
-                M_current_max_t = M_max_t;
-                M_t.set_bounds(1, M_max_t);
+            super.readFromDialog();
+            if (M_currentMaxT != M_maxT) {
+                M_currentMaxT = M_maxT;
+                M_t.setBounds(1, M_maxT);
             }
         }
         @Override
-        public void read_from_prefs(Class<?> c, String name)
+        public void readFromPrefs(Class<?> c, String name)
         {
-            super.read_from_prefs(c, name);
-            M_t.set_bounds(1, M_max_t);
+            super.readFromPrefs(c, name);
+            M_t.setBounds(1, M_maxT);
         }
         @Override
-        public List<Integer> get_value()
+        public List<Integer> getValue()
         {
             return new AbstractList<Integer>() {
                 @Override
                 public Integer get(int index)
-                {return M_t.get_value();}
+                {return M_t.getValue();}
                 @Override
                 public int size()
                 {return 1;}
             };
         }
 
-        private IntParameter M_t = new IntParameter(1, "t_value");
-        private int M_current_max_t;
+        private IntParameter M_t = new IntParameter(1, "tValue");
+        private int M_currentMaxT;
     }
 
 
@@ -312,17 +312,17 @@ public class TParameter extends HoldingParameter<List<Integer>> {
     /** Time parameter returning the current time slice */
     public class CurrentT extends AbstractDParameter<List<Integer>> {
         public CurrentT() {super("CurrentT");}
-        @Override public void add_to_dialog(DPDialog dialog) {}
-        @Override public void read_from_dialog() {}
-        @Override public void save_to_prefs(Class<?> c, String name) {}
-        @Override public void read_from_prefs(Class<?> c, String name) {}
+        @Override public void addToDialog(DPDialog dialog) {}
+        @Override public void readFromDialog() {}
+        @Override public void saveToPrefs(Class<?> c, String name) {}
+        @Override public void readFromPrefs(Class<?> c, String name) {}
         @Override
-        public List<Integer> get_value()
+        public List<Integer> getValue()
         {
             return new AbstractList<Integer>() {
                 @Override
                 public Integer get(int index)
-                {return M_holo_p.get_value().getCurrentSlice();}
+                {return M_holoP.getValue().getCurrentSlice();}
                 @Override
                 public int size()
                 {return 1;}
@@ -335,12 +335,12 @@ public class TParameter extends HoldingParameter<List<Integer>> {
     /** Time parameter returning all time slices */
     public class AllT extends AbstractDParameter<List<Integer>> {
         public AllT() {super("AllT");}
-        @Override public void add_to_dialog(DPDialog dialog) {}
-        @Override public void read_from_dialog() {}
-        @Override public void save_to_prefs(Class<?> c, String name) {}
-        @Override public void read_from_prefs(Class<?> c, String name) {}
+        @Override public void addToDialog(DPDialog dialog) {}
+        @Override public void readFromDialog() {}
+        @Override public void saveToPrefs(Class<?> c, String name) {}
+        @Override public void readFromPrefs(Class<?> c, String name) {}
         @Override
-        public List<Integer> get_value()
+        public List<Integer> getValue()
         {
             return new AbstractList<Integer>() {
                 @Override
@@ -348,7 +348,7 @@ public class TParameter extends HoldingParameter<List<Integer>> {
                 {return index + 1;}
                 @Override
                 public int size()
-                {return M_max_t;}
+                {return M_maxT;}
             };
         }
     }
@@ -361,62 +361,62 @@ public class TParameter extends HoldingParameter<List<Integer>> {
         @Override
         public void initialize()
         {
-            set_error("t list is empty.");
+            setError("t list is empty.");
         }
         @Override
-        public void add_to_dialog(DPDialog dialog)
+        public void addToDialog(DPDialog dialog)
         {
-            M_supplier = dialog.add_text_box(
-                "t values (in a comma separated list)", M_current_string);
+            M_supplier = dialog.addTextBox(
+                "t values (in a comma separated list)", M_currentString);
         }
         @Override
-        public void read_from_dialog()
+        public void readFromDialog()
         {
-            M_current_string = M_supplier.get();
-            process_errors();
+            M_currentString = M_supplier.get();
+            processErrors();
         }
         @Override
-        public void save_to_prefs(Class<?> c, String name)
+        public void saveToPrefs(Class<?> c, String name)
         {
-            prefs().put(c, name + ".value", M_current_string);
+            prefs().put(c, name + ".value", M_currentString);
         }
         @Override
-        public void read_from_prefs(Class<?> c, String name)
+        public void readFromPrefs(Class<?> c, String name)
         {
-            M_current_string = prefs().get(c, name + ".value", "");
-            process_errors();
+            M_currentString = prefs().get(c, name + ".value", "");
+            processErrors();
         }
         @Override
-        public List<Integer> get_value() {return M_ts;}
+        public List<Integer> getValue() {return M_ts;}
 
-        private void process_errors()
+        private void processErrors()
         {
-            if (M_current_string == null || M_current_string == "") {
-                set_error("t list is empty.");
+            if (M_currentString == null || M_currentString == "") {
+                setError("t list is empty.");
                 return;
             }
-            List<String> ts_as_string
-                = Arrays.asList(M_current_string.split("\\s*,\\s*"));
-            M_ts = new ArrayList<Integer>(ts_as_string.size());
-            for (String s : ts_as_string) {
+            List<String> tsAsString
+                = Arrays.asList(M_currentString.split("\\s*,\\s*"));
+            M_ts = new ArrayList<Integer>(tsAsString.size());
+            for (String s : tsAsString) {
                 try {M_ts.add(Integer.parseInt(s));}
                 catch (NumberFormatException e) {
-                    set_error("Unable to parse t list.  \"" + s
+                    setError("Unable to parse t list.  \"" + s
                               + "\" is not an integer.");
                     return;
                 }
             }
             for (int t : M_ts) {
-                if (t < 1 || t > M_max_t) {
-                    set_error("t value \"" + t + "\" is not in the range [1.."
-                              + M_max_t + "].");
+                if (t < 1 || t > M_maxT) {
+                    setError("t value \"" + t + "\" is not in the range [1.."
+                              + M_maxT + "].");
                     return;
                 }
             }
-            set_error(null);
+            setError(null);
         }
         private ArrayList<Integer> M_ts;
-        private String M_current_string;
+        private String M_currentString;
         private Supplier<String> M_supplier;
     }
 
@@ -428,81 +428,81 @@ public class TParameter extends HoldingParameter<List<Integer>> {
         @Override
         public void initialize()
         {
-            M_begin = add_parameter(IntParameter.class, 1, "t_value_begin");
-            M_end = add_parameter(IntParameter.class, 1, "t_value_end");
-            M_step = add_parameter(IntParameter.class, 1, "t_value_step");
-            M_begin.set_bounds(1, M_max_t);
-            M_end.set_bounds(1, M_max_t);
+            M_begin = addParameter(new IntParameter(1, "t_value_begin"));
+            M_end = addParameter(new IntParameter(1, "t_value_end"));
+            M_step = addParameter(new IntParameter(1, "t_value_step"));
+            M_begin.setBounds(1, M_maxT);
+            M_end.setBounds(1, M_maxT);
         }
         @Override
-        public void add_to_dialog(DPDialog dialog)
+        public void addToDialog(DPDialog dialog)
         {
-            super.add_to_dialog(dialog);
-            if (M_current_max_t != M_max_t) {
-                M_current_max_t = M_max_t;
-                M_begin.set_bounds(1, M_max_t);
-                M_end.set_bounds(1, M_max_t);
+            super.addToDialog(dialog);
+            if (M_currentMaxT != M_maxT) {
+                M_currentMaxT = M_maxT;
+                M_begin.setBounds(1, M_maxT);
+                M_end.setBounds(1, M_maxT);
             }
-            process_errors();
+            processErrors();
         }
         @Override
-        public void read_from_dialog()
+        public void readFromDialog()
         {
-            super.read_from_dialog();
-            if (M_current_max_t != M_max_t) {
-                M_current_max_t = M_max_t;
-                M_begin.set_bounds(1, M_max_t);
-                M_end.set_bounds(1, M_max_t);
+            super.readFromDialog();
+            if (M_currentMaxT != M_maxT) {
+                M_currentMaxT = M_maxT;
+                M_begin.setBounds(1, M_maxT);
+                M_end.setBounds(1, M_maxT);
             }
-            process_errors();
+            processErrors();
         }
         @Override
-        public void read_from_prefs(Class<?> c, String name)
+        public void readFromPrefs(Class<?> c, String name)
         {
-            super.read_from_prefs(c, name);
-            M_begin.set_bounds(1, M_max_t);
-            M_end.set_bounds(1, M_max_t);
-            process_errors();
+            super.readFromPrefs(c, name);
+            M_begin.setBounds(1, M_maxT);
+            M_end.setBounds(1, M_maxT);
+            processErrors();
         }
         @Override
-        public List<Integer> get_value()
+        public List<Integer> getValue()
         {
             return new AbstractList<Integer>() {
                 @Override
                 public Integer get(int index)
-                {return M_begin.get_value() + M_step.get_value() * index;}
+                {return M_begin.getValue() + M_step.getValue() * index;}
                 @Override
                 public int size()
-                {return Math.abs((M_end.get_value() - M_begin.get_value())
-                         / M_step.get_value()) + 1;}
+                {return Math.abs((M_end.getValue() - M_begin.getValue())
+                         / M_step.getValue()) + 1;}
             };
         }
 
-        private void process_errors()
+        private void processErrors()
         {
-            set_error(M_begin.get_error());
-            if (get_error() != null) return;
-            set_error(M_end.get_error());
-            if (get_error() != null) return;
-            set_error(M_step.get_error());
-            if (get_error() != null) return;
-            if (M_step.get_value() == 0) {
-                set_error("t value step cannot be zero.");
+            setError(M_begin.getError());
+            if (getError() != null) return;
+            setError(M_end.getError());
+            if (getError() != null) return;
+            setError(M_step.getError());
+            if (getError() != null) return;
+            if (M_step.getValue() == 0) {
+                setError("t value step cannot be zero.");
                 return;
             }
-            if (!(M_begin.get_value().equals(M_end.get_value())) &&
-                (M_end.get_value() < M_begin.get_value())
-                    == (M_step.get_value() > 0)) {
-                set_error("The sign of t value step must be the same as the "
+            if (!(M_begin.getValue().equals(M_end.getValue())) &&
+                (M_end.getValue() < M_begin.getValue())
+                    == (M_step.getValue() > 0)) {
+                setError("The sign of t value step must be the same as the "
                           + "sign of t value end minus t value begin.");
                 return;
             }
-            set_error(null);
+            setError(null);
         }
         private IntParameter M_begin;
         private IntParameter M_end;
         private IntParameter M_step;
-        private int M_current_max_t;
+        private int M_currentMaxT;
     }
 
 
@@ -513,54 +513,54 @@ public class TParameter extends HoldingParameter<List<Integer>> {
         @Override
         public void initialize()
         {
-            M_begin = add_parameter(IntParameter.class, 1, "t_value_begin");
-            M_end = add_parameter(IntParameter.class, 1, "t_value_end");
-            M_begin.set_bounds(1, M_max_t);
-            M_end.set_bounds(1, M_max_t);
+            M_begin = addParameter(new IntParameter(1, "t_value_begin"));
+            M_end = addParameter(new IntParameter(1, "t_value_end"));
+            M_begin.setBounds(1, M_maxT);
+            M_end.setBounds(1, M_maxT);
         }
         @Override
-        public void add_to_dialog(DPDialog dialog)
+        public void addToDialog(DPDialog dialog)
         {
-            super.add_to_dialog(dialog);
-            if (M_current_max_t != M_max_t) {
-                M_current_max_t = M_max_t;
-                M_begin.set_bounds(1, M_max_t);
-                M_end.set_bounds(1, M_max_t);
+            super.addToDialog(dialog);
+            if (M_currentMaxT != M_maxT) {
+                M_currentMaxT = M_maxT;
+                M_begin.setBounds(1, M_maxT);
+                M_end.setBounds(1, M_maxT);
             }
         }
         @Override
-        public void read_from_dialog()
+        public void readFromDialog()
         {
-            super.read_from_dialog();
-            if (M_current_max_t != M_max_t) {
-                M_current_max_t = M_max_t;
-                M_begin.set_bounds(1, M_max_t);
-                M_end.set_bounds(1, M_max_t);
+            super.readFromDialog();
+            if (M_currentMaxT != M_maxT) {
+                M_currentMaxT = M_maxT;
+                M_begin.setBounds(1, M_maxT);
+                M_end.setBounds(1, M_maxT);
             }
         }
         @Override
-        public void read_from_prefs(Class<?> c, String name)
+        public void readFromPrefs(Class<?> c, String name)
         {
-            super.read_from_prefs(c, name);
-            M_begin.set_bounds(1, M_max_t);
-            M_end.set_bounds(1, M_max_t);
+            super.readFromPrefs(c, name);
+            M_begin.setBounds(1, M_maxT);
+            M_end.setBounds(1, M_maxT);
         }
         @Override
-        public List<Integer> get_value()
+        public List<Integer> getValue()
         {
-            int multiplier = M_begin.get_value() < M_end.get_value() ? 1 : -1;
+            int multiplier = M_begin.getValue() < M_end.getValue() ? 1 : -1;
             return new AbstractList<Integer>() {
                 @Override
                 public Integer get(int index)
-                {return M_begin.get_value() + index * multiplier;}
+                {return M_begin.getValue() + index * multiplier;}
                 @Override
                 public int size()
-                {return Math.abs(M_end.get_value() - M_begin.get_value()) + 1;}
+                {return Math.abs(M_end.getValue() - M_begin.getValue()) + 1;}
             };
         }
 
         private IntParameter M_begin;
         private IntParameter M_end;
-        private int M_current_max_t;
+        private int M_currentMaxT;
     }
 }

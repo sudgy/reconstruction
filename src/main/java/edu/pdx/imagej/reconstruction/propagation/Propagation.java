@@ -43,8 +43,8 @@ import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
  * be confusing that <code>Propagation</code> is just a random plugin when the
  * propagation methods assume propagation happens between steps, but this plugin
  * has first priority and so is the first to have {@link
- * edu.pdx.imagej.reconstruction.plugin.ReconstructionPlugin#process_propagated_field
- * ReconstructionPlugin#process_propagated_field} called, and it does the
+ * edu.pdx.imagej.reconstruction.plugin.ReconstructionPlugin#processPropagatedField
+ * ReconstructionPlugin#processPropagatedField} called, and it does the
  * propagation then.  So, please don't have a priority before first, because
  * then it won't actually be propagated yet.
  */
@@ -66,29 +66,33 @@ public class Propagation extends HoldingSinglePlugin<PropagationPlugin>
     {
         super(plugin);
     }
+    @Override public Propagation duplicate()
+    {
+        return new Propagation((PropagationPlugin)getPlugin().duplicate());
+    }
     /** Propagate the field to the distance z.
      *
      * @param field The field to propagate.
      * @param t The time slice used to get this field.
      * @param z The z value to propagate to.
      */
-    @Override public void process_propagated_field(ReconstructionField field,
+    @Override public void processPropagatedField(ReconstructionField field,
                                                    int t, DistanceUnitValue z)
     {
-        if (M_ts_processed.add(t)) {
-            M_last_z = new DistanceUnitValue();
+        if (M_tsProcessed.add(t)) {
+            M_lastZ = new DistanceUnitValue();
             if (field != null) {
-                M_original_field = new ConstReconstructionField(field.copy());
+                M_originalField = new ConstReconstructionField(field.copy());
             }
-            get_plugin().process_starting_field(M_original_field);
+            getPlugin().processStartingField(M_originalField);
         }
-        get_plugin().propagate(M_original_field, z, field, M_last_z);
-        M_last_z = z;
+        getPlugin().propagate(M_originalField, z, field, M_lastZ);
+        M_lastZ = z;
     }
     /** Returns a singleton list of <code>{@link
      * PropagationPlugin}.class</code>.
      */
-    @Override public List<Class<? extends ReconstructionPlugin>> sub_plugins()
+    @Override public List<Class<? extends ReconstructionPlugin>> subPlugins()
     {
         ArrayList<Class<? extends ReconstructionPlugin>> result
             = new ArrayList<>();
@@ -96,7 +100,7 @@ public class Propagation extends HoldingSinglePlugin<PropagationPlugin>
         return result;
     }
 
-    private HashSet<Integer> M_ts_processed = new HashSet<>();
-    private ConstReconstructionField M_original_field;
-    private DistanceUnitValue M_last_z;
+    private HashSet<Integer> M_tsProcessed = new HashSet<>();
+    private ConstReconstructionField M_originalField;
+    private DistanceUnitValue M_lastZ;
 }

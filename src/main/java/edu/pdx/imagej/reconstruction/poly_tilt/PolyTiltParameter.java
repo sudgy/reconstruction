@@ -39,43 +39,43 @@ class PolyTiltParameter extends ReconstructionHoldingParameter<PolyTiltPlugin>
     @Override
     public void initialize()
     {
-        M_do = add_parameter(BoolParameter.class, "Polynomial Tilt Correction",
-                             false);
-        M_degree = add_parameter(IntParameter.class, 1, "Polynomial Degree");
-        M_degree.set_bounds(1, Integer.MAX_VALUE);
-        add_premade_parameter(M_param);
+        M_do = addParameter(new BoolParameter("Polynomial Tilt Correction",
+                             false));
+        M_degree = addParameter(new IntParameter(1, "Polynomial Degree"));
+        M_degree.setBounds(1, Integer.MAX_VALUE);
+        addParameter(M_param);
     }
     @Override
-    public PolyTiltPlugin get_value()
+    public PolyTiltPlugin getValue()
     {
-        return M_param.get_value();
+        return M_param.getValue();
     }
-    public boolean do_poly_tilt() {return M_do.get_value();}
-    public int degree() {return M_degree.get_value();}
-    public Iterable<Point> h_line() {return M_param.get_value().get_h_line();}
-    public Iterable<Point> v_line() {return M_param.get_value().get_v_line();}
+    public boolean doPolyTilt() {return M_do.getValue();}
+    public int degree() {return M_degree.getValue();}
+    public Iterable<Point> hLine() {return M_param.getValue().getHLine();}
+    public Iterable<Point> vLine() {return M_param.getValue().getVLine();}
     @Override
-    public void read_from_dialog()
+    public void readFromDialog()
     {
-        super.read_from_dialog();
-        set_visibilities();
+        super.readFromDialog();
+        setVisibilities();
     }
     @Override
-    public void read_from_prefs(Class<?> c, String name)
+    public void readFromPrefs(Class<?> c, String name)
     {
-        super.read_from_prefs(c, name);
-        set_visibilities();
+        super.readFromPrefs(c, name);
+        setVisibilities();
     }
 
-    private void set_visibilities()
+    private void setVisibilities()
     {
-        if (M_do.get_value() == false) {
-            M_degree.set_new_visibility(false);
-            M_param .set_new_visibility(false);
+        if (M_do.getValue() == false) {
+            M_degree.setNewVisibility(false);
+            M_param .setNewVisibility(false);
         }
         else {
-            M_degree.set_new_visibility(true);
-            M_param .set_new_visibility(true);
+            M_degree.setNewVisibility(true);
+            M_param .setNewVisibility(true);
         }
     }
 

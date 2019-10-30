@@ -62,30 +62,35 @@ public class Offset extends AbstractReferencePlugin {
         M_imp = imp;
         M_offset = offset;
     }
+    @Override
+    public Offset duplicate()
+    {
+        return new Offset(M_imp, M_offset);
+    }
     /** Get the reference hologram.
      */
     @Override
-    public ReconstructionField get_reference_holo(
+    public ReconstructionField getReferenceHolo(
         ConstReconstructionField field, int t)
     {
         // This should maybe be cached, but is it worth it?  That would use up a
         // lot of extra memory, and most of them should be a new calculation.
 
         if (M_param != null) {
-            M_imp = M_param.get_value().imp;
-            M_offset = M_param.get_value().offset;
+            M_imp = M_param.getValue().imp;
+            M_offset = M_param.getValue().offset;
         }
-        int offset = OffsetUtil.get_offset(M_offset, t, 1,
+        int offset = OffsetUtil.getOffset(M_offset, t, 1,
                                            M_imp.getImageStackSize());
-        int final_t = t + offset;
-        float[][] float_array = M_imp.getStack()
-                                     .getProcessor(final_t)
+        int finalT = t + offset;
+        float[][] floatArray = M_imp.getStack()
+                                     .getProcessor(finalT)
                                      .getFloatArray();
-        double[][] real = new double[float_array.length][float_array[0].length];
+        double[][] real = new double[floatArray.length][floatArray[0].length];
         double[][] imag = new double[real.length][real[0].length];
         for (int x = 0; x < real.length; ++x) {
             for (int y = 0; y < real[0].length; ++y) {
-                real[x][y] = float_array[x][y];
+                real[x][y] = floatArray[x][y];
             }
         }
         return new ReconstructionFieldImpl(real, imag);
@@ -120,23 +125,23 @@ public class Offset extends AbstractReferencePlugin {
         public void initialize()
         {
             if (M_images == null) {
-                M_img = add_parameter(ImageParameter.class,
-                                      "Reference Hologram Image");
+                M_img = addParameter(new ImageParameter(
+                                      "Reference Hologram Image"));
             }
             else {
                 M_img = new ImageParameter("Reference Hologram Image",
                                            M_images);
-                add_premade_parameter(M_img);
+                addParameter(M_img);
             }
-            M_offset = add_parameter(IntParameter.class,
-                                     0, "Time offset", "frames");
+            M_offset = addParameter(new IntParameter(
+                                     0, "Time offset", "frames"));
         }
         @Override
-        public OffsetParams get_value()
+        public OffsetParams getValue()
         {
             OffsetParams result = new OffsetParams();
-            result.imp = M_img.get_value();
-            result.offset = M_offset.get_value();
+            result.imp = M_img.getValue();
+            result.offset = M_offset.getValue();
             return result;
         }
 

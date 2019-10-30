@@ -25,7 +25,7 @@ import java.util.Arrays;
 import ij.ImagePlus;
 
 class MedianUtil {
-    static double[][] calculate_median(ImagePlus imp, Collection<Integer> times)
+    static double[][] calculateMedian(ImagePlus imp, Collection<Integer> times)
     {
         final int width = imp.getWidth();
         final int height = imp.getHeight();

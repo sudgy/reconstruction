@@ -36,7 +36,7 @@ import edu.pdx.imagej.dynamic_parameters.TestDialog;
 import edu.pdx.imagej.reconstruction.ReconstructionField;
 
 public class MedianTest {
-    @Test public void test_median()
+    @Test public void testMedian()
     {
         ImageStack stack = new ImageStack(2, 2);
         stack.addSlice(new FloatProcessor(new float[][] {{0, 0}, {0, 0}}));
@@ -47,7 +47,7 @@ public class MedianTest {
 
         Median test = new Median();
 
-        ReconstructionField result = test.get_reference_holo(imp,
+        ReconstructionField result = test.getReferenceHolo(imp,
             new AbstractList<Integer>() {
                 @Override
                 public Integer get(int index) {return index * 2 + 1;}
@@ -55,9 +55,9 @@ public class MedianTest {
                 public int size() {return 2;}
             });
 
-        assertEquals(result.field().get_real(0, 0), 2.5);
+        assertEquals(result.field().getReal(0, 0), 2.5);
     }
-    @Test public void test_live()
+    @Test public void testLive()
     {
         ImageStack stack = new ImageStack(2, 2);
         stack.addSlice(new FloatProcessor(new float[][] {{0, 0}, {0, 0}}));
@@ -69,19 +69,19 @@ public class MedianTest {
         Context context = new Context(true);
         context.inject(test.param());
         test.param().initialize();
-        test.param().refresh_visibility();
+        test.param().refreshVisibility();
         TestDialog dialog = new TestDialog();
-        test.param().add_to_dialog(dialog);
-        dialog.get_string(0).value = "List";
-        dialog.get_string_index(0).value = 0; // Select the image
-        test.param().read_from_dialog();
+        test.param().addToDialog(dialog);
+        dialog.getString(0).value = "List";
+        dialog.getStringIndex(0).value = 0; // Select the image
+        test.param().readFromDialog();
         dialog = new TestDialog();
-        test.param().add_to_dialog(dialog);
-        dialog.get_string(1).value = "1,3"; // Select the times to use
-        dialog.get_string_index(0).value = 0; // Crashes if we don't do this
-        test.param().read_from_dialog();
+        test.param().addToDialog(dialog);
+        dialog.getString(1).value = "1,3"; // Select the times to use
+        dialog.getStringIndex(0).value = 0; // Crashes if we don't do this
+        test.param().readFromDialog();
 
-        ReconstructionField field = test.get_reference_holo(null, 0);
-        assertEquals(field.field().get_real(0, 0), 2.5);
+        ReconstructionField field = test.getReferenceHolo(null, 0);
+        assertEquals(field.field().getReal(0, 0), 2.5);
     }
 }

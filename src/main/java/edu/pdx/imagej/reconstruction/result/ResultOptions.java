@@ -42,24 +42,24 @@ public class ResultOptions {
     /** Whether you should save the result to a file, or use a user-supplied
      * function with the result.
      */
-    public boolean save_to_file;
-    /** What directory to save to, if {@link save_to_file} is <code>true</code>.
+    public boolean saveToFile;
+    /** What directory to save to, if {@link saveToFile} is <code>true</code>.
      */
-    public String save_directory;
-    /** Function to call for the amplitude result if {@link save_to_file} is
+    public String saveDirectory;
+    /** Function to call for the amplitude result if {@link saveToFile} is
      * <code>false</code>.  It defaults to showing the ImagePlus.
      */
-    public Consumer<ImagePlus> amplitude_func = (ImagePlus imp) -> imp.show();
-    /** Function to call for the phase result if {@link save_to_file} is
+    public Consumer<ImagePlus> amplitudeFunc = (ImagePlus imp) -> imp.show();
+    /** Function to call for the phase result if {@link saveToFile} is
      * <code>false</code>.  It defaults to showing the ImagePlus.
      */
-    public Consumer<ImagePlus> phase_func = (ImagePlus imp) -> imp.show();
-    /** Function to call for the real result if {@link save_to_file} is
+    public Consumer<ImagePlus> phaseFunc = (ImagePlus imp) -> imp.show();
+    /** Function to call for the real result if {@link saveToFile} is
      * <code>false</code>.  It defaults to showing the ImagePlus.
      */
-    public Consumer<ImagePlus> real_func = (ImagePlus imp) -> imp.show();
-    /** Function to call for the imaginary result if {@link save_to_file} is
+    public Consumer<ImagePlus> realFunc = (ImagePlus imp) -> imp.show();
+    /** Function to call for the imaginary result if {@link saveToFile} is
      * <code>false</code>.  It defaults to showing the ImagePlus.
      */
-    public Consumer<ImagePlus> imaginary_func = (ImagePlus imp) -> imp.show();
+    public Consumer<ImagePlus> imaginaryFunc = (ImagePlus imp) -> imp.show();
 }

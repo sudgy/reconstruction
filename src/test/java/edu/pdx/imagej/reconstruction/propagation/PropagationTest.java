@@ -31,7 +31,7 @@ import edu.pdx.imagej.reconstruction.units.DistanceUnits;
 import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
 
 public class PropagationTest {
-    @Test public void test_processed()
+    @Test public void testProcessed()
     {
         TestPlugin plugin = new TestPlugin();
         Propagation prop = new Propagation(plugin);
@@ -44,30 +44,30 @@ public class PropagationTest {
         DistanceUnitValue height
             = new DistanceUnitValue(300, DistanceUnits.Micro);
 
-        prop.process_hologram_param(hologram);
-        prop.process_wavelength_param(wavelength);
-        prop.process_dimensions_param(width, height);
-        prop.process_beginning();
+        prop.processHologramParam(hologram);
+        prop.processWavelengthParam(wavelength);
+        prop.processDimensionsParam(width, height);
+        prop.processBeginning();
 
         assertEquals(plugin.M_hologram, hologram);
-        assertEquals(plugin.M_wavelength.as_micro(), 100);
-        assertEquals(plugin.M_width.as_micro(), 200);
-        assertEquals(plugin.M_height.as_micro(), 300);
-        assertTrue(plugin.M_processed_beginning);
+        assertEquals(plugin.M_wavelength.asMicro(), 100);
+        assertEquals(plugin.M_width.asMicro(), 200);
+        assertEquals(plugin.M_height.asMicro(), 300);
+        assertTrue(plugin.M_processedBeginning);
 
-        prop.process_propagated_field(null, 0, width);
+        prop.processPropagatedField(null, 0, width);
         assertTrue(plugin.M_processed);
         assertTrue(plugin.M_propagated);
         plugin.M_processed = false;
         plugin.M_propagated = false;
 
-        prop.process_propagated_field(null, 0, width);
+        prop.processPropagatedField(null, 0, width);
         assertTrue(!plugin.M_processed, "First frame processing should not "
             + "happen on later frames.");
         assertTrue(plugin.M_propagated);
         plugin.M_propagated = false;
 
-        prop.process_propagated_field(null, 1, width);
+        prop.processPropagatedField(null, 1, width);
         assertTrue(plugin.M_processed, "First frame processing should happen "
             + "on a later first frame.");
         assertTrue(plugin.M_propagated);
@@ -75,48 +75,50 @@ public class PropagationTest {
 
     private static class TestPlugin extends AbstractPropagationPlugin {
         @Override
-        public void process_hologram_param(ImagePlus hologram)
+        public void processHologramParam(ImagePlus hologram)
         {
             M_hologram = hologram;
         }
         @Override
-        public void process_wavelength_param(DistanceUnitValue wavelength)
+        public void processWavelengthParam(DistanceUnitValue wavelength)
         {
             M_wavelength = wavelength;
         }
         @Override
-        public void process_dimensions_param(DistanceUnitValue width,
+        public void processDimensionsParam(DistanceUnitValue width,
                                              DistanceUnitValue height)
         {
             M_width = width;
             M_height = height;
         }
         @Override
-        public void process_beginning()
+        public void processBeginning()
         {
-            M_processed_beginning = true;
+            M_processedBeginning = true;
         }
         @Override
-        public void process_starting_field(ConstReconstructionField field)
+        public void processStartingField(ConstReconstructionField field)
         {
             M_processed = true;
         }
         @Override
         public void propagate(
-            ConstReconstructionField original_field,
+            ConstReconstructionField originalField,
             DistanceUnitValue z,
             ReconstructionField field,
-            DistanceUnitValue last_z)
+            DistanceUnitValue lastZ)
         {
             M_propagated = true;
         }
+        @Override
+        public TestPlugin duplicate() {return new TestPlugin();}
 
         public ImagePlus M_hologram;
         public DistanceUnitValue M_wavelength;
         public DistanceUnitValue M_width;
         public DistanceUnitValue M_height;
 
-        public boolean M_processed_beginning = false;
+        public boolean M_processedBeginning = false;
         public boolean M_processed = false;
         public boolean M_propagated = false;
     }

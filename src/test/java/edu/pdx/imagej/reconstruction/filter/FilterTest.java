@@ -30,7 +30,7 @@ import edu.pdx.imagej.reconstruction.ReconstructionField;
 import edu.pdx.imagej.reconstruction.ReconstructionFieldImpl;
 
 public class FilterTest {
-    @Test public void test_no_roi()
+    @Test public void testNoRoi()
     {
         Filter test = new Filter();
         double[][] real = {
@@ -43,20 +43,20 @@ public class FilterTest {
         };
         ReconstructionField field = new ReconstructionFieldImpl(real, imag);
         ComplexField fourier = field.fourier().copy();
-        test.filter_field(field);
-        assertEquals(field.fourier().get_real(0, 0), fourier.get_real(0, 0));
-        assertEquals(field.fourier().get_real(0, 1), fourier.get_real(0, 1));
-        assertEquals(field.fourier().get_real(1, 0), fourier.get_real(1, 0));
-        assertEquals(field.fourier().get_real(1, 1), fourier.get_real(1, 1));
-        assertEquals(field.fourier().get_imag(0, 0), fourier.get_imag(0, 0));
-        assertEquals(field.fourier().get_imag(0, 1), fourier.get_imag(0, 1));
-        assertEquals(field.fourier().get_imag(1, 0), fourier.get_imag(1, 0));
-        assertEquals(field.fourier().get_imag(1, 1), fourier.get_imag(1, 1));
+        test.filterField(field);
+        assertEquals(field.fourier().getReal(0, 0), fourier.getReal(0, 0));
+        assertEquals(field.fourier().getReal(0, 1), fourier.getReal(0, 1));
+        assertEquals(field.fourier().getReal(1, 0), fourier.getReal(1, 0));
+        assertEquals(field.fourier().getReal(1, 1), fourier.getReal(1, 1));
+        assertEquals(field.fourier().getImag(0, 0), fourier.getImag(0, 0));
+        assertEquals(field.fourier().getImag(0, 1), fourier.getImag(0, 1));
+        assertEquals(field.fourier().getImag(1, 0), fourier.getImag(1, 0));
+        assertEquals(field.fourier().getImag(1, 1), fourier.getImag(1, 1));
     }
-    @Test public void test_filter()
+    @Test public void testFilter()
     {
         Filter test = new Filter();
-        test.set_filter(new PointRoi(0, 0));
+        test.setFilter(new PointRoi(0, 0));
         double[][] real = {
             {1, 2, 3},
             {3, 4, 5},
@@ -69,14 +69,14 @@ public class FilterTest {
         };
         ReconstructionField field = new ReconstructionFieldImpl(real, imag);
         ComplexField fourier = field.fourier().copy();
-        test.filter_field(field);
-        assertEquals(field.fourier().get_real(1, 1), fourier.get_real(0, 0));
-        assertEquals(field.fourier().get_imag(1, 1), fourier.get_imag(0, 0));
+        test.filterField(field);
+        assertEquals(field.fourier().getReal(1, 1), fourier.getReal(0, 0));
+        assertEquals(field.fourier().getImag(1, 1), fourier.getImag(0, 0));
         for (int x = 0; x < 3; ++x) {
             for (int y = 0; y < 3; ++y) {
                 if (x == 1 && y == 1) continue;
-                assertEquals(field.fourier().get_real(1, 1), 0);
-                assertEquals(field.fourier().get_imag(1, 1), 0);
+                assertEquals(field.fourier().getReal(1, 1), 0);
+                assertEquals(field.fourier().getImag(1, 1), 0);
             }
         }
     }

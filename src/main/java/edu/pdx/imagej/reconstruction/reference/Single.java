@@ -61,26 +61,35 @@ public class Single extends AbstractReferencePlugin {
     {
         M_image = image;
     }
+    private Single(ReconstructionField result)
+    {
+        M_result = result;
+    }
+    @Override
+    public Single duplicate()
+    {
+        return new Single(getReferenceHolo(null, 0).copy());
+    }
     /** Get the reference hologram.  It just returns the input image.
      *
      * @param field Unused.
      * @param t Unused.
      */
     @Override
-    public ReconstructionField get_reference_holo(
+    public ReconstructionField getReferenceHolo(
         ConstReconstructionField field, int t)
     {
         if (M_param != null) {
-            M_image = M_param.get_value();
+            M_image = M_param.getValue();
         }
         if (M_result == null) {
-            float[][] float_array = M_image.getProcessor().getFloatArray();
-            double[][] real = new double[float_array.length]
-                                        [float_array[0].length];
+            float[][] floatArray = M_image.getProcessor().getFloatArray();
+            double[][] real = new double[floatArray.length]
+                                        [floatArray[0].length];
             double[][] imag = new double[real.length][real[0].length];
             for (int x = 0; x < real.length; ++x) {
                 for (int y = 0; y < real[0].length; ++y) {
-                    real[x][y] = float_array[x][y];
+                    real[x][y] = floatArray[x][y];
                 }
             }
             M_result = new ReconstructionFieldImpl(real, imag);
@@ -105,31 +114,31 @@ public class Single extends AbstractReferencePlugin {
             super("Reference Hologram Image", images);
         }
         @Override
-        public void read_from_dialog()
+        public void readFromDialog()
         {
-            super.read_from_dialog();
-            check_for_errors();
+            super.readFromDialog();
+            checkForErrors();
         }
         @Override
-        public void read_from_prefs(Class<?> c, String name)
+        public void readFromPrefs(Class<?> c, String name)
         {
-            super.read_from_prefs(c, name);
-            check_for_errors();
+            super.readFromPrefs(c, name);
+            checkForErrors();
         }
         @Override
-        public void set_hologram(ImageParameter hologram)
+        public void setHologram(ImageParameter hologram)
         {
             M_holo = hologram;
         }
 
-        private void check_for_errors()
+        private void checkForErrors()
         {
             if (M_holo == null) return;
-            if (get_value() == M_holo.get_value()) {
-                set_warning("Warning: Reference Hologram is the same as the "
+            if (getValue() == M_holo.getValue()) {
+                setWarning("Warning: Reference Hologram is the same as the "
                             + "Hologram being reconstructed.");
             }
-            else set_warning(null);
+            else setWarning(null);
         }
 
         private ImageParameter M_img;

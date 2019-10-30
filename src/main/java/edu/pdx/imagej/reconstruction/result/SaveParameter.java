@@ -39,33 +39,33 @@ class SaveParameter extends HoldingParameter<Boolean> {
     @Override
     public void initialize()
     {
-        M_save_to_file = add_parameter(BoolParameter.class, "Save to file", false);
-        M_directory = add_parameter(DirectoryParameter.class, this);
-        M_directory.set_new_visibility(false);
+        M_saveToFile = addParameter(new BoolParameter("Save to file", false));
+        M_directory = addParameter(new DirectoryParameter());
+        M_directory.setNewVisibility(false);
     }
     @Override
-    public Boolean get_value() {return M_save_to_file.get_value();}
-    public String get_directory() {return M_directory.get_value();}
+    public Boolean getValue() {return M_saveToFile.getValue();}
+    public String getDirectory() {return M_directory.getValue();}
     @Override
-    public void read_from_dialog()
+    public void readFromDialog()
     {
-        super.read_from_dialog();
-        M_directory.set_new_visibility(M_save_to_file.get_value());
-        check_for_errors();
+        super.readFromDialog();
+        M_directory.setNewVisibility(M_saveToFile.getValue());
+        checkForErrors();
     }
     @Override
-    public void read_from_prefs(Class<?> c, String name)
+    public void readFromPrefs(Class<?> c, String name)
     {
-        super.read_from_prefs(c, name);
-        M_directory.set_new_visibility(M_save_to_file.get_value());
-        check_for_errors();
+        super.readFromPrefs(c, name);
+        M_directory.setNewVisibility(M_saveToFile.getValue());
+        checkForErrors();
     }
 
-    private void check_for_errors()
+    private void checkForErrors()
     {
-        set_error(M_save_to_file.get_value() && M_directory.get_value() == null ? "Please input a valid directory." : null);
+        setError(M_saveToFile.getValue() && M_directory.getValue() == null ? "Please input a valid directory." : null);
     }
-    private BoolParameter M_save_to_file = new BoolParameter("Save to file", false);
+    private BoolParameter M_saveToFile = new BoolParameter("Save to file", false);
     private DirectoryParameter M_directory;
 
     public class DirectoryParameter extends AbstractDParameter<String> implements ActionListener {
@@ -74,38 +74,38 @@ class SaveParameter extends HoldingParameter<Boolean> {
             super("DirectoryParameter");
             JButton button = new JButton("", new ImageIcon(SaveParameter.class.getResource("/folder.png")));
             button.addActionListener(this);
-            M_folder_button = new Panel();
-            M_folder_button.add(button);
+            M_folderButton = new Panel();
+            M_folderButton.add(button);
         }
         @Override
-        public void add_to_dialog(DPDialog dialog)
+        public void addToDialog(DPDialog dialog)
         {
             M_dialog = dialog;
-            dialog.add_panel(M_folder_button);
-            M_directory_label = dialog.add_message(M_directory == null ? "Select a directory..." : M_directory);
+            dialog.addPanel(M_folderButton);
+            M_directoryLabel = dialog.addMessage(M_directory == null ? "Select a directory..." : M_directory);
         }
-        @Override public void read_from_dialog() {}
-        @Override public void save_to_prefs(Class<?> c, String name) {}
-        @Override public void read_from_prefs(Class<?> c, String name) {}
-        @Override public int width() {return M_directory_width;}
-        @Override public String get_value() {return M_directory;}
+        @Override public void readFromDialog() {}
+        @Override public void saveToPrefs(Class<?> c, String name) {}
+        @Override public void readFromPrefs(Class<?> c, String name) {}
+        @Override public int width() {return M_directoryWidth;}
+        @Override public String getValue() {return M_directory;}
         @Override
         public void actionPerformed(ActionEvent e)
         {
             String temp = IJ.getDirectory("");
             if (temp != null) M_directory = temp;
-            M_directory_label.setText(M_directory == null ? "Select a directory..." : M_directory);
+            M_directoryLabel.setText(M_directory == null ? "Select a directory..." : M_directory);
             if (M_directory != null) {
-                M_directory_width = M_dialog.string_width(M_directory) + 64;
+                M_directoryWidth = M_dialog.stringWidth(M_directory) + 64;
             }
-            check_for_errors();
-            M_harvester.check_for_errors();
+            checkForErrors();
+            M_harvester.checkForErrors();
         }
 
-        private Label M_directory_label;
-        private Panel M_folder_button;
+        private Label M_directoryLabel;
+        private Panel M_folderButton;
         private String M_directory;
-        private int M_directory_width = 0;
+        private int M_directoryWidth = 0;
         private DPDialog M_dialog;
     }
 }

@@ -53,24 +53,33 @@ public class Median extends AbstractReferencePlugin {
     }
     /** Constructor intended for programmatic use of the plugin.
      *
-     * @param median_img The image stack to get the median from.
+     * @param medianImg The image stack to get the median from.
      * @param ts The time slices used in calculating the median.
      */
-    public Median(ImagePlus median_img, Collection<Integer> ts)
+    public Median(ImagePlus medianImg, Collection<Integer> ts)
     {
-        M_median_img = median_img;
+        M_medianImg = medianImg;
         M_ts = ts;
+    }
+    private Median(ReconstructionField result)
+    {
+        M_result = result;
+    }
+    @Override
+    public Median duplicate()
+    {
+        return new Median(getReferenceHolo(null, 0).copy());
     }
     /** Get the reference hologram. */
     @Override
-    public ReconstructionField get_reference_holo(
+    public ReconstructionField getReferenceHolo(
         ConstReconstructionField field, int t)
     {
         if (M_param != null) {
-            M_median_img = M_param.get_value().imp;
-            M_ts = M_param.get_value().ts;
+            M_medianImg = M_param.getValue().imp;
+            M_ts = M_param.getValue().ts;
         }
-        return get_reference_holo(M_median_img, M_ts);
+        return getReferenceHolo(M_medianImg, M_ts);
     }
     /** Get the reference hologram.  This is what actually gets the reference
      * hologram, because this is what this class cares about more.
@@ -79,11 +88,11 @@ public class Median extends AbstractReferencePlugin {
      * @param ts The time slices used in calculating the median.
      * @return The median of the images.
      */
-    public ReconstructionField get_reference_holo(ImagePlus imp,
+    public ReconstructionField getReferenceHolo(ImagePlus imp,
                                                   Collection<Integer> ts)
     {
         if (M_result == null) {
-            double[][] real = MedianUtil.calculate_median(imp, ts);
+            double[][] real = MedianUtil.calculateMedian(imp, ts);
             double[][] imag = new double[real.length][real[0].length];
             M_result = new ReconstructionFieldImpl(real, imag);
         }
@@ -98,7 +107,7 @@ public class Median extends AbstractReferencePlugin {
 
     private ReconstructionField M_result;
     private MedianParameter M_param;
-    private ImagePlus M_median_img;
+    private ImagePlus M_medianImg;
     private Collection<Integer> M_ts;
 
     private static class MedianParams {
@@ -120,24 +129,24 @@ public class Median extends AbstractReferencePlugin {
         public void initialize()
         {
             if (M_images == null) {
-                M_img = add_parameter(ImageParameter.class,
-                                      "Reference Hologram Stack");
+                M_img = addParameter(new ImageParameter(
+                                      "Reference Hologram Stack"));
             }
             else {
-                M_img = add_parameter(ImageParameter.class,
+                M_img = addParameter(new ImageParameter(
                                       "Reference Hologram Stack",
-                                      M_images);
+                                      M_images));
             }
-            M_ts = add_parameter(TParameter.class, M_img,
+            M_ts = addParameter(new TParameter(M_img,
                                  TParameter.PossibleTypes.AllMulti,
-                                 "MedianRef");
+                                 "MedianRef"));
         }
         @Override
-        public MedianParams get_value()
+        public MedianParams getValue()
         {
             MedianParams result = new MedianParams();
-            result.imp = M_img.get_value();
-            result.ts = M_ts.get_value();
+            result.imp = M_img.getValue();
+            result.ts = M_ts.getValue();
             return result;
         }
         private ImageParameter M_img;

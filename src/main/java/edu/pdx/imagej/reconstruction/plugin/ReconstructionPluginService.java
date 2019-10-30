@@ -39,7 +39,7 @@ public interface ReconstructionPluginService extends ImageJService {
      *
      * @return An instance of all <code>MainReconstructionPlugin</code>s.
      */
-    List<MainReconstructionPlugin> get_plugins();
+    List<MainReconstructionPlugin> getMainPlugins();
     /** Get all enabled plugins of a given type.
      *
      * @param <T> The type of plugins to get.  This can be inferred from <code>
@@ -47,7 +47,7 @@ public interface ReconstructionPluginService extends ImageJService {
      * @param type The class of plugins to get.
      * @return An instance of all enabled plugins of type<code>type</code>.
      */
-    <T extends ReconstructionPlugin> List<T> get_enabled_plugins(Class<T> type);
+    <T extends ReconstructionPlugin> List<T> getEnabledPlugins(Class<T> type);
     /** Get <em>all</em> {@link ReconstructionPlugin}s of a certain type.  Note
      * that this will get all plugins, even if they are disabled.
      *
@@ -56,13 +56,13 @@ public interface ReconstructionPluginService extends ImageJService {
      * @param type The class of plugins to get.
      * @return An instance of all plugins of type <code>type</code>.
      */
-    <T extends ReconstructionPlugin> List<T> get_all_plugins(Class<T> type);
+    <T extends ReconstructionPlugin> List<T> getAllPlugins(Class<T> type);
     /** Check if a plugin is enabled.
      *
      * @param plugin The plugin to check if it is enabled.
      * @return Whether or not the plugin is enabled.
      */
-    boolean is_enabled(Class<? extends ReconstructionPlugin> plugin);
+    boolean isEnabled(Class<? extends ReconstructionPlugin> plugin);
     /** Enable a plugin.
      *
      * @param plugin The plugin to enable.

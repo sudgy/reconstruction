@@ -35,11 +35,11 @@ import edu.pdx.imagej.reconstruction.units.DistanceUnitValue;
  * edu.pdx.imagej.reconstruction.plugin.ReconstructionPlugin
  * ReconstructionPlugin}, you can still do things during any other step of the
  * process, but you are <strong>not</strong> allowed to do something for {@link
- * edu.pdx.imagej.reconstruction.plugin.ReconstructionPlugin#process_propagated_field
- * ReconstructionPlugin#process_propagated_field}.  Calling that function will
+ * edu.pdx.imagej.reconstruction.plugin.ReconstructionPlugin#processPropagatedField
+ * ReconstructionPlugin#processPropagatedField}.  Calling that function will
  * throw an <code>UnsupportedOperationException</code>.  Instead, you need to
- * use {@link process_starting_field
- * process_starting_field(ConstReconstructionField)} or {@link propagate
+ * use {@link processStartingField
+ * processStartingField(ConstReconstructionField)} or {@link propagate
  * propagate(ConstReconstructionField, DistanceUnitValue, ReconstructionField,
  * DistanceUnitValue)}.
  */
@@ -50,7 +50,7 @@ public interface PropagationPlugin extends SubReconstructionPlugin {
      *
      * @param field The original field, right before propagation.
      */
-    default void process_starting_field(ConstReconstructionField field) {}
+    default void processStartingField(ConstReconstructionField field) {}
     /** Perform propagation, storing the result in <code>field</code>.
      * There are two ways that you could decide to propagate: first, you can
      * always propagate from the original field to the one you need to go to.
@@ -63,27 +63,27 @@ public interface PropagationPlugin extends SubReconstructionPlugin {
      * No matter what way you propagate, you must put the result in <code>field
      * </code>.
      *
-     * @param original_field The original field before propagation.
+     * @param originalField The original field before propagation.
      * @param z The z value to propagate to.
      * @param field The most recently-propagated field at this time slice, as
      *              well as the output.
-     * @param last_z The z value that was used to make <code>field</code>.
+     * @param lastZ The z value that was used to make <code>field</code>.
      */
-    void propagate(ConstReconstructionField original_field,
+    void propagate(ConstReconstructionField originalField,
                    DistanceUnitValue z,
                    ReconstructionField field,
-                   DistanceUnitValue last_z);
+                   DistanceUnitValue lastZ);
     /** Throws an <code>UnsupportedOperationException</code>.
      * @param field Unused.
      * @param t Unused.
      * @param z Unused.
      */
     @Override
-    default void process_propagated_field(ReconstructionField field,
+    default void processPropagatedField(ReconstructionField field,
                                           int t, DistanceUnitValue z)
     {
         throw new UnsupportedOperationException("PropagationPlugin should use "
-            + "the process_starting_field and propagate functions instead of "
-            + "process_propagated_field.");
+            + "the processStartingField and propagate functions instead of "
+            + "processPropagatedField.");
     }
 }
