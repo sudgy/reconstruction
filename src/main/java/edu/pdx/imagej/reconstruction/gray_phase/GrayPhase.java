@@ -61,6 +61,32 @@ public class GrayPhase extends AbstractReconstructionPlugin
     {
         if (M_live) M_doGray = M_param.getValue();
         if (!M_doGray) return;
+        final int num_bins = 1000;
+        int[] bins = new int[num_bins];
+        double[][] phase = field.field().getArg();
+        int x_size = phase.length;
+        int y_size = phase[0].length;
+        for (int x = 0; x < x_size; ++x) {
+            for (int y = 0; y < y_size; ++y) {
+                double val = phase[x][y];
+                int index = (int)((val + Math.PI) / (2 * Math.PI) * num_bins);
+                // I don't know if these are possible, (especially the first),
+                // but it's good to be safe
+                if (index < 0) index = 0;
+                if (index >= num_bins) index = num_bins - 1;
+                ++bins[index];
+            }
+        }
+        int max_index = 0;
+        int max_value = bins[0];
+        for (int i = 1; i < num_bins; ++i) {
+            if (bins[i] > max_value) {
+                max_index = i;
+                max_value = bins[i];
+            }
+        }
+        double diff = -((max_index + 0.5) * (2 * Math.PI) / num_bins - Math.PI);
+        field.field().multiplyInPlace(Math.cos(diff), Math.sin(diff));
     }
 
     private boolean M_live = false;
