@@ -43,6 +43,27 @@ public class ResultOptions {
      * function with the result.
      */
     public boolean saveToFile;
+    /** Enumeration specifying what directory structure to do
+     */
+    public enum DirStructure {
+        /** Save with the filename "z/t.tiff (the default)"
+         */
+        ZT,
+        /** Save with the filename "t/z.tiff"
+         */
+        TZ,
+        /** Save with the filename "t.tiff" (all z slices will be in one image
+         * file)
+         */
+        T,
+        /** Save with the filename "z.tiff" (all t slices will be in one image
+         * file)
+         */
+        Z
+    };
+    /** What directory structure to have (defaults to <code>ZT</code>)
+     */
+    public DirStructure dirStructure = DirStructure.ZT;
     /** What directory to save to, if {@link saveToFile} is <code>true</code>.
      */
     public String saveDirectory;

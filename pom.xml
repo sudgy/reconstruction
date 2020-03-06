@@ -7,7 +7,7 @@
 
     <groupId>edu.pdx</groupId>
     <artifactId>reconstruction</artifactId>
-    <version>3.1</version>
+    <version>3.2-SNAPSHOT</version>
 
     <name>Reconstruction</name>
     <description>This plugin performs reconstruction and numerical propagation of holograms.</description>

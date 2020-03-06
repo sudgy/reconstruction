@@ -97,10 +97,8 @@ import edu.pdx.imagej.reconstruction.ReconstructionField;
  * </ol>
  * While it is guaranteed that each method will be called after all of the
  * previous ones, plugins are allowed to call earlier methods again if they
- * choose to.  For example, {@link
- * edu.pdx.imagej.reconstruction.auto_focus.AutoFocus AutoFocus} calls {@link
- * processZsParam processZsParam} several times.  In addition, if {@link
- * hasError} returns <code>true</code> at any time, the command will abort.
+ * choose to.  If {@link hasError} returns <code>true</code> at any time, the
+ * command will abort.
  */
 public interface ReconstructionPlugin extends ImageJPlugin, ParameterPlugin {
     /** Read the all of the main reconstruction plugins enabled.  Some plugins

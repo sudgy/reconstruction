@@ -97,15 +97,45 @@ public class Result extends AbstractReconstructionPlugin
         M_cal.pixelHeight = height.value() / M_pixelHeight;
         M_cal.setUnit(width.unit().toString());
     }
-    /** Determine how many time slices there are.
+    /** Determine how many time slices there are, and create directories if
+     * needed.
      */
     @Override
     public void processTsParam(List<Integer> ts)
     {
         M_tSize = ts.size();
+        if (M_options.saveToFile) {
+            try {
+                if (M_options.dirStructure == ResultOptions.DirStructure.TZ) {
+                    for (int t : ts) {
+                        if (M_options.amplitude) {
+                            new File(Paths.get(M_options.saveDirectory,
+                                "Amplitude", formatT(t)).toString()).mkdirs();
+                        }
+                        if (M_options.phase) {
+                            new File(Paths.get(M_options.saveDirectory,
+                                "Phase", formatT(t)).toString()).mkdirs();
+                        }
+                        if (M_options.real) {
+                            new File(Paths.get(M_options.saveDirectory,
+                                "Real", formatT(t)).toString()).mkdirs();
+                        }
+                        if (M_options.imaginary) {
+                            new File(Paths.get(M_options.saveDirectory,
+                                "Imaginary", formatT(t)).toString()).mkdirs();
+                        }
+                    }
+                }
+            }
+            catch (SecurityException e) {
+                P_ui.showDialog("Unable to create directories: "
+                    + e.getMessage(), "Error");
+                M_error = true;
+                return;
+            }
+        }
     }
-    /** Determine how many z slices there are, and create directories if {@link
-     * ResultOptions#saveToFile} is <code>true</code>.
+    /** Determine how many z slices there are, and create directories if needed.
      */
     @Override
     public void processZsParam(List<DistanceUnitValue> zs)
@@ -113,22 +143,24 @@ public class Result extends AbstractReconstructionPlugin
         M_zSize = zs.size();
         if (M_options.saveToFile) {
             try {
-                for (DistanceUnitValue z : zs) {
-                    if (M_options.amplitude) {
-                        new File(Paths.get(M_options.saveDirectory,
-                            "Amplitude", formatZ(z)).toString()).mkdirs();
-                    }
-                    if (M_options.phase) {
-                        new File(Paths.get(M_options.saveDirectory,
-                            "Phase", formatZ(z)).toString()).mkdirs();
-                    }
-                    if (M_options.real) {
-                        new File(Paths.get(M_options.saveDirectory,
-                            "Real", formatZ(z)).toString()).mkdirs();
-                    }
-                    if (M_options.imaginary) {
-                        new File(Paths.get(M_options.saveDirectory,
-                            "Imaginary", formatZ(z)).toString()).mkdirs();
+                if (M_options.dirStructure == ResultOptions.DirStructure.ZT) {
+                    for (DistanceUnitValue z : zs) {
+                        if (M_options.amplitude) {
+                            new File(Paths.get(M_options.saveDirectory,
+                                "Amplitude", formatZ(z)).toString()).mkdirs();
+                        }
+                        if (M_options.phase) {
+                            new File(Paths.get(M_options.saveDirectory,
+                                "Phase", formatZ(z)).toString()).mkdirs();
+                        }
+                        if (M_options.real) {
+                            new File(Paths.get(M_options.saveDirectory,
+                                "Real", formatZ(z)).toString()).mkdirs();
+                        }
+                        if (M_options.imaginary) {
+                            new File(Paths.get(M_options.saveDirectory,
+                                "Imaginary", formatZ(z)).toString()).mkdirs();
+                        }
                     }
                 }
             }
@@ -205,8 +237,14 @@ public class Result extends AbstractReconstructionPlugin
         if (M_options.saveToFile) {
             ImagePlus tempImg = new ImagePlus("", proc);
             tempImg.setCalibration(M_cal);
-            IJ.saveAsTiff(tempImg, Paths.get(M_options.saveDirectory, type,
-                formatZ(z), formatT(t)).toString());
+            if (M_options.dirStructure == ResultOptions.DirStructure.ZT) {
+                IJ.saveAsTiff(tempImg, Paths.get(M_options.saveDirectory, type,
+                    formatZ(z), formatT(t)).toString());
+            }
+            if (M_options.dirStructure == ResultOptions.DirStructure.TZ) {
+                IJ.saveAsTiff(tempImg, Paths.get(M_options.saveDirectory, type,
+                    formatT(t), formatZ(z)).toString());
+            }
             tempImg.close();
         }
         // Not save to file
