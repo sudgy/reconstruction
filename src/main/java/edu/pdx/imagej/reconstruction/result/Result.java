@@ -214,6 +214,26 @@ public class Result extends AbstractReconstructionPlugin
                         }
                     }
                 }
+                if (M_options.dirStructure == ResultOptions.DirStructure.Z) {
+                    for (DistanceUnitValue z : zs) {
+                        if (M_options.amplitude) {
+                            new File(Paths.get(M_options.saveDirectory, "Tmp",
+                                "Amplitude", formatZ(z)).toString()).mkdirs();
+                        }
+                        if (M_options.phase) {
+                            new File(Paths.get(M_options.saveDirectory, "Tmp",
+                                "Phase", formatZ(z)).toString()).mkdirs();
+                        }
+                        if (M_options.real) {
+                            new File(Paths.get(M_options.saveDirectory, "Tmp",
+                                "Real", formatZ(z)).toString()).mkdirs();
+                        }
+                        if (M_options.imaginary) {
+                            new File(Paths.get(M_options.saveDirectory, "Tmp",
+                                "Imaginary", formatZ(z)).toString()).mkdirs();
+                        }
+                    }
+                }
             }
             catch (SecurityException e) {
                 P_ui.showDialog("Unable to create directories: "
@@ -296,6 +316,10 @@ public class Result extends AbstractReconstructionPlugin
                 IJ.saveAsTiff(tempImg, Paths.get(M_options.saveDirectory, type,
                     formatT(t), formatZ(z)).toString());
             }
+            if (M_options.dirStructure == ResultOptions.DirStructure.Z) {
+                IJ.saveAsTiff(tempImg, Paths.get(M_options.saveDirectory, "Tmp",
+                    type, formatZ(z), formatT(t)).toString());
+            }
             if (M_options.dirStructure == ResultOptions.DirStructure.T) {
                 IJ.saveAsTiff(tempImg, Paths.get(M_options.saveDirectory, "Tmp",
                     type, formatT(t), formatZ(z)).toString());
@@ -331,38 +355,13 @@ public class Result extends AbstractReconstructionPlugin
                 ImageStack new_stack
                     = new ImageStack(M_pixelWidth, M_pixelHeight);
                 for (DistanceUnitValue z : M_zs) {
-                    ImagePlus slice = null;
-                    Path path = Paths.get(
+                    ImagePlus slice = openImage(Paths.get(
                         M_options.saveDirectory,
                         "Tmp",
                         type,
                         formatT(t),
                         formatZ(z)
-                    );
-                    File file = new File(path.toString() + ".tif");
-                    if (file.isFile()) {
-                        slice = IJ.openImage(path.toString() + ".tif");
-                    }
-                    else if (file.exists()) {
-                        throw new RuntimeException(path.toString()
-                            + ".tif is not an image file.");
-                    }
-                    else {
-                        file = new File(path.toString() + ".tiff");
-                        if (file.isFile()) {
-                            slice = IJ.openImage(path.toString() + ".tiff");
-                        }
-                        else if (file.exists()) {
-                            throw new RuntimeException(path.toString()
-                                + ".tif is not an image file.");
-                        }
-                        else {
-                            throw new RuntimeException("A temporary file that "
-                                + "shouldn't have been touched was deleted.  "
-                                + "Please try again without removing any files."
-                            );
-                        }
-                    }
+                    ));
                     new_stack.addSlice(
                         "z = " + formatZ(z),
                         slice.getProcessor()
@@ -374,6 +373,43 @@ public class Result extends AbstractReconstructionPlugin
                         M_options.saveDirectory,
                         type,
                         formatT(t)
+                    ).toString()
+                );
+            }
+            try {
+                FileUtils.deleteDirectory(
+                    new File(
+                        Paths.get(M_options.saveDirectory, "Tmp").toString()
+                    )
+                );
+            }
+            catch (java.io.IOException e) {
+
+            }
+        }
+        if (M_options.dirStructure == ResultOptions.DirStructure.Z) {
+            for (DistanceUnitValue z : M_zs) {
+                ImageStack new_stack
+                    = new ImageStack(M_pixelWidth, M_pixelHeight);
+                for (int t : M_ts) {
+                    ImagePlus slice = openImage(Paths.get(
+                        M_options.saveDirectory,
+                        "Tmp",
+                        type,
+                        formatZ(z),
+                        formatT(t)
+                    ));
+                    new_stack.addSlice(
+                        "t = " + formatT(t),
+                        slice.getProcessor()
+                    );
+                }
+                IJ.saveAsTiff(
+                    new ImagePlus("z = " + formatZ(z), new_stack),
+                    Paths.get(
+                        M_options.saveDirectory,
+                        type,
+                        formatZ(z)
                     ).toString()
                 );
             }
@@ -434,6 +470,35 @@ public class Result extends AbstractReconstructionPlugin
     {
         String result = M_hologram.getImageStack().getSliceLabel(t);
         if (result == null) result = M_hologram.getTitle();
+        return result;
+    }
+    private ImagePlus openImage(Path path)
+    {
+        ImagePlus result = null;
+        File file = new File(path.toString() + ".tif");
+        if (file.isFile()) {
+            result = IJ.openImage(path.toString() + ".tif");
+        }
+        else if (file.exists()) {
+            throw new RuntimeException(path.toString()
+                + ".tif is not an image file.");
+        }
+        else {
+            file = new File(path.toString() + ".tiff");
+            if (file.isFile()) {
+                result = IJ.openImage(path.toString() + ".tiff");
+            }
+            else if (file.exists()) {
+                throw new RuntimeException(path.toString()
+                    + ".tif is not an image file.");
+            }
+            else {
+                throw new RuntimeException("A temporary file that "
+                    + "shouldn't have been touched was deleted.  "
+                    + "Please try again without removing any files."
+                );
+            }
+        }
         return result;
     }
 
