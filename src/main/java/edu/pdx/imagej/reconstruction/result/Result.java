@@ -20,8 +20,11 @@
 package edu.pdx.imagej.reconstruction.result;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+
+import org.apache.commons.io.FileUtils;
 
 import ij.IJ;
 import ij.ImagePlus;
@@ -75,6 +78,32 @@ public class Result extends AbstractReconstructionPlugin
     public void processBeforeParam()
     {
         if (M_options == null) M_options = M_param.getValue();
+        if (M_options.saveToFile) {
+            try {
+                if (M_options.amplitude) {
+                    new File(Paths.get(M_options.saveDirectory,
+                        "Amplitude").toString()).mkdirs();
+                }
+                if (M_options.phase) {
+                    new File(Paths.get(M_options.saveDirectory,
+                        "Phase").toString()).mkdirs();
+                }
+                if (M_options.real) {
+                    new File(Paths.get(M_options.saveDirectory,
+                        "Real").toString()).mkdirs();
+                }
+                if (M_options.imaginary) {
+                    new File(Paths.get(M_options.saveDirectory,
+                        "Imaginary").toString()).mkdirs();
+                }
+            }
+            catch (SecurityException e) {
+                P_ui.showDialog("Unable to create directories: "
+                    + e.getMessage(), "Error");
+                M_error = true;
+                return;
+            }
+        }
     }
     /** Get required information from the hologram.  The name of the hologram,
      * as well as its dimensions, are used.
@@ -103,6 +132,7 @@ public class Result extends AbstractReconstructionPlugin
     @Override
     public void processTsParam(List<Integer> ts)
     {
+        M_ts = ts;
         M_tSize = ts.size();
         if (M_options.saveToFile) {
             try {
@@ -126,6 +156,26 @@ public class Result extends AbstractReconstructionPlugin
                         }
                     }
                 }
+                if (M_options.dirStructure == ResultOptions.DirStructure.T) {
+                    for (int t : ts) {
+                        if (M_options.amplitude) {
+                            new File(Paths.get(M_options.saveDirectory, "Tmp",
+                                "Amplitude", formatT(t)).toString()).mkdirs();
+                        }
+                        if (M_options.phase) {
+                            new File(Paths.get(M_options.saveDirectory, "Tmp",
+                                "Phase", formatT(t)).toString()).mkdirs();
+                        }
+                        if (M_options.real) {
+                            new File(Paths.get(M_options.saveDirectory, "Tmp",
+                                "Real", formatT(t)).toString()).mkdirs();
+                        }
+                        if (M_options.imaginary) {
+                            new File(Paths.get(M_options.saveDirectory, "Tmp",
+                                "Imaginary", formatT(t)).toString()).mkdirs();
+                        }
+                    }
+                }
             }
             catch (SecurityException e) {
                 P_ui.showDialog("Unable to create directories: "
@@ -140,6 +190,7 @@ public class Result extends AbstractReconstructionPlugin
     @Override
     public void processZsParam(List<DistanceUnitValue> zs)
     {
+        M_zs = zs;
         M_zSize = zs.size();
         if (M_options.saveToFile) {
             try {
@@ -245,6 +296,10 @@ public class Result extends AbstractReconstructionPlugin
                 IJ.saveAsTiff(tempImg, Paths.get(M_options.saveDirectory, type,
                     formatT(t), formatZ(z)).toString());
             }
+            if (M_options.dirStructure == ResultOptions.DirStructure.T) {
+                IJ.saveAsTiff(tempImg, Paths.get(M_options.saveDirectory, "Tmp",
+                    type, formatT(t), formatZ(z)).toString());
+            }
             tempImg.close();
         }
         // Not save to file
@@ -269,9 +324,80 @@ public class Result extends AbstractReconstructionPlugin
             }
         }
     }
+    private void processTmpSave(String type)
+    {
+        if (M_options.dirStructure == ResultOptions.DirStructure.T) {
+            for (int t : M_ts) {
+                ImageStack new_stack
+                    = new ImageStack(M_pixelWidth, M_pixelHeight);
+                for (DistanceUnitValue z : M_zs) {
+                    ImagePlus slice = null;
+                    Path path = Paths.get(
+                        M_options.saveDirectory,
+                        "Tmp",
+                        type,
+                        formatT(t),
+                        formatZ(z)
+                    );
+                    File file = new File(path.toString() + ".tif");
+                    if (file.isFile()) {
+                        slice = IJ.openImage(path.toString() + ".tif");
+                    }
+                    else if (file.exists()) {
+                        throw new RuntimeException(path.toString()
+                            + ".tif is not an image file.");
+                    }
+                    else {
+                        file = new File(path.toString() + ".tiff");
+                        if (file.isFile()) {
+                            slice = IJ.openImage(path.toString() + ".tiff");
+                        }
+                        else if (file.exists()) {
+                            throw new RuntimeException(path.toString()
+                                + ".tif is not an image file.");
+                        }
+                        else {
+                            throw new RuntimeException("A temporary file that "
+                                + "shouldn't have been touched was deleted.  "
+                                + "Please try again without removing any files."
+                            );
+                        }
+                    }
+                    new_stack.addSlice(
+                        "z = " + formatZ(z),
+                        slice.getProcessor()
+                    );
+                }
+                IJ.saveAsTiff(
+                    new ImagePlus("t = " + formatT(t), new_stack),
+                    Paths.get(
+                        M_options.saveDirectory,
+                        type,
+                        formatT(t)
+                    ).toString()
+                );
+            }
+            try {
+                FileUtils.deleteDirectory(
+                    new File(
+                        Paths.get(M_options.saveDirectory, "Tmp").toString()
+                    )
+                );
+            }
+            catch (java.io.IOException e) {
+
+            }
+        }
+    }
     void almostProcessEnding() // Package private for testing
     {
-        if (!M_options.saveToFile) {
+        if (M_options.saveToFile) {
+            if (M_options.amplitude) processTmpSave("Amplitude");
+            if (M_options.phase) processTmpSave("Phase");
+            if (M_options.real) processTmpSave("Real");
+            if (M_options.imaginary) processTmpSave("Imaginary");
+        }
+        else {
             if (M_options.amplitude) {
                 M_amplitudeImp = createImp(M_amplitude, "Amplitude");
             }
@@ -326,6 +452,8 @@ public class Result extends AbstractReconstructionPlugin
     private Calibration M_cal;
     private int M_zSize;
     private int M_tSize;
+    private List<DistanceUnitValue> M_zs;
+    private List<Integer> M_ts;
     private int M_pixelWidth;
     private int M_pixelHeight;
 }

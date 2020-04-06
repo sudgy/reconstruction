@@ -156,6 +156,7 @@ public class ResultTest {
             ArrayList<DistanceUnitValue> zs = new ArrayList<>();
             zs.add(unit0); zs.add(unit1);
 
+            test.processBeforeParam();
             test.processHologramParam(stack);
             test.processDimensionsParam(unit2, unit3);
             test.processTsParam(ts);
@@ -236,6 +237,7 @@ public class ResultTest {
             ArrayList<DistanceUnitValue> zs = new ArrayList<>();
             zs.add(unit0); zs.add(unit1);
 
+            test.processBeforeParam();
             test.processHologramParam(stack);
             test.processDimensionsParam(unit2, unit3);
             test.processTsParam(ts);
@@ -295,6 +297,76 @@ public class ResultTest {
             assertEquals(real11_label, "1.000.tif");
             assertEquals(real30_label, "0.000.tif");
             assertEquals(real31_label, "1.000.tif");
+        }
+        finally {
+            FileUtils.deleteDirectory(new File(dir));
+        }
+    }
+    @Test public void testSaveToFileT() throws java.io.IOException
+    {
+        String dir = "./reconstructionResultSandbox";
+        try {
+            Result test = new Result();
+            ImagePlus stack = createTheStack();
+            test.M_options = new ResultOptions();
+            test.M_options.dirStructure = ResultOptions.DirStructure.T;
+            test.M_options.real = true;
+            test.M_options.saveToFile = true;
+            test.M_options.saveDirectory = dir;
+            ArrayList<Integer> ts = new ArrayList<>();
+            ts.add(1); ts.add(3);
+            ArrayList<DistanceUnitValue> zs = new ArrayList<>();
+            zs.add(unit0); zs.add(unit1);
+
+            test.processBeforeParam();
+            test.processHologramParam(stack);
+            test.processDimensionsParam(unit2, unit3);
+            test.processTsParam(ts);
+            test.processZsParam(zs);
+            test.processBeginning();
+
+            assertTrue(new File(Paths.get(dir, "Real").toString()).exists());
+
+            double[][] real = {{0, 0}, {0, 0}};
+            double[][] imag = {{0, 0}, {0, 0}};
+            ReconstructionField field = new ReconstructionFieldImpl(real, imag);
+            test.processPropagatedField(field, 1, unit0);
+            field.field().getField()[0][0] = 1;
+            test.processPropagatedField(field, 1, unit1);
+            field.field().getField()[0][0] = 2;
+            test.processPropagatedField(field, 3, unit0);
+            field.field().getField()[0][0] = 3;
+            test.processPropagatedField(field, 3, unit1);
+            test.almostProcessEnding();
+
+            assertTrue(test.M_realImp == null, "There should be no result in "
+                + "memory when saving to file.");
+            String real1_path = Paths.get(dir, "Real", "00001.tif").toString();
+            String real3_path = Paths.get(dir, "Real", "00003.tif").toString();
+            assertTrue(new File(real1_path).exists());
+            assertTrue(new File(real3_path).exists());
+
+            ImageStack real1_stack = IJ.openImage(real1_path).getStack();
+            ImageStack real3_stack = IJ.openImage(real3_path).getStack();
+            assertEquals(real1_stack.getSize(), 2);
+            assertEquals(real3_stack.getSize(), 2);
+            float[][] real10 = real1_stack.getProcessor(1).getFloatArray();
+            float[][] real11 = real1_stack.getProcessor(2).getFloatArray();
+            float[][] real30 = real3_stack.getProcessor(1).getFloatArray();
+            float[][] real31 = real3_stack.getProcessor(2).getFloatArray();
+            String real10_label = real1_stack.getSliceLabel(1);
+            String real11_label = real1_stack.getSliceLabel(2);
+            String real30_label = real3_stack.getSliceLabel(1);
+            String real31_label = real3_stack.getSliceLabel(2);
+
+            assertEquals(real10[0][0], 0);
+            assertEquals(real11[0][0], 1);
+            assertEquals(real30[0][0], 2);
+            assertEquals(real31[0][0], 3);
+            assertEquals(real10_label, "z = 0.000");
+            assertEquals(real11_label, "z = 1.000");
+            assertEquals(real30_label, "z = 0.000");
+            assertEquals(real31_label, "z = 1.000");
         }
         finally {
             FileUtils.deleteDirectory(new File(dir));
