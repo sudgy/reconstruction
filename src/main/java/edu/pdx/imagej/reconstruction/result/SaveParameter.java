@@ -33,6 +33,7 @@ import edu.pdx.imagej.dynamic_parameters.DPDialog;
 import edu.pdx.imagej.dynamic_parameters.AbstractDParameter;
 import edu.pdx.imagej.dynamic_parameters.HoldingParameter;
 import edu.pdx.imagej.dynamic_parameters.BoolParameter;
+import edu.pdx.imagej.dynamic_parameters.ChoiceParameter;
 
 class SaveParameter extends HoldingParameter<Boolean> {
     public SaveParameter() {super("SaveToFile");}
@@ -41,16 +42,22 @@ class SaveParameter extends HoldingParameter<Boolean> {
     {
         M_saveToFile = addParameter(new BoolParameter("Save to file", false));
         M_directory = addParameter(new DirectoryParameter());
+        M_dirStructure = addParameter(
+            new ChoiceParameter("Directory structure", SC_dirStructures)
+        );
         M_directory.setNewVisibility(false);
+        M_dirStructure.setNewVisibility(false);
     }
     @Override
     public Boolean getValue() {return M_saveToFile.getValue();}
     public String getDirectory() {return M_directory.getValue();}
+    public String getDirStructure() {return M_dirStructure.getValue();}
     @Override
     public void readFromDialog()
     {
         super.readFromDialog();
         M_directory.setNewVisibility(M_saveToFile.getValue());
+        M_dirStructure.setNewVisibility(M_saveToFile.getValue());
         checkForErrors();
     }
     @Override
@@ -58,6 +65,7 @@ class SaveParameter extends HoldingParameter<Boolean> {
     {
         super.readFromPrefs(c, name);
         M_directory.setNewVisibility(M_saveToFile.getValue());
+        M_dirStructure.setNewVisibility(M_saveToFile.getValue());
         checkForErrors();
     }
 
@@ -67,6 +75,13 @@ class SaveParameter extends HoldingParameter<Boolean> {
     }
     private BoolParameter M_saveToFile = new BoolParameter("Save to file", false);
     private DirectoryParameter M_directory;
+    private ChoiceParameter M_dirStructure;
+    private static final String[] SC_dirStructures = {
+        "z/t.tiff",
+        "t/z.tiff",
+        "t.tiff",
+        "z.tiff"
+    };
 
     public class DirectoryParameter extends AbstractDParameter<String> implements ActionListener {
         public DirectoryParameter()

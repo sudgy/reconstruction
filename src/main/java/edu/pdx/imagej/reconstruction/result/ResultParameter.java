@@ -49,11 +49,36 @@ class ResultParameter extends HoldingParameter<ResultOptions> {
         else if (type.equals("16-bit")) {
             result.type = ResultOptions.Type.Type16Bit;
         }
-        else {
+        else if (type.equals("32-bit")) {
             result.type = ResultOptions.Type.Type32Bit;
+        }
+        else {
+            throw new RuntimeException(
+                "Internal error when trying to read the output type.  The "
+                + "output type received was " + type + "."
+            );
         }
         result.saveToFile = M_save.getValue();
         result.saveDirectory = M_save.getDirectory();
+        String dirStructure = M_save.getDirStructure();
+        if (dirStructure.equals("z/t.tiff")) {
+            result.dirStructure = ResultOptions.DirStructure.ZT;
+        }
+        else if (dirStructure.equals("t/z.tiff")) {
+            result.dirStructure = ResultOptions.DirStructure.TZ;
+        }
+        else if (dirStructure.equals("t.tiff")) {
+            result.dirStructure = ResultOptions.DirStructure.T;
+        }
+        else if (dirStructure.equals("z.tiff")) {
+            result.dirStructure = ResultOptions.DirStructure.Z;
+        }
+        else {
+            throw new RuntimeException(
+                "Internal error when trying to read the directory structure.  "
+                + "The directory structure received was " + dirStructure + "."
+            );
+        }
         return result;
     }
 
