@@ -298,6 +298,7 @@ public class Result extends AbstractReconstructionPlugin
             }
         }
         ImageProcessor proc = new FloatProcessor(result);
+        if (type == "Phase") proc.setMinAndMax(-Math.PI, Math.PI);
         if (M_options.type == ResultOptions.Type.Type8Bit) {
             proc = proc.convertToByteProcessor();
         }
